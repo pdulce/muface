@@ -3,6 +3,7 @@ package com.mfc.infra.output.adapter;
 import com.mfc.infra.configuration.ArqConfigProperties;
 //import com.mfc.infra.event.ArqEvent;
 import com.mfc.infra.dto.ArqAbstractDTO;
+import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.exceptions.ArqNotExistException;
 import com.mfc.infra.output.port.ArqRelationalServicePort;
 import com.mfc.infra.utils.ArqConversionUtils;
@@ -13,14 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Transactional
-public abstract class ArqRelationalServiceAdapter<T, IDTO, ID> implements ArqRelationalServicePort<T, IDTO, ID> {
+public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> implements ArqRelationalServicePort<T, IDTO, ID> {
     Logger logger = LoggerFactory.getLogger(ArqRelationalServiceAdapter.class);
     @Autowired
     ArqConfigProperties arqConfigProperties;
@@ -190,16 +190,12 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO, ID> implements ArqRel
     /** método generíco para buscar dentro de cualquier campo de un entidad T **/
 
     @SuppressWarnings("unchecked")
-    public List<IDTO> buscarPorCampoValor(String fieldName, Object fieldValue) {
+    @Override
+    public List<IDTO> buscarPorCampoValor(IDTO instanceDTO) {
 
         try {
             Class<T> entityClass = getClassOfEntity();
-            T instance = entityClass.getDeclaredConstructor().newInstance();
-            // llenamos esta instancia con el field y value recibidos
-            Field field = entityClass.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(instance, fieldValue);
-
+            T instance = ArqAbstractDTO.convertToEntity(instanceDTO, entityClass);
             List<IDTO> resultado = new ArrayList<>();
             this.getRepository().findAll(Example.of(instance)).forEach((entity) -> {
                 resultado.add(ArqAbstractDTO.convertToDTO(entity, getClassOfDTO()));
@@ -207,9 +203,7 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO, ID> implements ArqRel
             return resultado;
         } catch (Throwable exc1) {
             logger.error("Error in buscarPorCampoValor method: ", exc1.getCause());
-            ArqNotExistException e = new ArqNotExistException();
-            e.setMsgError("fieldName: " + fieldName + " not exists for this Entity class");
-            RuntimeException exc = new RuntimeException(e);
+            RuntimeException exc = new RuntimeException(exc1.getCause());
             throw exc;
         }
     }

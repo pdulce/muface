@@ -1,9 +1,11 @@
 package com.mfc.infra.output.port;
 
+import com.mfc.infra.dto.IArqDTO;
+
 import java.util.List;
 
 
-public interface ArqRelationalServicePort<T, IDTO, ID> {
+public interface ArqRelationalServicePort<T, IDTO extends IArqDTO, ID> {
 
     IDTO crear(IDTO entity);
 
@@ -18,7 +20,7 @@ public interface ArqRelationalServicePort<T, IDTO, ID> {
 
     List<IDTO> buscarTodos();
 
-    List<IDTO> buscarPorCampoValor(String fieldName, Object fieldValue);
+    List<IDTO> buscarPorCampoValor(IDTO filterObject);
 
     String getDocumentEntityClassname();
 

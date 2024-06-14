@@ -24,7 +24,7 @@ public class DiplomaDTO extends ArqAbstractDTO {
     private String continente;
 
     @JsonIgnore
-    protected static Map<String, String> mapaConversion;
+    private static Map<String, String> mapaConversion;
 
     static {
         // Keys: los miembros del DTO

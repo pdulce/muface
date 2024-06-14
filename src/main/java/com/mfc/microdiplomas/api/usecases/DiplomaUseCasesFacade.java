@@ -1,4 +1,4 @@
-package com.mfc.microdiplomas.api.facade;
+package com.mfc.microdiplomas.api.usecases;
 
 import com.mfc.microdiplomas.api.usecases.ActualizarDiplomaUseCase;
 import com.mfc.microdiplomas.api.usecases.BorrarTodosLosDiplomasUseCase;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DiplomaFacade {
+public class DiplomaUseCasesFacade {
 
     @Autowired
     private CrearDiplomaUseCase crearDiplomaUseCase;
