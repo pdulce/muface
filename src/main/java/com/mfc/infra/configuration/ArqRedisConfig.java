@@ -1,6 +1,6 @@
 package com.mfc.infra.configuration;
 
-import com.mfc.infra.event.ArqEvent;
+//import com.mfc.infra.event.ArqEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -40,7 +40,7 @@ public class ArqRedisConfig {
         return new LettuceConnectionFactory(config);
     }
 
-    @Bean
+    /*@Bean
     public RedisTemplate<String, ArqEvent<?>> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, ArqEvent<?>> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
@@ -61,5 +61,6 @@ public class ArqRedisConfig {
 
         template.afterPropertiesSet();
         return template;
-    }
+    }*/
+
 }
