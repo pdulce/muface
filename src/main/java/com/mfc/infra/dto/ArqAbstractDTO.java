@@ -15,7 +15,7 @@ public abstract class ArqAbstractDTO implements IArqDTO {
         try {
             return clazz.getDeclaredField(fieldName);
         } catch (NoSuchFieldException e) {
-            return null;
+            throw new RuntimeException("Error de mapeo:: el campo " + fieldName + " no existe en ");
         }
     }
 
