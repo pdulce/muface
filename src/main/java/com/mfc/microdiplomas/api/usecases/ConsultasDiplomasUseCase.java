@@ -1,7 +1,7 @@
-package com.backend.microdiplomas.api.usecases;
+package com.mfc.microdiplomas.api.usecases;
 
-import com.backend.microdiplomas.domain.service.DiplomaServicePortArq;
-import com.backend.microdiplomas.api.dto.DiplomaDTOArq;
+import com.mfc.microdiplomas.domain.service.DiplomaServicePort;
+import com.mfc.microdiplomas.api.dto.DiplomaDTOArq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +11,7 @@ import java.util.List;
 public class ConsultasDiplomasUseCase {
 
     @Autowired
-    DiplomaServicePortArq diplomaCommandServicePort;
+    DiplomaServicePort diplomaCommandServicePort;
 
     public List<DiplomaDTOArq> consultarDiplomasDeCliente(Long customerId) {
         return this.diplomaCommandServicePort.buscarPorCampoValor("customerId", customerId);

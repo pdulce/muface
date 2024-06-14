@@ -1,6 +1,6 @@
-package com.backend.microdiplomas.domain.model;
+package com.mfc.microdiplomas.domain.model;
 
-import com.backend.microdiplomas.api.dto.DiplomaDTOArq;
+import com.mfc.microdiplomas.api.dto.DiplomaDTOArq;
 import jakarta.persistence.*;
 import lombok.Data;
 

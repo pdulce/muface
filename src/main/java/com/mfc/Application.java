@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
-@EnableAutoConfiguration(exclude={MongoAutoConfiguration.class})
+//@EnableAutoConfiguration(exclude={MongoAutoConfiguration.class})
 @EnableConfigurationProperties(ArqConfigProperties.class)
 public class Application {
 

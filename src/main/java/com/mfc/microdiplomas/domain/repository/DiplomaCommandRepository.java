@@ -1,6 +1,6 @@
-package com.backend.microdiplomas.domain.repository;
+package com.mfc.microdiplomas.domain.repository;
 
-import com.backend.microdiplomas.domain.model.Diploma;
+import com.mfc.microdiplomas.domain.model.Diploma;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

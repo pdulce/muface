@@ -1,9 +1,9 @@
-package com.backend.microdiplomas.api.facade;
+package com.mfc.microdiplomas.api.facade;
 
-import com.backend.microdiplomas.api.usecases.ActualizarDiplomaUseCase;
-import com.backend.microdiplomas.api.usecases.BorrarTodosLosDiplomasUseCase;
-import com.backend.microdiplomas.api.usecases.ConsultasDiplomasUseCase;
-import com.backend.microdiplomas.api.dto.DiplomaDTOArq;
+import com.mfc.microdiplomas.api.usecases.ActualizarDiplomaUseCase;
+import com.mfc.microdiplomas.api.usecases.BorrarTodosLosDiplomasUseCase;
+import com.mfc.microdiplomas.api.usecases.ConsultasDiplomasUseCase;
+import com.mfc.microdiplomas.api.dto.DiplomaDTOArq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +31,7 @@ public class DiplomaFacade {
     }
 
     public List<DiplomaDTOArq> consultarTodosLosDiplomas() {
+
         return this.consultasDiplomasUseCase.consultarTodos();
     }
 

@@ -1,4 +1,4 @@
-package com.backend.microdiplomas.api.dto;
+package com.mfc.microdiplomas.api.dto;
 
 import com.mfc.infra.domain.ArqAbstractDTO;
 import lombok.Data;
