@@ -1,0 +1,81 @@
+server:
+  port: 8086
+
+arch:
+  application-id: application-Id-sample
+  event-broker-active: true
+  mail:
+    password:
+      encoded: ewzqlzdstujochya
+
+spring:
+# local: 192.168.1.137, remoto: 192.168.1.163
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://192.168.1.137/auth/realms/mi_realm
+  keycloak:
+    realm: mi_realm
+    auth-server-url: http://192.168.1.137/mi_realm
+    resource: mufacearch
+    credentials:
+      secret: clien-secret-sample
+    principal-attribute: preferred_username
+
+  # command domain: 192.168.1.163
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.1.137:3306/sampleCommandDB
+    username: test
+    password: test
+
+  # query domain
+  redis:
+    host: 192.168.1.137
+    password: mypass
+    port: 6379
+
+  # event domain
+  data:
+    mongodb:
+      host: 192.168.1.137
+      port: 27017
+      uri: mongodb://test:test@192.168.1.137:27017/queryDomainDB
+      authentication-database: queryDomainDB
+    sql:
+      init:
+        mode: always
+    jpa:
+      hibernate:
+        ddl-auto: update
+        show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+
+# Event bus configuration: localhost:9092
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring:
+          deserializer:
+            value:
+              delegate:
+                class: org.springframework.kafka.support.serializer.JsonDeserializer
+          json:
+            trusted:
+              packages: '*'
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+  zipkin:
+    base-url: http://192.168.1.137:9411
+    sleuth:
+      sampler:
+        probability: 1.0
