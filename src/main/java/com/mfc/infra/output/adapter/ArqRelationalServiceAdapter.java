@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Transactional
-public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements ArqRelationalServicePort<T, IDTO, ID> {
-    Logger logger = LoggerFactory.getLogger(ArqArqRelationalServiceAdapter.class);
+public abstract class ArqRelationalServiceAdapter<T, IDTO, ID> implements ArqRelationalServicePort<T, IDTO, ID> {
+    Logger logger = LoggerFactory.getLogger(ArqRelationalServiceAdapter.class);
     @Autowired
     ArqConfigProperties arqConfigProperties;
 

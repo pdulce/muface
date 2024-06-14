@@ -11,8 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class ArqArqMongoServiceAdapter<T> implements ArqMongoServicePort<T> {
-    Logger logger = LoggerFactory.getLogger(ArqArqMongoServiceAdapter.class);
+public abstract class ArqMongoServiceAdapter<T> implements ArqMongoServicePort<T> {
+    Logger logger = LoggerFactory.getLogger(ArqMongoServiceAdapter.class);
 
     @Autowired
     MongoRepository<T, String> repository;
