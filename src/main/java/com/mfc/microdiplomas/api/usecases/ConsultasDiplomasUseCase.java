@@ -14,11 +14,11 @@ public class ConsultasDiplomasUseCase {
     DiplomaServicePort diplomaCommandServicePort;
 
     public List<DiplomaDTO> consultarDiplomasDeCliente(Long customerId) {
-        return this.diplomaCommandServicePort.buscarPorCampoValor("customerId", customerId);
+        return this.diplomaCommandServicePort.buscarPorCampoValor("idCliente", customerId);
     }
 
     public List<DiplomaDTO> consultarDiplomasPorNombreClientes(String name) {
-        return this.diplomaCommandServicePort.buscarPorCampoValor("name", name);
+        return this.diplomaCommandServicePort.buscarPorCampoValor("nombreCompleto", name);
     }
 
     public List<DiplomaDTO> consultarTodos() {

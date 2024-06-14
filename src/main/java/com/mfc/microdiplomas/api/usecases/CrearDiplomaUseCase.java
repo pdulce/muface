@@ -15,10 +15,12 @@ public class CrearDiplomaUseCase {
         DiplomaDTO diplomaDTOSaved = diplomaCommandServicePort.crear(diplomaDTO);
 
         /*** Business rules ***/
+        // TODO: llamar a algun Api Rest al que pasando el nombre del país nos devuelva el continente
+
+        // de momento, esta implementación a modo de ejemplo
         if (diplomaDTOSaved.getRegionOComarca().contains("France")) {
             diplomaDTOSaved.setContinente("Europe");
         } else {
-            // llamar a algçun Api Rest al que pasando el nombre del país nos devuelva el continente
             diplomaDTOSaved.setContinente("Fuera de Europa");
         }
         return diplomaDTOSaved;

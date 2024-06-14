@@ -18,7 +18,6 @@ public class DiplomaWithFacadeAPI extends ArqBaseRestController {
 
     @GetMapping(value = "allDiplomas", produces=MediaType.APPLICATION_JSON_VALUE)
     public List<DiplomaDTO> getAllDiplomas() {
-
         return this.diplomaFacade.consultarTodosLosDiplomas();
     }
 
