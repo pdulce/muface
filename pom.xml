@@ -9,7 +9,7 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.mfc</groupId>
-  <artifactId>sampleWitnInfraBackend</artifactId>
+  <artifactId>MufaceArq</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>Muface Arquitectura</name>
   <description>Muface Arquitectura under Spring Boot</description>
