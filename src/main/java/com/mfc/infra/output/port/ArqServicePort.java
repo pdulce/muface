@@ -5,7 +5,7 @@ import com.mfc.infra.dto.IArqDTO;
 import java.util.List;
 
 
-public interface ArqRelationalServicePort<T, D extends IArqDTO, ID> {
+public interface ArqServicePort<T, D extends IArqDTO, ID> {
 
     D crear(D entity);
 

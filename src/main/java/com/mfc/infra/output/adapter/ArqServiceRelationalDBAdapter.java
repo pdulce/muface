@@ -5,7 +5,7 @@ import com.mfc.infra.configuration.ArqConfigProperties;
 import com.mfc.infra.dto.ArqAbstractDTO;
 import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.exceptions.ArqNotExistException;
-import com.mfc.infra.output.port.ArqRelationalServicePort;
+import com.mfc.infra.output.port.ArqServicePort;
 import com.mfc.infra.utils.ArqConversionUtils;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Transactional
-public abstract class ArqRelationalServiceAdapter<T, D extends IArqDTO, ID> implements ArqRelationalServicePort<T, D, ID> {
-    Logger logger = LoggerFactory.getLogger(ArqRelationalServiceAdapter.class);
+public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> implements ArqServicePort<T, D, ID> {
+    Logger logger = LoggerFactory.getLogger(ArqServiceRelationalDBAdapter.class);
     @Autowired
     ArqConfigProperties arqConfigProperties;
 

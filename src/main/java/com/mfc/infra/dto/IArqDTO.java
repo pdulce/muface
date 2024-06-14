@@ -4,5 +4,7 @@ import java.util.Map;
 
 public interface IArqDTO {
 
-    public Map<String, String> getMapaConversion();
+    Map<String, String> getMapaConversion();
+    Object getId();
+
 }
