@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Transactional
-public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> implements ArqRelationalServicePort<T, IDTO, ID> {
+public abstract class ArqRelationalServiceAdapter<T, D extends IArqDTO, ID> implements ArqRelationalServicePort<T, D, ID> {
     Logger logger = LoggerFactory.getLogger(ArqRelationalServiceAdapter.class);
     @Autowired
     ArqConfigProperties arqConfigProperties;
@@ -46,8 +46,8 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> i
         return entityClass;
     }
 
-    protected Class<IDTO> getClassOfDTO() {
-        Class<IDTO> entityClass = (Class<IDTO>) ((ParameterizedType) getClass()
+    protected Class<D> getClassOfDTO() {
+        Class<D> entityClass = (Class<D>) ((ParameterizedType) getClass()
                 .getGenericSuperclass())
                 .getActualTypeArguments()[1];
         return entityClass;
@@ -63,7 +63,7 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> i
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
-    public IDTO crear(IDTO entityDto) {
+    public D crear(D entityDto) {
         T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
         this.getRepository().save(entity);
         if (entity != null && arqConfigProperties.isEventBrokerActive()) {
@@ -85,7 +85,7 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> i
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
-    public IDTO actualizar(IDTO entityDto) {
+    public D actualizar(D entityDto) {
         T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
         ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
         if (!this.getRepository().findById(id).isPresent()) {
@@ -108,7 +108,7 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> i
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
-    public int borrar(IDTO entityDto) {
+    public int borrar(D entityDto) {
         T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
         ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
         if (!this.getRepository().findById(id).isPresent()) {
@@ -131,7 +131,7 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> i
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
-    public int borrar(List<IDTO> entities) {
+    public int borrar(List<D> entities) {
         AtomicInteger counter = new AtomicInteger();
         entities.forEach((record) -> {
             this.borrar(record);
@@ -168,7 +168,7 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> i
 
     @SuppressWarnings("unchecked")
     @Override
-    public IDTO buscarPorId(ID id) {
+    public D buscarPorId(ID id) {
         if (!this.getRepository().findById(id).isPresent()) {
             logger.info("buscarPorId no localizó el id: " + id);
             ArqNotExistException e = new ArqNotExistException();
@@ -181,8 +181,8 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> i
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<IDTO> buscarTodos() {
-        List<IDTO> resultado = new ArrayList<>();
+    public List<D> buscarTodos() {
+        List<D> resultado = new ArrayList<>();
         this.getRepository().findAll().stream().toList().forEach((entity) -> {
             resultado.add(ArqAbstractDTO.convertToDTO(entity, getClassOfDTO()));
         });
@@ -193,12 +193,12 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> i
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<IDTO> buscarCoincidenciasEstricto(IDTO instanceDTO) {
+    public List<D> buscarCoincidenciasEstricto(D instanceDTO) {
 
         try {
             Class<T> entityClass = getClassOfEntity();
             T instance = ArqAbstractDTO.convertToEntity(instanceDTO, entityClass);
-            List<IDTO> resultado = new ArrayList<>();
+            List<D> resultado = new ArrayList<>();
             this.getRepository().findAll(Example.of(instance)).forEach((entity) -> {
                 resultado.add(ArqAbstractDTO.convertToDTO(entity, getClassOfDTO()));
             });
@@ -212,11 +212,11 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> i
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<IDTO> buscarCoincidenciasNoEstricto(IDTO filterObject) {
+    public List<D> buscarCoincidenciasNoEstricto(D filterObject) {
         try {
             Class<T> entityClass = getClassOfEntity();
             T instance = ArqAbstractDTO.convertToEntity(filterObject, entityClass);
-            List<IDTO> resultado = new ArrayList<>();
+            List<D> resultado = new ArrayList<>();
 
             // Crear un ExampleMatcher con configuración de LIKE en todos los campos
             ExampleMatcher matcher = ExampleMatcher.matchingAll()

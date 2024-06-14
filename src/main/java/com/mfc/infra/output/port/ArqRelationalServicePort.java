@@ -5,24 +5,24 @@ import com.mfc.infra.dto.IArqDTO;
 import java.util.List;
 
 
-public interface ArqRelationalServicePort<T, IDTO extends IArqDTO, ID> {
+public interface ArqRelationalServicePort<T, D extends IArqDTO, ID> {
 
-    IDTO crear(IDTO entity);
+    D crear(D entity);
 
-    IDTO actualizar(IDTO entity);
+    D actualizar(D entity);
 
-    int borrar(IDTO entity);
+    int borrar(D entity);
 
-    int borrar(List<IDTO> entities);
+    int borrar(List<D> entities);
     void borrar();
 
-    IDTO buscarPorId(ID id);
+    D buscarPorId(ID id);
 
-    List<IDTO> buscarTodos();
+    List<D> buscarTodos();
 
-    List<IDTO> buscarCoincidenciasEstricto(IDTO filterObject);
+    List<D> buscarCoincidenciasEstricto(D filterObject);
 
-    List<IDTO> buscarCoincidenciasNoEstricto(IDTO filterObject);
+    List<D> buscarCoincidenciasNoEstricto(D filterObject);
 
     String getDocumentEntityClassname();
 

@@ -16,6 +16,7 @@ C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\api\dto\Diplom
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\configuration\ArqGlobalExceptionAdvice.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\controller\ArqLoggerRestController.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\domain\service\DiplomaServicePort.java
+C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\configuration\ArqMongoConfig.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\output\adapter\ArqMongoServiceAdapter.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\domain\repository\DiplomaCommandRepository.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\api\DiplomaWithFacadeAPI.java
