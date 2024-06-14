@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.lang.reflect.ParameterizedType;
@@ -191,7 +193,7 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> i
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<IDTO> buscarPorCampoValor(IDTO instanceDTO) {
+    public List<IDTO> buscarCoincidenciasEstricto(IDTO instanceDTO) {
 
         try {
             Class<T> entityClass = getClassOfEntity();
@@ -204,6 +206,35 @@ public abstract class ArqRelationalServiceAdapter<T, IDTO extends IArqDTO, ID> i
         } catch (Throwable exc1) {
             logger.error("Error in buscarPorCampoValor method: ", exc1.getCause());
             RuntimeException exc = new RuntimeException(exc1.getCause());
+            throw exc;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<IDTO> buscarCoincidenciasNoEstricto(IDTO filterObject) {
+        try {
+            Class<T> entityClass = getClassOfEntity();
+            T instance = ArqAbstractDTO.convertToEntity(filterObject, entityClass);
+            List<IDTO> resultado = new ArrayList<>();
+
+            // Crear un ExampleMatcher con configuración de LIKE en todos los campos
+            ExampleMatcher matcher = ExampleMatcher.matchingAll()
+                    .withStringMatcher(StringMatcher.CONTAINING) // Realiza búsquedas LIKE %valor%
+                    .withIgnoreCase(); // Ignorar mayúsculas/minúsculas
+
+            // Crear el Example con el matcher configurado
+            Example<T> example = Example.of(instance, matcher);
+
+            // Buscar usando el repositorio
+            this.getRepository().findAll(example).forEach((entity) -> {
+                resultado.add(ArqAbstractDTO.convertToDTO(entity, getClassOfDTO()));
+            });
+
+            return resultado;
+        } catch (Throwable exc1) {
+            logger.error("Error in buscarCoincidenciasNoEstricto method: ", exc1);
+            RuntimeException exc = new RuntimeException(exc1);
             throw exc;
         }
     }

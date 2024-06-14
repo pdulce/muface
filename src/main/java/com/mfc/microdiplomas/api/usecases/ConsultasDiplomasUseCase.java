@@ -16,7 +16,7 @@ public class ConsultasDiplomasUseCase {
     public List<DiplomaDTO> consultarDiplomasDeCliente(Long customerId) {
         DiplomaDTO diplomaDTOFilter = new DiplomaDTO();
         diplomaDTOFilter.setIdCliente(customerId);
-        List<DiplomaDTO> resultados = this.diplomaCommandServicePort.buscarPorCampoValor(diplomaDTOFilter);
+        List<DiplomaDTO> resultados = this.diplomaCommandServicePort.buscarCoincidenciasEstricto(diplomaDTOFilter);
         resultados.forEach((diplomaDTO -> {
             this.diplomaCommandServicePort.setContinente(diplomaDTO);
         }));
@@ -26,7 +26,7 @@ public class ConsultasDiplomasUseCase {
     public List<DiplomaDTO> consultarDiplomasPorNombreClientes(String name) {
         DiplomaDTO diplomaDTOFilter = new DiplomaDTO();
         diplomaDTOFilter.setNombreCompleto(name);
-        List<DiplomaDTO> resultados = this.diplomaCommandServicePort.buscarPorCampoValor(diplomaDTOFilter);
+        List<DiplomaDTO> resultados = this.diplomaCommandServicePort.buscarCoincidenciasNoEstricto(diplomaDTOFilter);
         resultados.forEach((diplomaDTO -> {
             this.diplomaCommandServicePort.setContinente(diplomaDTO);
         }));

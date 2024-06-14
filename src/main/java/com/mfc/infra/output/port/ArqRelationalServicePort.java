@@ -20,7 +20,9 @@ public interface ArqRelationalServicePort<T, IDTO extends IArqDTO, ID> {
 
     List<IDTO> buscarTodos();
 
-    List<IDTO> buscarPorCampoValor(IDTO filterObject);
+    List<IDTO> buscarCoincidenciasEstricto(IDTO filterObject);
+
+    List<IDTO> buscarCoincidenciasNoEstricto(IDTO filterObject);
 
     String getDocumentEntityClassname();
 
