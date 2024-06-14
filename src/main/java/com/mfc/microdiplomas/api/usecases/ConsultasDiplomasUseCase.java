@@ -16,13 +16,21 @@ public class ConsultasDiplomasUseCase {
     public List<DiplomaDTO> consultarDiplomasDeCliente(Long customerId) {
         DiplomaDTO diplomaDTOFilter = new DiplomaDTO();
         diplomaDTOFilter.setIdCliente(customerId);
-        return this.diplomaCommandServicePort.buscarPorCampoValor(diplomaDTOFilter);
+        List<DiplomaDTO> resultados = this.diplomaCommandServicePort.buscarPorCampoValor(diplomaDTOFilter);
+        resultados.forEach((diplomaDTO -> {
+            this.diplomaCommandServicePort.setContinente(diplomaDTO);
+        }));
+        return resultados;
     }
 
     public List<DiplomaDTO> consultarDiplomasPorNombreClientes(String name) {
         DiplomaDTO diplomaDTOFilter = new DiplomaDTO();
         diplomaDTOFilter.setNombreCompleto(name);
-        return this.diplomaCommandServicePort.buscarPorCampoValor(diplomaDTOFilter);
+        List<DiplomaDTO> resultados = this.diplomaCommandServicePort.buscarPorCampoValor(diplomaDTOFilter);
+        resultados.forEach((diplomaDTO -> {
+            this.diplomaCommandServicePort.setContinente(diplomaDTO);
+        }));
+        return resultados;
     }
 
     public List<DiplomaDTO> consultarTodos() {
@@ -30,7 +38,11 @@ public class ConsultasDiplomasUseCase {
     }
 
     public List<DiplomaDTO> getDiplomasDeLaRegionProvenza() {
-        return this.diplomaCommandServicePort.getDiplomasDeLaRegionProvenza();
+        List<DiplomaDTO> resultados = this.diplomaCommandServicePort.getDiplomasDeLaRegionProvenza();
+        resultados.forEach((diplomaDTO -> {
+            this.diplomaCommandServicePort.setContinente(diplomaDTO);
+        }));
+        return resultados;
     }
 
 

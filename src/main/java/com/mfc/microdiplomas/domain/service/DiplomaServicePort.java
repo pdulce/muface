@@ -10,5 +10,7 @@ public interface DiplomaServicePort extends ArqRelationalServicePort<Diploma, Di
 
     List<DiplomaDTO> getDiplomasDeLaRegionProvenza();
 
+    void setContinente(DiplomaDTO diplomaDTO);
+
 
 }

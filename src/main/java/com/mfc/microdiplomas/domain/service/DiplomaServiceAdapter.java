@@ -35,4 +35,16 @@ public class DiplomaServiceAdapter extends ArqRelationalServiceAdapter<Diploma, 
         return diplomaDTOS;
     }
 
+    @Override
+    public void setContinente(DiplomaDTO diplomaDTO) {
+        /*** Business rules ***/
+        // TODO: llamar a algun Api Rest al que pasando el nombre del país nos devuelva el continente
+        // de momento, esta implementación a modo de ejemplo
+        if (diplomaDTO.getRegionOComarca().contains("France")) {
+            diplomaDTO.setContinente("Europe");
+        } else {
+            diplomaDTO.setContinente("Fuera de Europa");
+        }
+    }
+
 }
