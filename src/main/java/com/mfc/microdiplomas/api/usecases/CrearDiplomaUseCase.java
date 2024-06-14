@@ -12,7 +12,16 @@ public class CrearDiplomaUseCase {
     DiplomaServicePort diplomaCommandServicePort;
 
     public DiplomaDTO ejecutar(DiplomaDTO diplomaDTO) {
-        return diplomaCommandServicePort.crear(diplomaDTO);
+        DiplomaDTO diplomaDTOSaved = diplomaCommandServicePort.crear(diplomaDTO);
+
+        /*** Business rules ***/
+        if (diplomaDTOSaved.getRegionOComarca().contains("France")) {
+            diplomaDTOSaved.setContinente("Europe");
+        } else {
+            // llamar a algçun Api Rest al que pasando el nombre del país nos devuelva el continente
+            diplomaDTOSaved.setContinente("Fuera de Europa");
+        }
+        return diplomaDTOSaved;
     }
 
 }
