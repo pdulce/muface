@@ -1,10 +1,13 @@
 package com.mfc.infra.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.lang.reflect.Field;
 import java.util.Map;
 
 public abstract class ArqAbstractDTO implements IArqDTO {
 
+    @JsonIgnore
     public abstract Map<String, String> getMapaConversion();
 
 
@@ -34,8 +37,8 @@ public abstract class ArqAbstractDTO implements IArqDTO {
                 }
             } else {
                 for (Map.Entry<String, String> entry : dto.getMapaConversion().entrySet()) {
-                    String entityFieldName = entry.getKey();
-                    String dtoFieldName = entry.getValue();
+                    String entityFieldName = entry.getValue();
+                    String dtoFieldName = entry.getKey();
 
                     Field entityField = getFieldByName(entity.getClass(), entityFieldName);
                     Field dtoField = getFieldByName(dtoClass, dtoFieldName);
@@ -76,8 +79,8 @@ public abstract class ArqAbstractDTO implements IArqDTO {
                 }
             } else {
                 for (Map.Entry<String, String> entry : dto.getMapaConversion().entrySet()) {
-                    String entityFieldName = entry.getKey();
-                    String dtoFieldName = entry.getValue();
+                    String entityFieldName = entry.getValue();
+                    String dtoFieldName = entry.getKey();
 
                     Field entityField = getFieldByName(entityClass, entityFieldName);
                     Field dtoField = getFieldByName(dto.getClass(), dtoFieldName);

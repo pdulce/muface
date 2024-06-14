@@ -1,5 +1,6 @@
 package com.mfc.microdiplomas.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mfc.infra.dto.ArqAbstractDTO;
 import lombok.Data;
 
@@ -9,7 +10,7 @@ import java.util.Map;
 @Data
 public class DiplomaDTO extends ArqAbstractDTO {
 
-    private Long indentificador;
+    private Long identificador;
 
     private Long idCliente;
 
@@ -18,16 +19,24 @@ public class DiplomaDTO extends ArqAbstractDTO {
     private String titulacion;
 
     private String regionOComarca;
-    public DiplomaDTO(){}
 
-    public Map<String, String> getMapaConversion() {
-        Map<String, String> mapaConversion = new HashMap<>();
-        mapaConversion.put("indentificador", "id");
+    @JsonIgnore
+    protected static Map<String, String> mapaConversion;
+
+    static {
+        // Keys: los miembros del DTO
+        // Values: los miembros del Entity
+        mapaConversion = new HashMap<>();
+        mapaConversion.put("identificador", "id");
         mapaConversion.put("idCliente", "idcustomer");
         mapaConversion.put("nombreCompleto", "name");
         mapaConversion.put("titulacion", "titulo");
         mapaConversion.put("regionOComarca", "region");
-        return new HashMap<>();
+    }
+    public DiplomaDTO(){}
+
+    public Map<String, String> getMapaConversion() {
+        return mapaConversion;
     }
 
 
