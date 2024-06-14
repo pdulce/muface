@@ -22,8 +22,9 @@ public class ArqAuditoriasControllerAPI {
     @Autowired
     protected MessageSource messageSource;
 
-    @Autowired(required=false)
-    protected ArqSagaOrchestratorPort orchestratorManager;
+    /*@Autowired(required=false)
+    protected ArqSagaOrchestratorPort orchestratorManager;*/
+
     @Autowired(required=false)
     protected ArqEventStoreInputPort eventStoreConsumerAdapter;
 
@@ -73,8 +74,8 @@ public class ArqAuditoriasControllerAPI {
     }
 
 
-    @GetMapping(value = "transacciones-distribuidas/{applicationId}/{saga}/{transactionId}/status")
-    private String getSagaEstadoFinalizacion(@PathVariable @NotEmpty String applicationId,
+    /*@GetMapping(value = "transacciones-distribuidas/{applicationId}/{saga}/{transactionId}/status")
+    public String getSagaEstadoFinalizacion(@PathVariable @NotEmpty String applicationId,
                                              @PathVariable @NotEmpty String saga,
                                              @PathVariable @NotEmpty String transactionId) {
         logger.info("...Comprobamos si finalizó la transacción number: " + transactionId + " de la saga " + saga);
@@ -85,6 +86,6 @@ public class ArqAuditoriasControllerAPI {
             args[i-1] = messageKeyAndArgs[i];
         }
         return messageSource.getMessage(messageKeyAndArgs[0], args, new Locale("es"));
-    }
+    }*/
 
 }
