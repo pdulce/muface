@@ -14,7 +14,7 @@ import java.util.Optional;
 public abstract class ArqArqMongoServiceAdapter<T> implements ArqMongoServicePort<T> {
     Logger logger = LoggerFactory.getLogger(ArqArqMongoServiceAdapter.class);
 
-    @Autowired
+    @Autowired(required = false)
     MongoRepository<T, String> repository;
 
     @Override
