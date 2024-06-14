@@ -2,9 +2,8 @@ package com.mfc.infra.output.adapter;
 
 import com.mfc.infra.configuration.ArqConfigProperties;
 import com.mfc.infra.domain.ArqDTOConverter;
-import com.mfc.infra.event.ArqEvent;
+//import com.mfc.infra.event.ArqEvent;
 import com.mfc.infra.exceptions.ArqNotExistException;
-import com.mfc.infra.output.port.ArqCommandEventPublisherPort;
 import com.mfc.infra.output.port.ArqRelationalServicePort;
 import com.mfc.infra.utils.ArqConversionUtils;
 import jakarta.transaction.Transactional;
@@ -26,7 +25,7 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
     ArqConfigProperties arqConfigProperties;
 
     @Autowired(required = false)
-    ArqCommandEventPublisherPort arqCommandEventPublisherPort;
+    //ArqCommandEventPublisherPort arqCommandEventPublisherPort;
 
     protected abstract JpaRepository<T, ID> getRepository();
 
@@ -68,11 +67,11 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
              *  - consumer responsable del dominio de eventos que persiste en MongoDB (patrón Event-Sourcing)
              *  - consumer responsable del dominio de consultas que persiste en Redis (patrón CQRS)
              */
-            ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
+            /*ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
                     arqConfigProperties.getApplicationId(),
                     ArqConversionUtils.convertToMap(saved).get("id").toString(),
                     ArqEvent.EVENT_TYPE_CREATE, saved);
-            arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);
+            arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
         }
         return ArqDTOConverter.convertToDTO(saved, getClassOfDTO());
     }
@@ -92,11 +91,11 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
         }
         T updated =  this.getRepository().save(entity);
         if (updated != null && arqConfigProperties.isEventBrokerActive()) {
-            ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
+            /*ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
                     arqConfigProperties.getApplicationId(),
                     ArqConversionUtils.convertToMap(entity).get("id").toString(),
                     ArqEvent.EVENT_TYPE_UPDATE, updated);
-            arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);
+            arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
         }
         return ArqDTOConverter.convertToDTO(updated, getClassOfDTO());
     }
@@ -115,11 +114,11 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
         }
         this.getRepository().delete(entity);
         if (arqConfigProperties.isEventBrokerActive()) {
-            ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
+            /*ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
                     arqConfigProperties.getApplicationId(),
                     ArqConversionUtils.convertToMap(entity).get("id").toString(),
                     ArqEvent.EVENT_TYPE_DELETE, entity);
-            arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);
+            arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
         }
     }
 
@@ -130,11 +129,11 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
         entities.forEach((record) -> {
             this.borrar(record);
             if (arqConfigProperties.isEventBrokerActive()) {
-                ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
+                /*ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
                         arqConfigProperties.getApplicationId(),
                         ArqConversionUtils.convertToMap(record).get("id").toString(),
                         ArqEvent.EVENT_TYPE_DELETE, record);
-                arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);
+                arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
             }
         });
     }
@@ -143,19 +142,19 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
     @Override
     @Transactional
     public void borrar() {
-        List<ArqEvent> events = new ArrayList<>();
+        //List<ArqEvent> events = new ArrayList<>();
         buscarTodos().forEach((record) -> {
-            events.add(new ArqEvent(getDocumentEntityClassname(), "author",
+            /*events.add(new ArqEvent(getDocumentEntityClassname(), "author",
                     arqConfigProperties.getApplicationId(),
                     ArqConversionUtils.convertToMap(record).get("id").toString(),
-                    ArqEvent.EVENT_TYPE_DELETE, record));
+                    ArqEvent.EVENT_TYPE_DELETE, record));*/
         });
         this.getRepository().deleteAll();
-        if (arqConfigProperties.isEventBrokerActive()) {
+        /*if (arqConfigProperties.isEventBrokerActive()) {
             events.forEach((event) -> {
                 arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, event);
             });
-        }
+        }*/
     }
 
     @SuppressWarnings("unchecked")
