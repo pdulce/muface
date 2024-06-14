@@ -23,13 +23,13 @@ public class DiplomaWithFacadeAPI extends ArqBaseRestController {
 
 
     @GetMapping(value = "diplomasByCustomer", produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<DiplomaDTO> getAllDiplomasByCustomerName(@RequestParam String nombreCompleto) {
-        return this.diplomaUseCasesFacade.consultaDiplomasDeClientesConNombre(nombreCompleto);
+    public List<DiplomaDTO> getAllDiplomasByCustomerID(@RequestParam Long idCliente) {
+        return this.diplomaUseCasesFacade.consultaDiplomasDeCliente(idCliente);
     }
 
     @GetMapping(value = "diplomasByName", produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<DiplomaDTO> getAllDiplomasByCustomerID(@RequestParam Long idCliente) {
-        return this.diplomaUseCasesFacade.consultaDiplomasDeCliente(idCliente);
+    public List<DiplomaDTO> getAllDiplomasByCustomerName(@RequestParam String nombreCompleto) {
+        return this.diplomaUseCasesFacade.consultaDiplomasDeClientesConNombre(nombreCompleto);
     }
 
     @PostMapping(produces=MediaType.APPLICATION_JSON_VALUE)
