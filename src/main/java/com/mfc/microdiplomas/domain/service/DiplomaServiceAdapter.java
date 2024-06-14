@@ -13,7 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class DiplomaServiceAdapte extends ArqArqRelationalServiceAdapter<Diploma, DiplomaDTO, Long> implements DiplomaServicePort {
+public class DiplomaServiceAdapter extends ArqArqRelationalServiceAdapter<Diploma, DiplomaDTO, Long>
+        implements DiplomaServicePort {
 
     @Autowired
     private DiplomaCommandRepository repository;
@@ -29,8 +30,7 @@ public class DiplomaServiceAdapte extends ArqArqRelationalServiceAdapter<Diploma
         dFilter.setRegion("Provenza");
         Example<Diploma> example = Example.of(dFilter);
         repository.findAll(example).forEach((diploma -> {
-            diplomaDTOS.add(new DiplomaDTO(diploma.getId(), diploma.getIdcustomer(), diploma.getName(), diploma.getTitulo(),
-                    diploma.getRegion()));
+            diplomaDTOS.add(DiplomaDTO.convertToDTO(diploma, DiplomaDTO.class));
         }));
         return diplomaDTOS;
     }

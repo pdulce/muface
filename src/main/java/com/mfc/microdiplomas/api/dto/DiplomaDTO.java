@@ -1,6 +1,6 @@
 package com.mfc.microdiplomas.api.dto;
 
-import com.mfc.infra.domain.ArqAbstractDTO;
+import com.mfc.infra.dto.ArqAbstractDTO;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -9,27 +9,25 @@ import java.util.Map;
 @Data
 public class DiplomaDTO extends ArqAbstractDTO {
 
-    private Long id;
+    private Long indentificador;
 
-    private Long idcustomer;
+    private Long idCliente;
 
-    private String name;
+    private String nombreCompleto;
 
-    private String titulo;
+    private String titulacion;
 
-    private String region;
+    private String regionOComarca;
     public DiplomaDTO(){}
 
     public Map<String, String> getMapaConversion() {
+        Map<String, String> mapaConversion = new HashMap<>();
+        mapaConversion.put("indentificador", "id");
+        mapaConversion.put("idCliente", "idcustomer");
+        mapaConversion.put("nombreCompleto", "name");
+        mapaConversion.put("titulacion", "titulo");
+        mapaConversion.put("regionOComarca", "region");
         return new HashMap<>();
-    }
-
-    public DiplomaDTO(Long id, Long idcustomer, String name, String titulo, String region) {
-        this.id = id;
-        this.idcustomer = idcustomer;
-        this.name = name;
-        this.titulo = titulo;
-        this.region = region;
     }
 
 

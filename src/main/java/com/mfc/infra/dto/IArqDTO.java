@@ -1,4 +1,4 @@
-package com.mfc.infra.domain;
+package com.mfc.infra.dto;
 
 import java.util.Map;
 

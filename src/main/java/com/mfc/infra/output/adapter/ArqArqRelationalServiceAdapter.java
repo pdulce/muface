@@ -1,8 +1,8 @@
 package com.mfc.infra.output.adapter;
 
 import com.mfc.infra.configuration.ArqConfigProperties;
-import com.mfc.infra.domain.ArqDTOConverter;
 //import com.mfc.infra.event.ArqEvent;
+import com.mfc.infra.dto.ArqAbstractDTO;
 import com.mfc.infra.exceptions.ArqNotExistException;
 import com.mfc.infra.output.port.ArqRelationalServicePort;
 import com.mfc.infra.utils.ArqConversionUtils;
@@ -25,7 +25,7 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
     @Autowired
     ArqConfigProperties arqConfigProperties;
 
-    @Autowired(required = false)
+    //@Autowired(required = false)
     //ArqCommandEventPublisherPort arqCommandEventPublisherPort;
 
     protected abstract JpaRepository<T, ID> getRepository();
@@ -62,7 +62,7 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
     @Override
     @Transactional
     public IDTO crear(IDTO entityDto) {
-        T entity = ArqDTOConverter.convertToEntity(entityDto, getClassOfEntity());
+        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
         this.getRepository().save(entity);
         if (entity != null && arqConfigProperties.isEventBrokerActive()) {
             /*** Mando el evento al bus para que los recojan los dos consumers:
@@ -75,7 +75,7 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
                     ArqEvent.EVENT_TYPE_CREATE, saved);
             arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
         }
-        entityDto = ArqDTOConverter.convertToDTO(entity, getClassOfDTO());
+        entityDto = ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
         return entityDto;
     }
 
@@ -84,7 +84,7 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
     @Override
     @Transactional
     public IDTO actualizar(IDTO entityDto) {
-        T entity = ArqDTOConverter.convertToEntity(entityDto, getClassOfEntity());
+        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
         ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
         if (!this.getRepository().findById(id).isPresent()) {
             ArqNotExistException e = new ArqNotExistException();
@@ -100,14 +100,14 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
                     ArqEvent.EVENT_TYPE_UPDATE, updated);
             arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
         }
-        return ArqDTOConverter.convertToDTO(entity, getClassOfDTO());
+        return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
     }
 
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
     public int borrar(IDTO entityDto) {
-        T entity = ArqDTOConverter.convertToEntity(entityDto, getClassOfEntity());
+        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
         ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
         if (!this.getRepository().findById(id).isPresent()) {
             ArqNotExistException e = new ArqNotExistException();
@@ -174,7 +174,7 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
             RuntimeException exc = new RuntimeException(e);
             throw exc;
         }
-        return ArqDTOConverter.convertToDTO(this.getRepository().findById(id).get(), getClassOfDTO());
+        return ArqAbstractDTO.convertToDTO(this.getRepository().findById(id).get(), getClassOfDTO());
     }
 
     @SuppressWarnings("unchecked")
@@ -182,7 +182,7 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
     public List<IDTO> buscarTodos() {
         List<IDTO> resultado = new ArrayList<>();
         this.getRepository().findAll().stream().toList().forEach((entity) -> {
-            resultado.add(ArqDTOConverter.convertToDTO(entity, getClassOfDTO()));
+            resultado.add(ArqAbstractDTO.convertToDTO(entity, getClassOfDTO()));
         });
         return resultado;
     }
@@ -202,7 +202,7 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
 
             List<IDTO> resultado = new ArrayList<>();
             this.getRepository().findAll(Example.of(instance)).forEach((entity) -> {
-                resultado.add(ArqDTOConverter.convertToDTO(entity, getClassOfDTO()));
+                resultado.add(ArqAbstractDTO.convertToDTO(entity, getClassOfDTO()));
             });
             return resultado;
         } catch (Throwable exc1) {

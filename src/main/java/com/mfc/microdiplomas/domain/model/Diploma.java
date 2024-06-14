@@ -26,13 +26,5 @@ public class Diploma {
 
     public Diploma() {}
 
-    public Diploma(DiplomaDTO diplomaDTO) {
-        this.id = diplomaDTO.getId();
-        this.idcustomer = diplomaDTO.getIdcustomer();
-        this.name = diplomaDTO.getName();
-        this.titulo = diplomaDTO.getTitulo();
-        this.region = diplomaDTO.getRegion();
-    }
-
 
 }
