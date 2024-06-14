@@ -9,9 +9,9 @@ public interface ArqRelationalServicePort<T, IDTO, ID> {
 
     IDTO actualizar(IDTO entity);
 
-    void borrar(IDTO entity);
+    int borrar(IDTO entity);
 
-    void borrar(List<IDTO> entities);
+    int borrar(List<IDTO> entities);
     void borrar();
 
     IDTO buscarPorId(ID id);

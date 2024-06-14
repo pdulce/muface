@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Transactional
 public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements ArqRelationalServicePort<T, IDTO, ID> {
@@ -61,8 +62,9 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
     @Override
     @Transactional
     public IDTO crear(IDTO entityDto) {
-        T saved = this.getRepository().save(ArqDTOConverter.convertToEntity(entityDto, getClassOfEntity()));
-        if (saved != null && arqConfigProperties.isEventBrokerActive()) {
+        T entity = ArqDTOConverter.convertToEntity(entityDto, getClassOfEntity());
+        this.getRepository().save(entity);
+        if (entity != null && arqConfigProperties.isEventBrokerActive()) {
             /*** Mando el evento al bus para que los recojan los dos consumers:
              *  - consumer responsable del dominio de eventos que persiste en MongoDB (patrón Event-Sourcing)
              *  - consumer responsable del dominio de consultas que persiste en Redis (patrón CQRS)
@@ -73,7 +75,8 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
                     ArqEvent.EVENT_TYPE_CREATE, saved);
             arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
         }
-        return ArqDTOConverter.convertToDTO(saved, getClassOfDTO());
+        entityDto = ArqDTOConverter.convertToDTO(entity, getClassOfDTO());
+        return entityDto;
     }
 
 
@@ -89,21 +92,21 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
             RuntimeException exc = new RuntimeException(e);
             throw exc;
         }
-        T updated =  this.getRepository().save(entity);
-        if (updated != null && arqConfigProperties.isEventBrokerActive()) {
+        this.getRepository().save(entity);
+        if (entity != null && arqConfigProperties.isEventBrokerActive()) {
             /*ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
                     arqConfigProperties.getApplicationId(),
                     ArqConversionUtils.convertToMap(entity).get("id").toString(),
                     ArqEvent.EVENT_TYPE_UPDATE, updated);
             arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
         }
-        return ArqDTOConverter.convertToDTO(updated, getClassOfDTO());
+        return ArqDTOConverter.convertToDTO(entity, getClassOfDTO());
     }
 
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
-    public void borrar(IDTO entityDto) {
+    public int borrar(IDTO entityDto) {
         T entity = ArqDTOConverter.convertToEntity(entityDto, getClassOfEntity());
         ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
         if (!this.getRepository().findById(id).isPresent()) {
@@ -120,14 +123,17 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
                     ArqEvent.EVENT_TYPE_DELETE, entity);
             arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
         }
+        return !this.getRepository().findById(id).isPresent() ? 1 : 0;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
-    public void borrar(List<IDTO> entities) {
+    public int borrar(List<IDTO> entities) {
+        AtomicInteger counter = new AtomicInteger();
         entities.forEach((record) -> {
             this.borrar(record);
+            counter.getAndIncrement();
             if (arqConfigProperties.isEventBrokerActive()) {
                 /*ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
                         arqConfigProperties.getApplicationId(),
@@ -136,6 +142,7 @@ public abstract class ArqArqRelationalServiceAdapter<T, IDTO, ID> implements Arq
                 arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
             }
         });
+        return counter.get();
     }
 
     @SuppressWarnings("unchecked")

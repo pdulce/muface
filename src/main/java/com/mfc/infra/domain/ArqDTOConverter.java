@@ -8,8 +8,6 @@ public class ArqDTOConverter {
         try {
             IArqDTO dto = (IArqDTO) dtoClass.getDeclaredConstructor().newInstance();
             if (dto.getMapaConversion() == null || dto.getMapaConversion().isEmpty()) {
-                //TODO
-            } else {
                 for (Field entityField : entity.getClass().getDeclaredFields()) {
                     entityField.setAccessible(true);
                     Object value = entityField.get(entity);
@@ -22,6 +20,8 @@ public class ArqDTOConverter {
                         }
                     }
                 }
+            } else {
+                //TODO
             }
             return (D) dto;
         } catch (Exception e) {
