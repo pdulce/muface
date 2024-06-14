@@ -3,7 +3,8 @@ package com.mfc.microdiplomas.api.facade;
 import com.mfc.microdiplomas.api.usecases.ActualizarDiplomaUseCase;
 import com.mfc.microdiplomas.api.usecases.BorrarTodosLosDiplomasUseCase;
 import com.mfc.microdiplomas.api.usecases.ConsultasDiplomasUseCase;
-import com.mfc.microdiplomas.api.dto.DiplomaDTOArq;
+import com.mfc.microdiplomas.api.dto.DiplomaDTO;
+import com.mfc.microdiplomas.api.usecases.CrearDiplomaUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,8 @@ import java.util.List;
 public class DiplomaFacade {
 
     @Autowired
+    private CrearDiplomaUseCase crearDiplomaUseCase;
+    @Autowired
     private ActualizarDiplomaUseCase actualizarDiplomaUseCase;
 
     @Autowired
@@ -21,7 +24,11 @@ public class DiplomaFacade {
     @Autowired
     private ConsultasDiplomasUseCase consultasDiplomasUseCase;
 
-    public DiplomaDTOArq actualizarDiploma(DiplomaDTOArq diplomaDTO) {
+    public DiplomaDTO crearDiploma(DiplomaDTO diplomaDTO) {
+        return this.crearDiplomaUseCase.ejecutar(diplomaDTO);
+    }
+
+    public DiplomaDTO actualizarDiploma(DiplomaDTO diplomaDTO) {
         return this.actualizarDiplomaUseCase.ejecutar(diplomaDTO);
     }
 
@@ -30,21 +37,21 @@ public class DiplomaFacade {
         this.borrarTodosLosDiplomasUseCase.ejecutar();
     }
 
-    public List<DiplomaDTOArq> consultarTodosLosDiplomas() {
+    public List<DiplomaDTO> consultarTodosLosDiplomas() {
 
         return this.consultasDiplomasUseCase.consultarTodos();
     }
 
-    public List<DiplomaDTOArq> consultaDiplomasDeCliente(Long idCustomer) {
+    public List<DiplomaDTO> consultaDiplomasDeCliente(Long idCustomer) {
         return this.consultasDiplomasUseCase.consultarDiplomasDeCliente(idCustomer);
     }
 
-    public List<DiplomaDTOArq> consultaDiplomasDeClientesConNombre(String name) {
+    public List<DiplomaDTO> consultaDiplomasDeClientesConNombre(String name) {
         return this.consultasDiplomasUseCase.consultarDiplomasPorNombreClientes(name);
     }
 
 
-    public List<DiplomaDTOArq> consultaDiplomasDeRegionProvenza() {
+    public List<DiplomaDTO> consultaDiplomasDeRegionProvenza() {
         return this.consultasDiplomasUseCase.getDiplomasDeLaRegionProvenza();
     }
 

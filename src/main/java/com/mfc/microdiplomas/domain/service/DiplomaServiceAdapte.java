@@ -1,7 +1,7 @@
 package com.mfc.microdiplomas.domain.service;
 
 import com.mfc.microdiplomas.domain.model.Diploma;
-import com.mfc.microdiplomas.api.dto.DiplomaDTOArq;
+import com.mfc.microdiplomas.api.dto.DiplomaDTO;
 import com.mfc.microdiplomas.domain.repository.DiplomaCommandRepository;
 import com.mfc.infra.output.adapter.ArqArqRelationalServiceAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class DiplomaServiceAdapte extends ArqArqRelationalServiceAdapter<Diploma, DiplomaDTOArq, Long> implements DiplomaServicePort {
+public class DiplomaServiceAdapte extends ArqArqRelationalServiceAdapter<Diploma, DiplomaDTO, Long> implements DiplomaServicePort {
 
     @Autowired
     private DiplomaCommandRepository repository;
@@ -23,13 +23,13 @@ public class DiplomaServiceAdapte extends ArqArqRelationalServiceAdapter<Diploma
     }
 
     @Override
-    public List<DiplomaDTOArq> getDiplomasDeLaRegionProvenza() {
-        List<DiplomaDTOArq> diplomaDTOS = new ArrayList<>();
+    public List<DiplomaDTO> getDiplomasDeLaRegionProvenza() {
+        List<DiplomaDTO> diplomaDTOS = new ArrayList<>();
         Diploma dFilter = new Diploma();
         dFilter.setRegion("Provenza");
         Example<Diploma> example = Example.of(dFilter);
         repository.findAll(example).forEach((diploma -> {
-            diplomaDTOS.add(new DiplomaDTOArq(diploma.getId(), diploma.getIdcustomer(), diploma.getName(), diploma.getTitulo(),
+            diplomaDTOS.add(new DiplomaDTO(diploma.getId(), diploma.getIdcustomer(), diploma.getName(), diploma.getTitulo(),
                     diploma.getRegion()));
         }));
         return diplomaDTOS;

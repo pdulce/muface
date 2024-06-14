@@ -1,6 +1,6 @@
 package com.mfc.microdiplomas.api;
 
-import com.mfc.microdiplomas.api.dto.DiplomaDTOArq;
+import com.mfc.microdiplomas.api.dto.DiplomaDTO;
 import com.mfc.microdiplomas.api.facade.DiplomaFacade;
 import com.mfc.infra.controller.ArqBaseRestController;
 import jakarta.validation.constraints.NotNull;
@@ -17,24 +17,29 @@ public class DiplomaWithFacadeAPI extends ArqBaseRestController {
     DiplomaFacade diplomaFacade;
 
     @GetMapping(value = "allDiplomas", produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<DiplomaDTOArq> getAllDiplomas() {
+    public List<DiplomaDTO> getAllDiplomas() {
 
         return this.diplomaFacade.consultarTodosLosDiplomas();
     }
 
 
     @GetMapping(value = "allDiplomasByCustomerName", produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<DiplomaDTOArq> getAllDiplomasByCustomerName(@RequestParam String name) {
+    public List<DiplomaDTO> getAllDiplomasByCustomerName(@RequestParam String name) {
         return this.diplomaFacade.consultaDiplomasDeClientesConNombre(name);
     }
 
     @GetMapping(value = "allDiplomasByCustomerID", produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<DiplomaDTOArq> getAllDiplomasByCustomerID(@RequestParam Long customerid) {
+    public List<DiplomaDTO> getAllDiplomasByCustomerID(@RequestParam Long customerid) {
         return this.diplomaFacade.consultaDiplomasDeCliente(customerid);
     }
 
+    @PostMapping(produces=MediaType.APPLICATION_JSON_VALUE)
+    public DiplomaDTO create(@RequestBody @NotNull DiplomaDTO diplomaDTO) {
+        return this.diplomaFacade.crearDiploma(diplomaDTO);
+    }
+
     @PutMapping(produces=MediaType.APPLICATION_JSON_VALUE)
-    public DiplomaDTOArq update(@RequestBody @NotNull DiplomaDTOArq diplomaDTO) {
+    public DiplomaDTO update(@RequestBody @NotNull DiplomaDTO diplomaDTO) {
         return this.diplomaFacade.actualizarDiploma(diplomaDTO);
     }
 
@@ -46,7 +51,7 @@ public class DiplomaWithFacadeAPI extends ArqBaseRestController {
     /*** **/
 
     @GetMapping(value = "getDiplomasDeLaRegionProvenza", produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<DiplomaDTOArq> getDiplomasDeLaRegionProvenza() {
+    public List<DiplomaDTO> getDiplomasDeLaRegionProvenza() {
         return this.diplomaFacade.consultaDiplomasDeRegionProvenza();
     }
 

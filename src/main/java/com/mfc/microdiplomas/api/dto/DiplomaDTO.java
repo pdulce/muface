@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Data
-public class DiplomaDTOArq extends ArqAbstractDTO {
+public class DiplomaDTO extends ArqAbstractDTO {
 
     private Long id;
 
@@ -18,13 +18,13 @@ public class DiplomaDTOArq extends ArqAbstractDTO {
     private String titulo;
 
     private String region;
-    public DiplomaDTOArq(){}
+    public DiplomaDTO(){}
 
     public Map<String, String> getMapaConversion() {
         return new HashMap<>();
     }
 
-    public DiplomaDTOArq(Long id, Long idcustomer, String name, String titulo, String region) {
+    public DiplomaDTO(Long id, Long idcustomer, String name, String titulo, String region) {
         this.id = id;
         this.idcustomer = idcustomer;
         this.name = name;

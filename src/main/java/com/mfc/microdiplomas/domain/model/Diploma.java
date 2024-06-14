@@ -1,6 +1,6 @@
 package com.mfc.microdiplomas.domain.model;
 
-import com.mfc.microdiplomas.api.dto.DiplomaDTOArq;
+import com.mfc.microdiplomas.api.dto.DiplomaDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -26,7 +26,7 @@ public class Diploma {
 
     public Diploma() {}
 
-    public Diploma(DiplomaDTOArq diplomaDTO) {
+    public Diploma(DiplomaDTO diplomaDTO) {
         this.id = diplomaDTO.getId();
         this.idcustomer = diplomaDTO.getIdcustomer();
         this.name = diplomaDTO.getName();
