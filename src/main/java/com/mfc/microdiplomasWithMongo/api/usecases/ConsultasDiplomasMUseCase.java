@@ -1,17 +1,17 @@
 package com.mfc.microdiplomasWithMongo.api.usecases;
 
 import com.mfc.microdiplomasWithMongo.api.dto.DiplomaDTO;
-import com.mfc.microdiplomasWithMongo.domain.service.DiplomaServicePort;
+import com.mfc.microdiplomasWithMongo.domain.service.DiplomaMServicePort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class ConsultasDiplomasUseCase {
+public class ConsultasDiplomasMUseCase {
 
     @Autowired
-    DiplomaServicePort diplomaCommandServicePort;
+    DiplomaMServicePort diplomaCommandServicePort;
 
     public List<DiplomaDTO> consultarDiplomasDeCliente(Long customerId) {
         DiplomaDTO diplomaDTOFilter = new DiplomaDTO();

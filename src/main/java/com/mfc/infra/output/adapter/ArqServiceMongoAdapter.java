@@ -7,6 +7,7 @@ import com.mfc.infra.output.port.ArqServicePort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
@@ -18,8 +19,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public abstract class ArqMongoServiceAdapter<T, D extends IArqDTO, ID> implements ArqServicePort<T, D, ID> {
-    Logger logger = LoggerFactory.getLogger(ArqMongoServiceAdapter.class);
+public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> implements ArqServicePort<T, D, ID> {
+    Logger logger = LoggerFactory.getLogger(ArqServiceMongoAdapter.class);
 
     protected abstract MongoRepository<T, String> getRepository();
 
@@ -82,7 +83,21 @@ public abstract class ArqMongoServiceAdapter<T, D extends IArqDTO, ID> implement
 
     @Override
     public void borrar() {
-        mongoOperations.dropCollection(getDocumentEntityClassname());
+        try {
+            String collectionName = getCollectionName(getClassOfEntity());
+            mongoOperations.dropCollection(collectionName);
+            logger.info("Todos los registros en la colección '{}' han sido borrados.", collectionName);
+        } catch (Exception e) {
+            logger.error("Error al borrar todos los registros: ", e);
+        }
+    }
+
+    private String getCollectionName(Class<?> clazz) {
+        if (clazz.isAnnotationPresent(Document.class)) {
+            Document document = clazz.getAnnotation(Document.class);
+            return document.collection();
+        }
+        throw new IllegalStateException("La clase " + clazz.getName() + " no está anotada con @Document");
     }
 
     @Override
@@ -107,23 +122,16 @@ public abstract class ArqMongoServiceAdapter<T, D extends IArqDTO, ID> implement
 
     @Override
     public List<D> buscarCoincidenciasEstricto(D filterObject) {
-        // Implementación según tus necesidades específicas
+        // TODO
         return Collections.emptyList(); // Ejemplo
     }
 
     @Override
     public List<D> buscarCoincidenciasNoEstricto(D filterObject) {
-        // Implementación según tus necesidades específicas
+        // TODO
         return Collections.emptyList(); // Ejemplo
     }
 
-    @Override
-    public String getDocumentEntityClassname() {
-        Class<T> entityClass = (Class<T>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[0];
-        return entityClass.getSimpleName().toLowerCase();
-    }
 
     // Métodos de conversión entre DTO y Entity
 

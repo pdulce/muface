@@ -32,13 +32,6 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> im
 
     protected abstract JpaRepository<T, ID> getRepository();
 
-    public String getDocumentEntityClassname() {
-        Class<T> entityClass = (Class<T>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[0];
-        return entityClass.getSimpleName().toLowerCase();
-    }
-
     protected Class<T> getClassOfEntity() {
         Class<T> entityClass = (Class<T>) ((ParameterizedType) getClass()
                 .getGenericSuperclass())

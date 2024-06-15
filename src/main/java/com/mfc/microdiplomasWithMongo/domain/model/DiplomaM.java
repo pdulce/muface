@@ -5,11 +5,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document(collection = "customer")
-public class Diploma {
+@Document(collection = "diplomas")
+public class DiplomaM {
 
     @Id
-    private String id;
+    private Long id;
 
     private Long idcustomer;
 

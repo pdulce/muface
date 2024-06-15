@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "diplomasFacade")
-public class DiplomaWithFacadeAPI extends ArqBaseRestController {
+public class DiplomaUsingFacadeAPI extends ArqBaseRestController {
     @Autowired
     DiplomaUseCasesFacade diplomaUseCasesFacade;
 

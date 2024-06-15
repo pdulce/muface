@@ -25,6 +25,4 @@ public interface ArqServicePort<T, D extends IArqDTO, ID> {
 
     List<D> buscarCoincidenciasNoEstricto(D filterObject);
 
-    String getDocumentEntityClassname();
-
 }

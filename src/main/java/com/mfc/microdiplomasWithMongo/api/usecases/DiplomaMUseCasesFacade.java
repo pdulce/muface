@@ -7,18 +7,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DiplomaUseCasesFacade {
+public class DiplomaMUseCasesFacade {
 
     @Autowired
-    private CrearDiplomaUseCase crearDiplomaUseCase;
+    private CrearDiplomaMUseCase crearDiplomaUseCase;
     @Autowired
-    private ActualizarDiplomaUseCase actualizarDiplomaUseCase;
+    private ActualizarDiplomaMUseCase actualizarDiplomaUseCase;
 
     @Autowired
-    private BorrarTodosLosDiplomasUseCase borrarTodosLosDiplomasUseCase;
+    private BorrarTodosLosDiplomasMUseCase borrarTodosLosDiplomasUseCase;
 
     @Autowired
-    private ConsultasDiplomasUseCase consultasDiplomasUseCase;
+    private ConsultasDiplomasMUseCase consultasDiplomasUseCase;
 
     public DiplomaDTO crearDiploma(DiplomaDTO diplomaDTO) {
         return this.crearDiplomaUseCase.ejecutar(diplomaDTO);

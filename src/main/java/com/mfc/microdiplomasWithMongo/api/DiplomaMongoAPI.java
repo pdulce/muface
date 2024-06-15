@@ -2,7 +2,7 @@ package com.mfc.microdiplomasWithMongo.api;
 
 import com.mfc.infra.controller.ArqBaseRestController;
 import com.mfc.microdiplomasWithMongo.api.dto.DiplomaDTO;
-import com.mfc.microdiplomasWithMongo.api.usecases.DiplomaUseCasesFacade;
+import com.mfc.microdiplomasWithMongo.api.usecases.DiplomaMUseCasesFacade;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "diplomasFacade")
-public class DiplomaWithFacadeAPI extends ArqBaseRestController {
+@RequestMapping(value = "diplomasFacadeMongo")
+public class DiplomaMongoAPI extends ArqBaseRestController {
     @Autowired
-    DiplomaUseCasesFacade diplomaUseCasesFacade;
+    DiplomaMUseCasesFacade diplomaUseCasesFacade;
 
     @GetMapping(value = "allDiplomas", produces=MediaType.APPLICATION_JSON_VALUE)
     public List<DiplomaDTO> getAllDiplomas() {
