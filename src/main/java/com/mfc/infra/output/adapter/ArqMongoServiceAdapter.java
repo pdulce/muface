@@ -21,8 +21,7 @@ import java.util.Optional;
 public abstract class ArqMongoServiceAdapter<T, D extends IArqDTO, ID> implements ArqServicePort<T, D, ID> {
     Logger logger = LoggerFactory.getLogger(ArqMongoServiceAdapter.class);
 
-    @Autowired
-    MongoRepository<T, String> repository;
+    protected abstract MongoRepository<T, String> getRepository();
 
     @Autowired
     MongoOperations mongoOperations;
@@ -46,7 +45,7 @@ public abstract class ArqMongoServiceAdapter<T, D extends IArqDTO, ID> implement
     @Override
     public D crear(D entityDto) {
         T entityToSave = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
-        entityToSave = repository.save(entityToSave);
+        entityToSave = getRepository().save(entityToSave);
         entityDto = ArqAbstractDTO.convertToDTO(entityToSave, getClassOfDTO());
         return entityDto;
     }
@@ -54,7 +53,7 @@ public abstract class ArqMongoServiceAdapter<T, D extends IArqDTO, ID> implement
     @Override
     public D actualizar(D entityDto) {
         T entityToUpdate = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
-        entityToUpdate = repository.save(entityToUpdate);
+        entityToUpdate = getRepository().save(entityToUpdate);
         entityDto = ArqAbstractDTO.convertToDTO(entityToUpdate, getClassOfDTO());
         return entityDto;
     }
@@ -88,7 +87,7 @@ public abstract class ArqMongoServiceAdapter<T, D extends IArqDTO, ID> implement
 
     @Override
     public D buscarPorId(ID id) {
-        Optional<T> result = repository.findById((String) id);
+        Optional<T> result = getRepository().findById((String) id);
         D item = result.isPresent() ? ArqAbstractDTO.convertToDTO(result.isPresent(), getClassOfDTO()) : null;
         if (item == null) {
             logger.info("buscarPorId no localizó el id: " + id);
@@ -102,7 +101,7 @@ public abstract class ArqMongoServiceAdapter<T, D extends IArqDTO, ID> implement
 
     @Override
     public List<D> buscarTodos() {
-        List<T> entities = repository.findAll();
+        List<T> entities = getRepository().findAll();
         return convertToDTOList(entities);
     }
 

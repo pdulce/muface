@@ -1,4 +1,4 @@
-package com.mfc.microdiplomas.api.dto;
+package com.mfc.microdiplomasWithMongo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mfc.infra.dto.ArqAbstractDTO;
@@ -41,6 +41,5 @@ public class DiplomaDTO extends ArqAbstractDTO {
     public Map<String, String> getMapaConversion() {
         return mapaConversion;
     }
-
 
 }

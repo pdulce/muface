@@ -23,7 +23,5 @@ public class Diploma {
     @Column
     private String region;
 
-    public Diploma() {}
-
 
 }
