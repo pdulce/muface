@@ -1,9 +1,9 @@
 package com.mfc.infra.output.adapter;
 
 import com.mfc.infra.configuration.ArqConfigProperties;
-//import com.mfc.infra.event.ArqEvent;
 import com.mfc.infra.dto.ArqAbstractDTO;
 import com.mfc.infra.dto.IArqDTO;
+import com.mfc.infra.event.ArqEvent;
 import com.mfc.infra.exceptions.ArqNotExistException;
 import com.mfc.infra.output.port.ArqServicePort;
 import com.mfc.infra.utils.ArqConversionUtils;
@@ -16,42 +16,16 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Transactional
-public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> implements ArqServicePort<T, D, ID> {
+public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> extends ArqAbstractService<T, D, ID>
+        implements ArqServicePort<T, D, ID> {
     Logger logger = LoggerFactory.getLogger(ArqServiceRelationalDBAdapter.class);
-    @Autowired
-    ArqConfigProperties arqConfigProperties;
-
-    //@Autowired(required = false)
-    //ArqCommandEventPublisherPort arqCommandEventPublisherPort;
 
     protected abstract JpaRepository<T, ID> getRepository();
-
-    protected Class<T> getClassOfEntity() {
-        Class<T> entityClass = (Class<T>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[0];
-        return entityClass;
-    }
-
-    protected Class<D> getClassOfDTO() {
-        Class<D> entityClass = (Class<D>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[1];
-        return entityClass;
-    }
-
-    protected Class<ID> getClassOfID() {
-        Class<ID> entityClass = (Class<ID>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[2];
-        return entityClass;
-    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -59,18 +33,8 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> im
     public D crear(D entityDto) {
         T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
         this.getRepository().save(entity);
-        if (entity != null && arqConfigProperties.isEventBrokerActive()) {
-            /*** Mando el evento al bus para que los recojan los dos consumers:
-             *  - consumer responsable del dominio de eventos que persiste en MongoDB (patrón Event-Sourcing)
-             *  - consumer responsable del dominio de consultas que persiste en Redis (patrón CQRS)
-             */
-            /*ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
-                    arqConfigProperties.getApplicationId(),
-                    ArqConversionUtils.convertToMap(saved).get("id").toString(),
-                    ArqEvent.EVENT_TYPE_CREATE, saved);
-            arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
-        }
         entityDto = ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
+        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_CREATE);
         return entityDto;
     }
 
@@ -88,13 +52,7 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> im
             throw exc;
         }
         this.getRepository().save(entity);
-        if (entity != null && arqConfigProperties.isEventBrokerActive()) {
-            /*ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
-                    arqConfigProperties.getApplicationId(),
-                    ArqConversionUtils.convertToMap(entity).get("id").toString(),
-                    ArqEvent.EVENT_TYPE_UPDATE, updated);
-            arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
-        }
+        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_UPDATE);
         return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
     }
 
@@ -111,14 +69,8 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> im
             throw exc;
         }
         this.getRepository().delete(entity);
-        if (arqConfigProperties.isEventBrokerActive()) {
-            /*ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
-                    arqConfigProperties.getApplicationId(),
-                    ArqConversionUtils.convertToMap(entity).get("id").toString(),
-                    ArqEvent.EVENT_TYPE_DELETE, entity);
-            arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
-        }
-        return !this.getRepository().findById(id).isPresent() ? 1 : 0;
+        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
+        return 1;
     }
 
     @SuppressWarnings("unchecked")
@@ -126,16 +78,11 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> im
     @Transactional
     public int borrar(List<D> entities) {
         AtomicInteger counter = new AtomicInteger();
-        entities.forEach((record) -> {
-            this.borrar(record);
+        entities.forEach((entityDTO) -> {
+            this.borrar(entityDTO);
             counter.getAndIncrement();
-            if (arqConfigProperties.isEventBrokerActive()) {
-                /*ArqEvent eventArch = new ArqEvent(getDocumentEntityClassname(), "author",
-                        arqConfigProperties.getApplicationId(),
-                        ArqConversionUtils.convertToMap(record).get("id").toString(),
-                        ArqEvent.EVENT_TYPE_DELETE, record);
-                arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, eventArch);*/
-            }
+            T entity = ArqAbstractDTO.convertToEntity(entityDTO, getClassOfEntity());
+            super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
         });
         return counter.get();
     }
@@ -144,19 +91,13 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> im
     @Override
     @Transactional
     public void borrar() {
-        //List<ArqEvent> events = new ArrayList<>();
-        buscarTodos().forEach((record) -> {
-            /*events.add(new ArqEvent(getDocumentEntityClassname(), "author",
-                    arqConfigProperties.getApplicationId(),
-                    ArqConversionUtils.convertToMap(record).get("id").toString(),
-                    ArqEvent.EVENT_TYPE_DELETE, record));*/
+        List<T> entities = new ArrayList<>();
+        buscarTodos().forEach((entityDTO) -> {
+            T entity = ArqAbstractDTO.convertToEntity(entityDTO, getClassOfEntity());
+            entities.add(entity);
         });
         this.getRepository().deleteAll();
-        /*if (arqConfigProperties.isEventBrokerActive()) {
-            events.forEach((event) -> {
-                arqCommandEventPublisherPort.publish(ArqEvent.EVENT_TOPIC, event);
-            });
-        }*/
+        super.registrarEventos(entities, ArqEvent.EVENT_TYPE_DELETE);
     }
 
     @SuppressWarnings("unchecked")

@@ -2,11 +2,16 @@ package com.mfc.infra.output.adapter;
 
 import com.mfc.infra.dto.ArqAbstractDTO;
 import com.mfc.infra.dto.IArqDTO;
+import com.mfc.infra.event.ArqEvent;
 import com.mfc.infra.exceptions.ArqNotExistException;
 import com.mfc.infra.output.port.ArqServicePort;
+import com.mfc.infra.utils.ArqConversionUtils;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -19,7 +24,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> implements ArqServicePort<T, D, ID> {
+public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends ArqAbstractService<T, D, ID>
+        implements ArqServicePort<T, D, ID> {
     Logger logger = LoggerFactory.getLogger(ArqServiceMongoAdapter.class);
 
     protected abstract MongoRepository<T, String> getRepository();
@@ -27,65 +33,74 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> implement
     @Autowired
     MongoOperations mongoOperations;
 
-    // Implementación de los métodos de ArqServicePort
-
-    protected Class<T> getClassOfEntity() {
-        Class<T> entityClass = (Class<T>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[0];
-        return entityClass;
-    }
-
-    protected Class<D> getClassOfDTO() {
-        Class<D> entityClass = (Class<D>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[1];
-        return entityClass;
-    }
-
     @Override
+    @Transactional
     public D crear(D entityDto) {
-        T entityToSave = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
-        entityToSave = getRepository().save(entityToSave);
-        entityDto = ArqAbstractDTO.convertToDTO(entityToSave, getClassOfDTO());
+        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
+        this.getRepository().save(entity);
+        entityDto = ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
+        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_CREATE);
         return entityDto;
     }
 
+
+    @SuppressWarnings("unchecked")
     @Override
+    @Transactional
     public D actualizar(D entityDto) {
-        T entityToUpdate = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
-        entityToUpdate = getRepository().save(entityToUpdate);
-        entityDto = ArqAbstractDTO.convertToDTO(entityToUpdate, getClassOfDTO());
-        return entityDto;
+        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
+        ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
+        if (this.buscarPorId(id) == null) {
+            ArqNotExistException e = new ArqNotExistException();
+            e.setMsgError("entity with id: " + String.valueOf(id) + " not found");
+            RuntimeException exc = new RuntimeException(e);
+            throw exc;
+        }
+        this.getRepository().save(entity);
+        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_UPDATE);
+        return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
     }
 
     @Override
-    public int borrar(D entity) {
-        Query deleteQuery = new Query();
-        Criteria criteria = Criteria.where("_id").is(entity.getId());
-        deleteQuery.addCriteria(criteria);
-        mongoOperations.remove(deleteQuery, entity.getClass());
-        return 1; // asumiendo que siempre se borra exactamente un elemento
-    }
-
-    @Override
-    public int borrar(List<D> entities) {
-        List<ID> ids = new ArrayList<>();
-        for (D entity : entities) {
-            ids.add((ID) entity.getId());
+    @Transactional
+    public int borrar(D entityDto) {
+        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
+        ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
+        if (this.buscarPorId(id) == null) {
+            ArqNotExistException e = new ArqNotExistException();
+            e.setMsgError("entity with id: " + id + " not found");
+            RuntimeException exc = new RuntimeException(e);
+            throw exc;
         }
         Query deleteQuery = new Query();
-        Criteria criteria = Criteria.where("_id").in(ids);
+        Criteria criteria = Criteria.where("_id").is(id);
         deleteQuery.addCriteria(criteria);
-        mongoOperations.remove(deleteQuery, entities.get(0).getClass());
+        mongoOperations.remove(deleteQuery, entity.getClass());
+        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
+        return 1;
+    }
+
+    @Override
+    @Transactional
+    public int borrar(List<D> entities) {
+        entities.forEach((entityDTO) -> {
+            borrar(entityDTO);
+        });
         return entities.size();
     }
 
     @Override
+    @Transactional
     public void borrar() {
         try {
+            List<T> entities = new ArrayList<>();
+            buscarTodos().forEach((entityDTO) -> {
+                T entity = ArqAbstractDTO.convertToEntity(entityDTO, getClassOfEntity());
+                entities.add(entity);
+            });
             String collectionName = getCollectionName(getClassOfEntity());
             mongoOperations.dropCollection(collectionName);
+            super.registrarEventos(entities, ArqEvent.EVENT_TYPE_DELETE);
             logger.info("Todos los registros en la colección '{}' han sido borrados.", collectionName);
         } catch (Exception e) {
             logger.error("Error al borrar todos los registros: ", e);
@@ -122,25 +137,58 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> implement
 
     @Override
     public List<D> buscarCoincidenciasEstricto(D filterObject) {
-        // TODO
-        return Collections.emptyList(); // Ejemplo
+        try {
+            Class<T> entityClass = getClassOfEntity();
+            T instance = ArqAbstractDTO.convertToEntity(filterObject, entityClass);
+
+            ExampleMatcher matcher = ExampleMatcher.matchingAll()
+                    .withIgnoreNullValues();
+            Example<T> example = Example.of(instance, matcher);
+
+            List<D> resultado = new ArrayList<>();
+            getRepository().findAll(example).forEach((entity) -> {
+                resultado.add(ArqAbstractDTO.convertToDTO(entity, getClassOfDTO()));
+            });
+
+            return resultado;
+        } catch (Throwable exc1) {
+            logger.error("Error in buscarCoincidenciasEstricto method: ", exc1);
+            RuntimeException exc = new RuntimeException(exc1);
+            throw exc;
+        }
     }
 
     @Override
     public List<D> buscarCoincidenciasNoEstricto(D filterObject) {
-        // TODO
-        return Collections.emptyList(); // Ejemplo
+        try {
+            Class<T> entityClass = getClassOfEntity();
+            T instance = ArqAbstractDTO.convertToEntity(filterObject, entityClass);
+            List<D> resultado = new ArrayList<>();
+
+            // Crear un ExampleMatcher con configuración de LIKE en todos los campos
+            ExampleMatcher matcher = ExampleMatcher.matchingAll()
+                    .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING) // Realiza búsquedas LIKE %valor%
+                    .withIgnoreCase(); // Ignorar mayúsculas/minúsculas
+
+            // Crear el Example con el matcher configurado
+            Example<T> example = Example.of(instance, matcher);
+
+            // Buscar usando el repositorio
+            this.getRepository().findAll(example).forEach((entity) -> {
+                resultado.add(ArqAbstractDTO.convertToDTO(entity, getClassOfDTO()));
+            });
+
+            return resultado;
+        } catch (Throwable exc1) {
+            logger.error("Error in buscarCoincidenciasNoEstricto method: ", exc1);
+            RuntimeException exc = new RuntimeException(exc1);
+            throw exc;
+        }
     }
 
 
     // Métodos de conversión entre DTO y Entity
 
-    protected List<D> convertToDTOList(List<T> entities) {
-        List<D> dtos = new ArrayList<>();
-        for (T entity : entities) {
-            dtos.add(ArqAbstractDTO.convertToDTO(entity, getClassOfDTO()));
-        }
-        return dtos;
-    }
+
 
 }
