@@ -1,6 +1,5 @@
 package com.mfc.infra.output.adapter;
 
-import com.mfc.infra.configuration.ArqConfigProperties;
 import com.mfc.infra.dto.ArqAbstractDTO;
 import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.event.ArqEvent;
@@ -10,7 +9,6 @@ import com.mfc.infra.utils.ArqConversionUtils;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;

@@ -18,8 +18,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Criteria;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
