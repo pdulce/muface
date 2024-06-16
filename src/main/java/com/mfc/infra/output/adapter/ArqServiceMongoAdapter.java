@@ -71,6 +71,8 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
                     new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
             logger.info(info);
             return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
+        } catch (ArqBaseOperationsException notExists) {
+            throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
                     new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
@@ -98,6 +100,8 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
             logger.info(info);
             super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
             return 1;
+        } catch (ArqBaseOperationsException notExists) {
+            throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,
                     new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
@@ -118,6 +122,8 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
                     new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
             logger.info(info);
             return entities.size();
+        } catch (ArqBaseOperationsException notExists) {
+            throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
                     new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
@@ -162,7 +168,7 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
     @Override
     public D buscarPorId(ID id) {
         Optional<T> result = getRepository().findById((String) id);
-        D item = result.isPresent() ? ArqAbstractDTO.convertToDTO(result.isPresent(), getClassOfDTO()) : null;
+        D item = result.isPresent() ? ArqAbstractDTO.convertToDTO(result.get(), getClassOfDTO()) : null;
         if (item == null) {
             throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
         }

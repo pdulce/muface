@@ -60,6 +60,8 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
             this.getRepository().save(entity);
             super.registrarEvento(entity, ArqEvent.EVENT_TYPE_UPDATE);
             return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
+        } catch (ArqBaseOperationsException notExists) {
+            throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
                     new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
@@ -85,6 +87,8 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
             logger.info(info);
             super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
             return 1;
+        } catch (ArqBaseOperationsException notExists) {
+            throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,
                     new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
@@ -110,6 +114,8 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
                     new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
             logger.info(info);
             return counter.get();
+        } catch (ArqBaseOperationsException notExists) {
+            throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
                     new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));

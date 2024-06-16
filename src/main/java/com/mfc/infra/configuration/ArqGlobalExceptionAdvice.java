@@ -32,7 +32,7 @@ public class ArqGlobalExceptionAdvice {
     public ResponseEntity<String> handleResourceNotFoundException(ArqBaseOperationsException ex,
                                                                   WebRequest request, Locale locale) {
         String errorMessage = messageSource.getMessage(ex.getCode(), ex.getArgs(), locale);
-        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_MODIFIED);
+        return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IndexOutOfBoundsException.class)
