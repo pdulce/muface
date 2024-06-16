@@ -3,8 +3,9 @@ package com.mfc.infra.output.adapter;
 import com.mfc.infra.dto.ArqAbstractDTO;
 import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.event.ArqEvent;
-import com.mfc.infra.exceptions.ArqNotExistException;
+import com.mfc.infra.exceptions.ArqBaseOperationsException;
 import com.mfc.infra.output.port.ArqServicePort;
+import com.mfc.infra.utils.ArqConstantMessages;
 import com.mfc.infra.utils.ArqConversionUtils;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Optional;
 
 public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends ArqAbstractService<T, D, ID>
@@ -34,11 +36,22 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
     @Override
     @Transactional
     public D crear(D entityDto) {
-        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
-        this.getRepository().save(entity);
-        entityDto = ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
-        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_CREATE);
-        return entityDto;
+        try{
+            T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
+            this.getRepository().save(entity);
+            entityDto = ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
+            super.registrarEvento(entity, ArqEvent.EVENT_TYPE_CREATE);
+            String info = messageSource.getMessage(ArqConstantMessages.CREATED_OK,
+                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+            logger.info(info);
+            return entityDto;
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.CREATED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+            logger.error(error);
+            throw new ArqBaseOperationsException(ArqConstantMessages.CREATED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
+        }
     }
 
 
@@ -46,45 +59,72 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
     @Override
     @Transactional
     public D actualizar(D entityDto) {
-        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
-        ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
-        if (this.buscarPorId(id) == null) {
-            ArqNotExistException e = new ArqNotExistException();
-            e.setMsgError("entity with id: " + String.valueOf(id) + " not found");
-            RuntimeException exc = new RuntimeException(e);
-            throw exc;
+        try {
+            T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
+            ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
+            if (this.buscarPorId(id) == null) {
+                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
+            }
+            this.getRepository().save(entity);
+            super.registrarEvento(entity, ArqEvent.EVENT_TYPE_UPDATE);
+            String info = messageSource.getMessage(ArqConstantMessages.UPDATED_OK,
+                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+            logger.info(info);
+            return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+            logger.error(error);
+            throw new ArqBaseOperationsException(ArqConstantMessages.UPDATED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
         }
-        this.getRepository().save(entity);
-        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_UPDATE);
-        return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
     }
 
     @Override
     @Transactional
     public int borrar(D entityDto) {
-        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
-        ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
-        if (this.buscarPorId(id) == null) {
-            ArqNotExistException e = new ArqNotExistException();
-            e.setMsgError("entity with id: " + id + " not found");
-            RuntimeException exc = new RuntimeException(e);
-            throw exc;
+        try {
+            T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
+            ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
+            if (this.buscarPorId(id) == null) {
+                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
+            }
+            Query deleteQuery = new Query();
+            Criteria criteria = Criteria.where("_id").is(id);
+            deleteQuery.addCriteria(criteria);
+            mongoOperations.remove(deleteQuery, entity.getClass());
+            String info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
+                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+            logger.info(info);
+            super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
+            return 1;
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+            logger.error(error);
+            throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
         }
-        Query deleteQuery = new Query();
-        Criteria criteria = Criteria.where("_id").is(id);
-        deleteQuery.addCriteria(criteria);
-        mongoOperations.remove(deleteQuery, entity.getClass());
-        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
-        return 1;
     }
 
     @Override
     @Transactional
     public int borrar(List<D> entities) {
-        entities.forEach((entityDTO) -> {
-            borrar(entityDTO);
-        });
-        return entities.size();
+        try{
+            entities.forEach((entityDTO) -> {
+                borrar(entityDTO);
+            });
+            String info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
+                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+            logger.info(info);
+            return entities.size();
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+            logger.error(error);
+            throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
+        }
     }
 
     @Override
@@ -98,10 +138,16 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
             });
             String collectionName = getCollectionName(getClassOfEntity());
             mongoOperations.dropCollection(collectionName);
+            String info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
+                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+            logger.info(info);
             super.registrarEventos(entities, ArqEvent.EVENT_TYPE_DELETE);
-            logger.info("Todos los registros en la colección '{}' han sido borrados.", collectionName);
-        } catch (Exception e) {
-            logger.error("Error al borrar todos los registros: ", e);
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+            logger.error(error);
+            throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
         }
     }
 
@@ -118,11 +164,7 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
         Optional<T> result = getRepository().findById((String) id);
         D item = result.isPresent() ? ArqAbstractDTO.convertToDTO(result.isPresent(), getClassOfDTO()) : null;
         if (item == null) {
-            logger.info("buscarPorId no localizó el id: " + id);
-            ArqNotExistException e = new ArqNotExistException();
-            e.setMsgError("id: " + id);
-            RuntimeException exc = new RuntimeException(e);
-            throw exc;
+            throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
         }
         return item;
     }

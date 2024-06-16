@@ -1,7 +1,6 @@
 com\mfc\infra\dto\ArqAbstractDTO.class
 com\mfc\infra\output\adapter\ArqServiceMongoAdapter.class
 com\mfc\microdiplomasWithMongo\api\usecases\ActualizarDiplomaMUseCase.class
-com\mfc\infra\exceptions\ArqNotExistException.class
 com\mfc\infra\utils\ArqTrustMgr.class
 com\mfc\infra\configuration\ArqAppConfig.class
 com\mfc\infra\dto\IArqDTO.class
@@ -19,6 +18,7 @@ com\mfc\infra\configuration\ArqMongoConfig.class
 com\mfc\infra\configuration\ArqGlobalExceptionAdvice.class
 com\mfc\Application.class
 com\mfc\infra\event\ArqContextInfo.class
+com\mfc\infra\exceptions\ArqBaseOperationsException.class
 com\mfc\microdiplomasWithMongo\domain\service\DiplomaMServiceAdapter.class
 com\mfc\microdiplomas\domain\repository\DiplomaCommandRepository.class
 com\mfc\microdiplomasWithMongo\api\usecases\BorrarTodosLosDiplomasMUseCase.class

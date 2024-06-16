@@ -1,12 +1,10 @@
 package com.mfc.infra.configuration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mfc.infra.exceptions.ArqNotExistException;
+import com.mfc.infra.exceptions.ArqBaseOperationsException;
 import com.mfc.infra.utils.ArqConstantMessages;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -27,12 +25,15 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ArqGlobalExceptionAdvice {
-
-    Logger logger = LoggerFactory.getLogger(ArqGlobalExceptionAdvice.class);
-
     @Autowired
     private MessageSource messageSource;
 
+    @ExceptionHandler(ArqBaseOperationsException.class)
+    public ResponseEntity<String> handleResourceNotFoundException(ArqBaseOperationsException ex,
+                                                                  WebRequest request, Locale locale) {
+        String errorMessage = messageSource.getMessage(ex.getCode(), ex.getArgs(), locale);
+        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_MODIFIED);
+    }
 
     @ExceptionHandler(IndexOutOfBoundsException.class)
     public ResponseEntity<String> handleResourceNotFoundException(IndexOutOfBoundsException ex,
@@ -66,13 +67,6 @@ public class ArqGlobalExceptionAdvice {
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ArqNotExistException.class)
-    public ResponseEntity<String> handleResourceNotFoundException(ArqNotExistException ex,
-                                                                  WebRequest request, Locale locale) {
-        String errorMessage = messageSource.getMessage(ArqConstantMessages.ERROR_NOT_FOUND,
-                new Object[]{ex.getMsgError()}, locale);
-        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
-    }
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException ex,
                                                                   WebRequest request, Locale locale) {
@@ -86,14 +80,12 @@ public class ArqGlobalExceptionAdvice {
     public ResponseEntity<Map<String, List<String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult().getFieldErrors()
                 .stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
-        logger.error("some errors: " + errors.size());
         return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
         Map<String, List<String>> errorResponse = new HashMap<>();
         errorResponse.put("errors", errors);
-        logger.error("some errors: " + errors.size());
         return errorResponse;
     }
 

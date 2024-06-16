@@ -7,6 +7,7 @@ import com.mfc.infra.event.ArqEvent;
 import com.mfc.infra.utils.ArqConversionUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -17,6 +18,9 @@ public abstract class ArqAbstractService<T, D extends IArqDTO, ID> {
 
     @Autowired
     ArqConfigProperties arqConfigProperties;
+
+    @Autowired
+    MessageSource messageSource;
 
     //@Autowired(required = false)
     //ArqCommandEventPublisherPort arqCommandEventPublisherPort;

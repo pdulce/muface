@@ -3,8 +3,9 @@ package com.mfc.infra.output.adapter;
 import com.mfc.infra.dto.ArqAbstractDTO;
 import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.event.ArqEvent;
-import com.mfc.infra.exceptions.ArqNotExistException;
+import com.mfc.infra.exceptions.ArqBaseOperationsException;
 import com.mfc.infra.output.port.ArqServicePort;
+import com.mfc.infra.utils.ArqConstantMessages;
 import com.mfc.infra.utils.ArqConversionUtils;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Transactional
@@ -29,11 +31,19 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
     @Override
     @Transactional
     public D crear(D entityDto) {
-        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
-        this.getRepository().save(entity);
-        entityDto = ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
-        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_CREATE);
-        return entityDto;
+        try {
+            T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
+            this.getRepository().save(entity);
+            entityDto = ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
+            super.registrarEvento(entity, ArqEvent.EVENT_TYPE_CREATE);
+            return entityDto;
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.CREATED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+            logger.error(error);
+            throw new ArqBaseOperationsException(ArqConstantMessages.CREATED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
+        }
     }
 
 
@@ -41,72 +51,103 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
     @Override
     @Transactional
     public D actualizar(D entityDto) {
-        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
-        ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
-        if (!this.getRepository().findById(id).isPresent()) {
-            ArqNotExistException e = new ArqNotExistException();
-            e.setMsgError("entity with id: " + String.valueOf(id) + " not found");
-            RuntimeException exc = new RuntimeException(e);
-            throw exc;
+        try {
+            T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
+            ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
+            if (!this.getRepository().findById(id).isPresent()) {
+                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
+            }
+            this.getRepository().save(entity);
+            super.registrarEvento(entity, ArqEvent.EVENT_TYPE_UPDATE);
+            return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+            logger.error(error);
+            throw new ArqBaseOperationsException(ArqConstantMessages.UPDATED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
         }
-        this.getRepository().save(entity);
-        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_UPDATE);
-        return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
     }
 
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
     public int borrar(D entityDto) {
-        T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
-        ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
-        if (!this.getRepository().findById(id).isPresent()) {
-            ArqNotExistException e = new ArqNotExistException();
-            e.setMsgError("entity with id: " + String.valueOf(id) + " not found");
-            RuntimeException exc = new RuntimeException(e);
-            throw exc;
+        try {
+            T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
+            ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
+            if (!this.getRepository().findById(id).isPresent()) {
+                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
+            }
+            this.getRepository().delete(entity);
+            String info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
+                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+            logger.info(info);
+            super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
+            return 1;
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+            logger.error(error);
+            throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
         }
-        this.getRepository().delete(entity);
-        super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
-        return 1;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
     public int borrar(List<D> entities) {
-        AtomicInteger counter = new AtomicInteger();
-        entities.forEach((entityDTO) -> {
-            this.borrar(entityDTO);
-            counter.getAndIncrement();
-            T entity = ArqAbstractDTO.convertToEntity(entityDTO, getClassOfEntity());
-            super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
-        });
-        return counter.get();
+        try {
+            AtomicInteger counter = new AtomicInteger();
+            entities.forEach((entityDTO) -> {
+                this.borrar(entityDTO);
+                counter.getAndIncrement();
+                T entity = ArqAbstractDTO.convertToEntity(entityDTO, getClassOfEntity());
+                super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
+            });
+            String info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
+                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+            logger.info(info);
+            return counter.get();
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+            logger.error(error);
+            throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
+        }
     }
 
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
     public void borrar() {
-        List<T> entities = new ArrayList<>();
-        buscarTodos().forEach((entityDTO) -> {
-            T entity = ArqAbstractDTO.convertToEntity(entityDTO, getClassOfEntity());
-            entities.add(entity);
-        });
-        this.getRepository().deleteAll();
-        super.registrarEventos(entities, ArqEvent.EVENT_TYPE_DELETE);
+        try{
+            List<T> entities = new ArrayList<>();
+            buscarTodos().forEach((entityDTO) -> {
+                T entity = ArqAbstractDTO.convertToEntity(entityDTO, getClassOfEntity());
+                entities.add(entity);
+            });
+            this.getRepository().deleteAll();
+            String info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
+                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+            logger.info(info);
+            super.registrarEventos(entities, ArqEvent.EVENT_TYPE_DELETE);
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+            logger.error(error);
+            throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
+                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
+        }
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public D buscarPorId(ID id) {
         if (!this.getRepository().findById(id).isPresent()) {
-            logger.info("buscarPorId no localizó el id: " + id);
-            ArqNotExistException e = new ArqNotExistException();
-            e.setMsgError("id: " + id);
-            RuntimeException exc = new RuntimeException(e);
-            throw exc;
+            throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
         }
         return ArqAbstractDTO.convertToDTO(this.getRepository().findById(id).get(), getClassOfDTO());
     }
