@@ -63,7 +63,8 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
             T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
             if (this.buscarPorId(id) == null) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
+                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+                        new Object[]{getClassOfEntity().getSimpleName(), id});
             }
             this.getRepository().save(entity);
             super.registrarEvento(entity, ArqEvent.EVENT_TYPE_UPDATE);
@@ -89,7 +90,8 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
             T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
             if (this.buscarPorId(id) == null) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
+                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+                        new Object[]{getClassOfEntity().getSimpleName(), id});
             }
             Query deleteQuery = new Query();
             Criteria criteria = Criteria.where("_id").is(id);
@@ -170,7 +172,8 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
         Optional<T> result = getRepository().findById((String) id);
         D item = result.isPresent() ? ArqAbstractDTO.convertToDTO(result.get(), getClassOfDTO()) : null;
         if (item == null) {
-            throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
+            throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+                    new Object[]{getClassOfEntity().getSimpleName(), id});
         }
         return item;
     }

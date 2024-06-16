@@ -55,7 +55,8 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
             T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
             if (!this.getRepository().findById(id).isPresent()) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
+                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+                        new Object[]{getClassOfEntity().getSimpleName(), id});
             }
             this.getRepository().save(entity);
             super.registrarEvento(entity, ArqEvent.EVENT_TYPE_UPDATE);
@@ -79,7 +80,8 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
             T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
             if (!this.getRepository().findById(id).isPresent()) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
+                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+                        new Object[]{getClassOfEntity().getSimpleName(), id});
             }
             this.getRepository().delete(entity);
             String info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
@@ -153,7 +155,8 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
     @Override
     public D buscarPorId(ID id) {
         if (!this.getRepository().findById(id).isPresent()) {
-            throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND, new Object[]{id});
+            throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+                    new Object[]{getClassOfEntity().getSimpleName(), id});
         }
         return ArqAbstractDTO.convertToDTO(this.getRepository().findById(id).get(), getClassOfDTO());
     }
