@@ -6,6 +6,10 @@ arch:
   event-broker-active: false
 
 spring:
+
+  profiles:
+    active: mongo  # o jpa
+
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver

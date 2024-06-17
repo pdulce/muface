@@ -1,4 +1,4 @@
-package com.mfc.microdiplomasWithMongo.domain.model;
+package com.mfc.microdiplomas.domain.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document(collection = "diplomas")
-public class Diploma {
+public class DiplomaDocument {
 
     @Id
     private String id;

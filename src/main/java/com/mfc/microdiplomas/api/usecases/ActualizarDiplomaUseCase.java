@@ -1,20 +1,15 @@
 package com.mfc.microdiplomas.api.usecases;
 
-import com.mfc.microdiplomas.domain.service.DiplomaServicePort;
+import com.mfc.infra.usecase.ArqUseCase;
 import com.mfc.microdiplomas.api.dto.DiplomaDTO;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.mfc.microdiplomas.domain.model.Diploma;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ActualizarDiplomaUseCase {
-
-    @Autowired
-    DiplomaServicePort diplomaCommandServicePort;
+public class ActualizarDiplomaUseCase extends ArqUseCase<Diploma, DiplomaDTO, Long> {
 
     public DiplomaDTO ejecutar(DiplomaDTO diplomaDTO) {
-        DiplomaDTO diplomaDTOSaved = this.diplomaCommandServicePort.actualizar(diplomaDTO);
-        this.diplomaCommandServicePort.setContinente(diplomaDTOSaved);
-        return diplomaDTOSaved;
+        return this.commandService.actualizar(diplomaDTO);
     }
 
 }

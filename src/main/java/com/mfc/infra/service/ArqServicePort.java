@@ -1,4 +1,4 @@
-package com.mfc.infra.output.port;
+package com.mfc.infra.service;
 
 import com.mfc.infra.dto.IArqDTO;
 
@@ -14,7 +14,8 @@ public interface ArqServicePort<T, D extends IArqDTO, ID> {
     int borrarEntidades(D entity);
 
     int borrarEntidades(List<D> entities);
-    void borrarEntidades();
+
+    void borrarTodos();
 
     D buscarPorId(ID id);
 

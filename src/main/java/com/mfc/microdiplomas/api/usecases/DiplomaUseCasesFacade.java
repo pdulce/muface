@@ -1,10 +1,6 @@
 package com.mfc.microdiplomas.api.usecases;
 
-import com.mfc.microdiplomas.api.usecases.ActualizarDiplomaUseCase;
-import com.mfc.microdiplomas.api.usecases.BorrarTodosLosDiplomasUseCase;
-import com.mfc.microdiplomas.api.usecases.ConsultasDiplomasUseCase;
 import com.mfc.microdiplomas.api.dto.DiplomaDTO;
-import com.mfc.microdiplomas.api.usecases.CrearDiplomaUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,12 +29,10 @@ public class DiplomaUseCasesFacade {
     }
 
     public void borrarTodosLosDiplomas() {
-
         this.borrarTodosLosDiplomasUseCase.ejecutar();
     }
 
     public List<DiplomaDTO> consultarTodosLosDiplomas() {
-
         return this.consultasDiplomasUseCase.consultarTodos();
     }
 
@@ -50,10 +44,6 @@ public class DiplomaUseCasesFacade {
         return this.consultasDiplomasUseCase.consultarDiplomasPorNombreClientes(name);
     }
 
-
-    public List<DiplomaDTO> consultaDiplomasDeRegionProvenza() {
-        return this.consultasDiplomasUseCase.getDiplomasDeLaRegionProvenza();
-    }
 
 
 }

@@ -47,12 +47,5 @@ public class DiplomaUsingFacadeAPI extends ArqBaseRestController {
         this.diplomaUseCasesFacade.borrarTodosLosDiplomas();
     }
 
-    /*** **/
-
-    @GetMapping(value = "getDiplomasDeLaRegionProvenza", produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<DiplomaDTO> getDiplomasDeLaRegionProvenza() {
-        return this.diplomaUseCasesFacade.consultaDiplomasDeRegionProvenza();
-    }
-
 
 }
