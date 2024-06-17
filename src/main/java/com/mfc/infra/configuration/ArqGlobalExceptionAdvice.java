@@ -2,6 +2,7 @@ package com.mfc.infra.configuration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mfc.infra.exceptions.ArqBaseOperationsException;
+import com.mfc.infra.exceptions.NotExistException;
 import com.mfc.infra.utils.ArqConstantMessages;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
@@ -33,6 +34,13 @@ public class ArqGlobalExceptionAdvice {
                                                                   WebRequest request, Locale locale) {
         String errorMessage = messageSource.getMessage(ex.getCode(), ex.getArgs(), locale);
         return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(NotExistException.class)
+    public ResponseEntity<String> handleResourceNotFoundException(NotExistException ex,
+                                                                  WebRequest request, Locale locale) {
+        String errorMessage = messageSource.getMessage(ex.getCode(), ex.getArgs(), locale);
+        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(IndexOutOfBoundsException.class)

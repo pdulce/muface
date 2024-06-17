@@ -4,6 +4,7 @@ import com.mfc.infra.dto.ArqAbstractDTO;
 import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.event.ArqEvent;
 import com.mfc.infra.exceptions.ArqBaseOperationsException;
+import com.mfc.infra.exceptions.NotExistException;
 import com.mfc.infra.output.port.ArqServicePort;
 import com.mfc.infra.utils.ArqConstantMessages;
 import com.mfc.infra.utils.ArqConversionUtils;
@@ -55,7 +56,7 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
             T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
             if (!this.getRepository().findById(id).isPresent()) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+                throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
                         new Object[]{getClassOfEntity().getSimpleName(), id});
             }
             this.getRepository().save(entity);
@@ -80,7 +81,7 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
             T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
             if (!this.getRepository().findById(id).isPresent()) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+                throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
                         new Object[]{getClassOfEntity().getSimpleName(), id});
             }
             this.getRepository().delete(entity);
@@ -155,7 +156,7 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
     @Override
     public D buscarPorId(ID id) {
         if (!this.getRepository().findById(id).isPresent()) {
-            throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+            throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
                     new Object[]{getClassOfEntity().getSimpleName(), id});
         }
         return ArqAbstractDTO.convertToDTO(this.getRepository().findById(id).get(), getClassOfDTO());

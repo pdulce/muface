@@ -4,6 +4,7 @@ import com.mfc.infra.dto.ArqAbstractDTO;
 import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.event.ArqEvent;
 import com.mfc.infra.exceptions.ArqBaseOperationsException;
+import com.mfc.infra.exceptions.NotExistException;
 import com.mfc.infra.output.port.ArqServicePort;
 import com.mfc.infra.utils.ArqConstantMessages;
 import com.mfc.infra.utils.ArqConversionUtils;
@@ -63,7 +64,7 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
             T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
             if (this.buscarPorId(id) == null) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+                throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
                         new Object[]{getClassOfEntity().getSimpleName(), id});
             }
             this.getRepository().save(entity);
@@ -90,7 +91,7 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
             T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
             if (this.buscarPorId(id) == null) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+                throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
                         new Object[]{getClassOfEntity().getSimpleName(), id});
             }
             Query deleteQuery = new Query();
@@ -172,7 +173,7 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
         Optional<T> result = getRepository().findById((String) id);
         D item = result.isPresent() ? ArqAbstractDTO.convertToDTO(result.get(), getClassOfDTO()) : null;
         if (item == null) {
-            throw new ArqBaseOperationsException(ArqConstantMessages.RECORD_NOT_FOUND,
+            throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
                     new Object[]{getClassOfEntity().getSimpleName(), id});
         }
         return item;
