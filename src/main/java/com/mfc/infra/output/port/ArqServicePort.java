@@ -11,10 +11,10 @@ public interface ArqServicePort<T, D extends IArqDTO, ID> {
 
     D actualizar(D entity);
 
-    int borrarTodos(D entity);
+    int borrarEntidades(D entity);
 
-    int borrarTodos(List<D> entities);
-    void borrarTodos();
+    int borrarEntidades(List<D> entities);
+    void borrarEntidades();
 
     D buscarPorId(ID id);
 
