@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface DiplomaCommandRepository extends JpaRepository<Diploma, Long> {
+public interface DiplomaRepository extends JpaRepository<Diploma, Long> {
 
 
 

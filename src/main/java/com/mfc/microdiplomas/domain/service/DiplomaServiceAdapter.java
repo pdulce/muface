@@ -2,7 +2,7 @@ package com.mfc.microdiplomas.domain.service;
 
 import com.mfc.microdiplomas.domain.model.Diploma;
 import com.mfc.microdiplomas.api.dto.DiplomaDTO;
-import com.mfc.microdiplomas.domain.repository.DiplomaCommandRepository;
+import com.mfc.microdiplomas.domain.repository.DiplomaRepository;
 import com.mfc.infra.output.adapter.ArqServiceRelationalDBAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -17,7 +17,7 @@ public class DiplomaServiceAdapter extends ArqServiceRelationalDBAdapter<Diploma
         implements DiplomaServicePort {
 
     @Autowired
-    private DiplomaCommandRepository repository;
+    private DiplomaRepository repository;
 
     protected JpaRepository<Diploma, Long> getRepository() {
         return this.repository;

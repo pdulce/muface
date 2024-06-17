@@ -73,7 +73,9 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
                     new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
             logger.info(info);
             return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
-        } catch (ArqBaseOperationsException notExists) {
+        } catch (ArqBaseOperationsException opeExc) {
+            throw opeExc;
+        } catch (NotExistException notExists) {
             throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
@@ -103,7 +105,9 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
             logger.info(info);
             super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
             return 1;
-        } catch (ArqBaseOperationsException notExists) {
+        } catch (ArqBaseOperationsException opeExc) {
+            throw opeExc;
+        } catch (NotExistException notExists) {
             throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,

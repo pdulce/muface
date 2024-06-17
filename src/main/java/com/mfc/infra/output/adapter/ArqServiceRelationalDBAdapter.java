@@ -62,7 +62,9 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
             this.getRepository().save(entity);
             super.registrarEvento(entity, ArqEvent.EVENT_TYPE_UPDATE);
             return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
-        } catch (ArqBaseOperationsException notExists) {
+        } catch (ArqBaseOperationsException opeExc) {
+            throw opeExc;
+        } catch (NotExistException notExists) {
             throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
@@ -90,7 +92,9 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
             logger.info(info);
             super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
             return 1;
-        } catch (ArqBaseOperationsException notExists) {
+        } catch (ArqBaseOperationsException opeExc) {
+            throw opeExc;
+        } catch (NotExistException notExists) {
             throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,
