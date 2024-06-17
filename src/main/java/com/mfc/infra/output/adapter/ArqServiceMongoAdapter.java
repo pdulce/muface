@@ -86,7 +86,7 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
 
     @Override
     @Transactional
-    public int borrar(D entityDto) {
+    public int borrarTodos(D entityDto) {
         try {
             T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
@@ -116,10 +116,10 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
 
     @Override
     @Transactional
-    public int borrar(List<D> entities) {
+    public int borrarTodos(List<D> entities) {
         try{
             entities.forEach((entityDTO) -> {
-                borrar(entityDTO);
+                borrarTodos(entityDTO);
             });
             String info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
                     new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
@@ -138,7 +138,7 @@ public abstract class ArqServiceMongoAdapter<T, D extends IArqDTO, ID> extends A
 
     @Override
     @Transactional
-    public void borrar() {
+    public void borrarTodos() {
         try {
             List<T> entities = new ArrayList<>();
             buscarTodos().forEach((entityDTO) -> {

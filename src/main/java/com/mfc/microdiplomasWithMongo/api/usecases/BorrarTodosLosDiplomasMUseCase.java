@@ -11,7 +11,7 @@ public class BorrarTodosLosDiplomasMUseCase {
     DiplomaMServicePort diplomaCommandServicePort;
 
     public void ejecutar() {
-        diplomaCommandServicePort.borrar();
+        diplomaCommandServicePort.borrarTodos();
     }
 
 }

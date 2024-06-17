@@ -76,7 +76,7 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
-    public int borrar(D entityDto) {
+    public int borrarTodos(D entityDto) {
         try {
             T entity = ArqAbstractDTO.convertToEntity(entityDto, getClassOfEntity());
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
@@ -104,11 +104,11 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
-    public int borrar(List<D> entities) {
+    public int borrarTodos(List<D> entities) {
         try {
             AtomicInteger counter = new AtomicInteger();
             entities.forEach((entityDTO) -> {
-                this.borrar(entityDTO);
+                this.borrarTodos(entityDTO);
                 counter.getAndIncrement();
                 T entity = ArqAbstractDTO.convertToEntity(entityDTO, getClassOfEntity());
                 super.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
@@ -131,7 +131,7 @@ public abstract class ArqServiceRelationalDBAdapter<T, D extends IArqDTO, ID> ex
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
-    public void borrar() {
+    public void borrarTodos() {
         try{
             List<T> entities = new ArrayList<>();
             buscarTodos().forEach((entityDTO) -> {
