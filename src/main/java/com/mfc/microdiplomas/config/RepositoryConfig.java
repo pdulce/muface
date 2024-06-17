@@ -3,8 +3,6 @@ package com.mfc.microdiplomas.config;
 import com.mfc.infra.repository.ArqMongoAdapterRepository;
 import com.mfc.infra.repository.ArqPortRepository;
 import com.mfc.infra.repository.ArqRelationalAdapterRepository;
-import com.mfc.infra.service.ArqGenericService;
-import com.mfc.microdiplomas.api.dto.DiplomaDTO;
 import com.mfc.microdiplomas.domain.model.Diploma;
 import com.mfc.microdiplomas.domain.model.DiplomaDocument;
 import org.springframework.context.annotation.Bean;
@@ -35,19 +33,6 @@ public class RepositoryConfig {
         repository.setJpaRepository(jpaRepository);
         return repository;
     }
-
-    /*@Bean
-    @Profile("mongo")
-    public ArqGenericService<DiplomaDocument, DiplomaDTO, Long>
-        diplomaDocumentService(ArqPortRepository<DiplomaDocument, Long> repository) {
-        return new ArqGenericService<>(repository, DiplomaDTO.class);
-    }
-
-    @Bean
-    @Profile("jpa")
-    public ArqGenericService<Diploma, DiplomaDTO, Long> diplomaService(ArqPortRepository<Diploma, Long> repository) {
-        return new ArqGenericService<>(repository, DiplomaDTO.class);
-    }*/
 
     /*** definir el resto de beans de cada entidad/document para Relational Databases o Mongo **/
 
