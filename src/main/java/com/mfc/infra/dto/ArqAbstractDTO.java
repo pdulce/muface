@@ -50,7 +50,7 @@ public abstract class ArqAbstractDTO implements IArqDTO {
                         if (dtoField.getType().equals(entityField.getType())) {
                             Object value = entityField.get(entity);
                             dtoField.set(dto, value);
-                        } else {
+                        } else if (entityField.get(entity) != null){
                             if (dtoField.getType().getSimpleName().contentEquals("String")) {
                                 Object value = entityField.get(entity);
                                 dtoField.set(dto, value.toString());
@@ -103,7 +103,7 @@ public abstract class ArqAbstractDTO implements IArqDTO {
                         if (entityField.getType().equals(dtoField.getType())) {
                             Object value = dtoField.get(dto);
                             entityField.set(entity, value);
-                        } else {
+                        } else if (entityField.get(entity) != null){
                             if (entityField.getType().getSimpleName().contentEquals("String")) {
                                 Object value = entityField.get(entity);
                                 dtoField.set(dto, value.toString());
