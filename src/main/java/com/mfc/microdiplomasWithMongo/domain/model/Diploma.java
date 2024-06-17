@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document(collection = "diplomas")
-public class DiplomaM {
+public class Diploma {
 
     @Id
     private String id;

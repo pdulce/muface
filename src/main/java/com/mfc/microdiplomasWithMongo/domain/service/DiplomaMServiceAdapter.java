@@ -2,7 +2,7 @@ package com.mfc.microdiplomasWithMongo.domain.service;
 
 import com.mfc.infra.output.adapter.ArqServiceMongoAdapter;
 import com.mfc.microdiplomasWithMongo.api.dto.DiplomaDTO;
-import com.mfc.microdiplomasWithMongo.domain.model.DiplomaM;
+import com.mfc.microdiplomasWithMongo.domain.model.Diploma;
 import com.mfc.microdiplomasWithMongo.domain.repository.DiplomaDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -13,22 +13,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class DiplomaMServiceAdapter extends ArqServiceMongoAdapter<DiplomaM, DiplomaDTO, String>
+public class DiplomaMServiceAdapter extends ArqServiceMongoAdapter<Diploma, DiplomaDTO, String>
         implements DiplomaMServicePort {
 
     @Autowired
     private DiplomaDocumentRepository repository;
 
-    protected MongoRepository<DiplomaM, String> getRepository() {
+    protected MongoRepository<Diploma, String> getRepository() {
         return this.repository;
     }
 
     @Override
     public List<DiplomaDTO> getDiplomasDeLaRegionProvenza() {
         List<DiplomaDTO> diplomaDTOS = new ArrayList<>();
-        DiplomaM dFilter = new DiplomaM();
+        Diploma dFilter = new Diploma();
         dFilter.setRegion("Provenza");
-        Example<DiplomaM> example = Example.of(dFilter);
+        Example<Diploma> example = Example.of(dFilter);
         repository.findAll(example).forEach((diploma -> {
             diplomaDTOS.add(DiplomaDTO.convertToDTO(diploma, DiplomaDTO.class));
         }));
