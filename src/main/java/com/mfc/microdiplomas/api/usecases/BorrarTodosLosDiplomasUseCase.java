@@ -1,14 +1,14 @@
 package com.mfc.microdiplomas.api.usecases;
 
-import com.mfc.infra.usecase.ArqUseCase;
-import com.mfc.microdiplomas.api.dto.DiplomaDTO;
-import com.mfc.microdiplomas.domain.model.Diploma;
+import com.mfc.infra.service.ArqGenericService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BorrarTodosLosDiplomasUseCase extends ArqUseCase<Diploma, DiplomaDTO, Long> {
+public class BorrarTodosLosDiplomasUseCase {
 
-
+    @Autowired
+    ArqGenericService commandService;
     public void ejecutar() {
         this.commandService.borrarTodos();
     }

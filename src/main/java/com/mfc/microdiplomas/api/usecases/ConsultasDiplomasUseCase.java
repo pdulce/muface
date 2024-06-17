@@ -1,15 +1,17 @@
 package com.mfc.microdiplomas.api.usecases;
 
-import com.mfc.infra.usecase.ArqUseCase;
-import com.mfc.microdiplomas.domain.model.Diploma;
+import com.mfc.infra.service.ArqGenericService;
 import com.mfc.microdiplomas.api.dto.DiplomaDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class ConsultasDiplomasUseCase extends ArqUseCase<Diploma, DiplomaDTO, Long> {
+public class ConsultasDiplomasUseCase {
 
+    @Autowired
+    ArqGenericService commandService;
     public List<DiplomaDTO> consultarDiplomasDeCliente(Long customerId) {
         DiplomaDTO diplomaDTOFilter = new DiplomaDTO();
         diplomaDTOFilter.setIdCliente(customerId);

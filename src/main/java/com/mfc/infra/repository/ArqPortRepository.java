@@ -5,6 +5,8 @@ import java.util.Optional;
 
 public interface ArqPortRepository<T, ID> {
 
+    Class<T> getClassOfEntity();
+
     T save(T entity);
     void delete(T entity);
 
@@ -16,7 +18,5 @@ public interface ArqPortRepository<T, ID> {
     List<T> findByExampleStricted(T example);
 
     List<T> findByExampleNotStricted(T example);
-
-    String getCollectionName();
 
 }

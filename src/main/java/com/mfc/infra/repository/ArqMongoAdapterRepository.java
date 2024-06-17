@@ -2,11 +2,9 @@ package com.mfc.infra.repository;
 
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.domain.Example;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,8 +13,19 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
     private MongoRepository<T, ID> mongoRepository;
     private MongoOperations mongoOperations;
 
-    public void setMongoRepository(MongoRepository<?, ?> mongoRepository) {
-        this.mongoRepository = (MongoRepository<T, ID>) mongoRepository;
+    protected final Class entityClass;
+
+    @SuppressWarnings("unchecked")
+    public ArqMongoAdapterRepository(Class classZ) {
+        this.entityClass = classZ.getClass();
+    }
+
+    public Class<T> getClassOfEntity() {
+        return this.entityClass;
+    }
+
+    public void setMongoRepository(MongoRepository<T, ID> mongoRepository) {
+        this.mongoRepository = mongoRepository;
     }
     public void setMongoOperations(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
@@ -73,18 +82,6 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
         // Crear el Example con el matcher configurado
         Example<T> exampleMongo = Example.of(example, matcher);
         return mongoRepository.findAll(exampleMongo);
-    }
-
-    public String getCollectionName() {
-        Class<T> clazz = (Class<T>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[0];
-        if (clazz.isAnnotationPresent(Document.class)) {
-            Document document = clazz.getAnnotation(Document.class);
-            return document.collection();
-        } else {
-            return "";
-        }
     }
 
 

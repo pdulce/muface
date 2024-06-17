@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class DiplomaDocument {
 
     @Id
-    private String id;
+    private Long id;
 
     private Long idcustomer;
 

@@ -4,7 +4,6 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Example;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,8 +12,19 @@ public class ArqRelationalAdapterRepository<T, ID> implements ArqPortRepository<
 
     private JpaRepository<T, ID> jpaRepository;
 
-    public void setJpaRepository(JpaRepository<?, ?> jpaRepository) {
-        this.jpaRepository = (JpaRepository<T, ID>) jpaRepository;
+    public void setJpaRepository(JpaRepository<T, ID> jpaRepository) {
+        this.jpaRepository = jpaRepository;
+    }
+
+    protected final Class<T> entityClass;
+
+    @SuppressWarnings("unchecked")
+    public ArqRelationalAdapterRepository(Class<T> classZ) {
+        this.entityClass = classZ;
+    }
+
+    public Class<T> getClassOfEntity() {
+        return this.entityClass;
     }
 
     @Override
@@ -66,17 +76,6 @@ public class ArqRelationalAdapterRepository<T, ID> implements ArqPortRepository<
         // Crear el Example con el matcher configurado
         Example<T> exampleJPA = Example.of(example, matcher);
         return jpaRepository.findAll(exampleJPA);
-    }
-
-    public String getCollectionName() {
-        return getClassOfEntity().getSimpleName();
-    }
-
-    private Class<T> getClassOfEntity() {
-        Class<T> entityClass = (Class<T>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[0];
-        return entityClass;
     }
 
 }
