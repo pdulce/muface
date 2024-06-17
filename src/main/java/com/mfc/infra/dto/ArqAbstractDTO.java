@@ -50,6 +50,17 @@ public abstract class ArqAbstractDTO implements IArqDTO {
                         if (dtoField.getType().equals(entityField.getType())) {
                             Object value = entityField.get(entity);
                             dtoField.set(dto, value);
+                        } else {
+                            if (dtoField.getType().getSimpleName().contentEquals("String")) {
+                                Object value = entityField.get(entity);
+                                dtoField.set(dto, value.toString());
+                            } else if (dtoField.getType().getSimpleName().contentEquals("Long")) {
+                                Object value = entityField.get(entity);
+                                dtoField.set(dto, Long.valueOf(value.toString()));
+                            } else if (dtoField.getType().getSimpleName().contentEquals("Integer")) {
+                                Object value = entityField.get(entity);
+                                dtoField.set(dto, Long.valueOf(value.toString()));
+                            }
                         }
                     }
                 }
@@ -92,6 +103,17 @@ public abstract class ArqAbstractDTO implements IArqDTO {
                         if (entityField.getType().equals(dtoField.getType())) {
                             Object value = dtoField.get(dto);
                             entityField.set(entity, value);
+                        } else {
+                            if (entityField.getType().getSimpleName().contentEquals("String")) {
+                                Object value = entityField.get(entity);
+                                dtoField.set(dto, value.toString());
+                            } else if (entityField.getType().getSimpleName().contentEquals("Long")) {
+                                Object value = entityField.get(entity);
+                                dtoField.set(dto, Long.valueOf(value.toString()));
+                            } else if (entityField.getType().getSimpleName().contentEquals("Integer")) {
+                                Object value = entityField.get(entity);
+                                dtoField.set(dto, Long.valueOf(value.toString()));
+                            }
                         }
                     }
                 }

@@ -10,7 +10,7 @@ import java.util.Map;
 @Data
 public class DiplomaDTO extends ArqAbstractDTO {
 
-    private Long id;
+    private String id;
 
     private Long idCliente;
 

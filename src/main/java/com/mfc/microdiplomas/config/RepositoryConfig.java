@@ -18,9 +18,9 @@ public class RepositoryConfig {
     // crear un hashmap de parejas Entity y DTO y se las pasas al constructor de ArqMongoAdapterRepository y ArqRelationalAdapterRepository
     @Bean
     @Profile("mongo")
-    public ArqPortRepository<DiplomaDocument, Long> mongoCommonRepository(MongoRepository<DiplomaDocument, Long> mongoRepository,
+    public ArqPortRepository<DiplomaDocument, String> mongoCommonRepository(MongoRepository<DiplomaDocument, String> mongoRepository,
                                                                             MongoOperations mongoOperations) {
-        ArqMongoAdapterRepository<DiplomaDocument, Long> repository = new ArqMongoAdapterRepository<>(DiplomaDocument.class);
+        ArqMongoAdapterRepository<DiplomaDocument, String> repository = new ArqMongoAdapterRepository<>(DiplomaDocument.class);
         repository.setMongoRepository(mongoRepository);
         repository.setMongoOperations(mongoOperations);
         return repository;
