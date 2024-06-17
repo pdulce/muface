@@ -13,11 +13,11 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
     private MongoRepository<T, ID> mongoRepository;
     private MongoOperations mongoOperations;
 
-    protected final Class entityClass;
+    protected final Class<T> entityClass;
 
     @SuppressWarnings("unchecked")
-    public ArqMongoAdapterRepository(Class classZ) {
-        this.entityClass = classZ.getClass();
+    public ArqMongoAdapterRepository(Class<T> classZ) {
+        this.entityClass = classZ;
     }
 
     public Class<T> getClassOfEntity() {

@@ -8,7 +8,7 @@ arch:
 spring:
 
   profiles:
-    active: jpa  # o mongo
+    active: mongo # o jpa
 
   datasource:
     url: jdbc:h2:mem:testdb
