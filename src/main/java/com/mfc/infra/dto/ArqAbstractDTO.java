@@ -101,11 +101,11 @@ public abstract class ArqAbstractDTO implements IArqDTO {
                             entityField.set(entity, value);
                         } else if (value != null){
                             if (entityField.getType().getSimpleName().contentEquals("String")) {
-                                dtoField.set(dto, value.toString());
+                                entityField.set(entity, value.toString());
                             } else if (entityField.getType().getSimpleName().contentEquals("Long")) {
-                                dtoField.set(dto, Long.valueOf(value.toString()));
+                                entityField.set(entity, Long.valueOf(value.toString()));
                             } else if (entityField.getType().getSimpleName().contentEquals("Integer")) {
-                                dtoField.set(dto, Long.valueOf(value.toString()));
+                                entityField.set(entity, Long.valueOf(value.toString()));
                             }
                         }
                     }
