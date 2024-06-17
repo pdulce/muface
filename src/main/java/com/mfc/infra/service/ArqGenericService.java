@@ -51,15 +51,15 @@ public class ArqGenericService<T, D extends IArqDTO, ID> implements ArqServicePo
             entityDto = ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
             this.registrarEvento(entity, ArqEvent.EVENT_TYPE_CREATE);
             String info = messageSource.getMessage(ArqConstantMessages.CREATED_OK,
-                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+                    new Object[]{this.commonRepository.getCollectionName()}, new Locale("es"));
             logger.info(info);
             return entityDto;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.CREATED_KO,
-                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+                    new Object[]{this.commonRepository.getCollectionName(), exc.getCause()}, new Locale("es"));
             logger.error(error);
             throw new ArqBaseOperationsException(ArqConstantMessages.CREATED_KO,
-                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
+                    new Object[]{this.commonRepository.getCollectionName(), exc.getCause()});
         }
     }
 
@@ -71,12 +71,12 @@ public class ArqGenericService<T, D extends IArqDTO, ID> implements ArqServicePo
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
             if (this.buscarPorId(id) == null) {
                 throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
-                        new Object[]{getClassOfEntity().getSimpleName(), id});
+                        new Object[]{this.commonRepository.getCollectionName(), id});
             }
             this.commonRepository.save(entity);
             this.registrarEvento(entity, ArqEvent.EVENT_TYPE_UPDATE);
             String info = messageSource.getMessage(ArqConstantMessages.UPDATED_OK,
-                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+                    new Object[]{this.commonRepository.getCollectionName()}, new Locale("es"));
             logger.info(info);
             return ArqAbstractDTO.convertToDTO(entity, getClassOfDTO());
         } catch (ArqBaseOperationsException opeExc) {
@@ -85,10 +85,10 @@ public class ArqGenericService<T, D extends IArqDTO, ID> implements ArqServicePo
             throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
-                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+                    new Object[]{this.commonRepository.getCollectionName(), exc.getCause()}, new Locale("es"));
             logger.error(error);
             throw new ArqBaseOperationsException(ArqConstantMessages.UPDATED_KO,
-                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
+                    new Object[]{this.commonRepository.getCollectionName(), exc.getCause()});
         }
     }
 
@@ -100,11 +100,11 @@ public class ArqGenericService<T, D extends IArqDTO, ID> implements ArqServicePo
             ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
             if (this.buscarPorId(id) == null) {
                 throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
-                        new Object[]{getClassOfEntity().getSimpleName(), id});
+                        new Object[]{this.commonRepository.getCollectionName(), id});
             }
             this.commonRepository.delete(entity);
             String info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
-                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+                    new Object[]{this.commonRepository.getCollectionName()}, new Locale("es"));
             logger.info(info);
             this.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
             return 1;
@@ -114,10 +114,10 @@ public class ArqGenericService<T, D extends IArqDTO, ID> implements ArqServicePo
             throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,
-                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+                    new Object[]{this.commonRepository.getCollectionName(), exc.getCause()}, new Locale("es"));
             logger.error(error);
             throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
-                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
+                    new Object[]{this.commonRepository.getCollectionName(), exc.getCause()});
         }
     }
 
@@ -129,17 +129,17 @@ public class ArqGenericService<T, D extends IArqDTO, ID> implements ArqServicePo
                 borrarEntidades(entityDTO);
             });
             String info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
-                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+                    new Object[]{this.commonRepository.getCollectionName()}, new Locale("es"));
             logger.info(info);
             return entities.size();
         } catch (ArqBaseOperationsException notExists) {
             throw notExists;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
-                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+                    new Object[]{this.commonRepository.getCollectionName(), exc.getCause()}, new Locale("es"));
             logger.error(error);
             throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
-                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
+                    new Object[]{this.commonRepository.getCollectionName(), exc.getCause()});
         }
     }
 
@@ -154,15 +154,15 @@ public class ArqGenericService<T, D extends IArqDTO, ID> implements ArqServicePo
             });
             this.commonRepository.deleteEntities(entities);
             String info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
-                    new Object[]{getClassOfEntity().getSimpleName()}, new Locale("es"));
+                    new Object[]{this.commonRepository.getCollectionName()}, new Locale("es"));
             logger.info(info);
             this.registrarEventos(entities, ArqEvent.EVENT_TYPE_DELETE);
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
-                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()}, new Locale("es"));
+                    new Object[]{this.commonRepository.getCollectionName(), exc.getCause()}, new Locale("es"));
             logger.error(error);
             throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
-                    new Object[]{getClassOfEntity().getSimpleName(), exc.getCause()});
+                    new Object[]{this.commonRepository.getCollectionName(), exc.getCause()});
         }
     }
 
@@ -172,7 +172,7 @@ public class ArqGenericService<T, D extends IArqDTO, ID> implements ArqServicePo
         D item = result.isPresent() ? ArqAbstractDTO.convertToDTO(result.get(), getClassOfDTO()) : null;
         if (item == null) {
             throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
-                    new Object[]{getClassOfEntity().getSimpleName(), id});
+                    new Object[]{this.commonRepository.getCollectionName(), id});
         }
         return item;
     }

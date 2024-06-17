@@ -5,7 +5,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.domain.Example;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -16,8 +15,8 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
     private MongoRepository<T, ID> mongoRepository;
     private MongoOperations mongoOperations;
 
-    public void setMongoRepository(MongoRepository<T, ID> mongoRepository) {
-        this.mongoRepository = mongoRepository;
+    public void setMongoRepository(MongoRepository<?, ?> mongoRepository) {
+        this.mongoRepository = (MongoRepository<T, ID>) mongoRepository;
     }
     public void setMongoOperations(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
@@ -35,8 +34,9 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
 
     @Override
     public void deleteEntities(List<T> entities) {
-        String collectionName = getCollectionName(getClassOfEntity());
-        mongoOperations.dropCollection(collectionName);
+        entities.forEach((entity) -> {
+            delete(entity);
+        });
     }
 
     @Override
@@ -75,8 +75,10 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
         return mongoRepository.findAll(exampleMongo);
     }
 
-
-    private String getCollectionName(Class<?> clazz) {
+    public String getCollectionName() {
+        Class<T> clazz = (Class<T>) ((ParameterizedType) getClass()
+                .getGenericSuperclass())
+                .getActualTypeArguments()[0];
         if (clazz.isAnnotationPresent(Document.class)) {
             Document document = clazz.getAnnotation(Document.class);
             return document.collection();
@@ -85,12 +87,6 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
         }
     }
 
-    private Class<T> getClassOfEntity() {
-        Class<T> entityClass = (Class<T>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[0];
-        return entityClass;
-    }
 
 }
 

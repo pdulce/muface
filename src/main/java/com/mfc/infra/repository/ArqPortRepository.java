@@ -17,4 +17,6 @@ public interface ArqPortRepository<T, ID> {
 
     List<T> findByExampleNotStricted(T example);
 
+    String getCollectionName();
+
 }
