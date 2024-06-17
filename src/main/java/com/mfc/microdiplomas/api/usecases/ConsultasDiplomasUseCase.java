@@ -10,8 +10,13 @@ import java.util.List;
 @Component
 public class ConsultasDiplomasUseCase {
 
+    protected ArqGenericService commandService;
+
     @Autowired
-    ArqGenericService commandService;
+    public ConsultasDiplomasUseCase(ArqGenericService commandService) {
+        this.commandService = commandService;
+        this.commandService.setDtoClass(DiplomaDTO.class);
+    }
     public List<DiplomaDTO> consultarDiplomasDeCliente(Long customerId) {
         DiplomaDTO diplomaDTOFilter = new DiplomaDTO();
         diplomaDTOFilter.setIdCliente(customerId);

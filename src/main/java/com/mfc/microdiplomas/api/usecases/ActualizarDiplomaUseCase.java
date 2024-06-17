@@ -9,8 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class ActualizarDiplomaUseCase {
 
+    protected ArqGenericService commandService;
+
     @Autowired
-    ArqGenericService commandService;
+    public ActualizarDiplomaUseCase(ArqGenericService commandService) {
+        this.commandService = commandService;
+        this.commandService.setDtoClass(DiplomaDTO.class);
+    }
 
     public DiplomaDTO ejecutar(DiplomaDTO diplomaDTO) {
         return (DiplomaDTO) this.commandService.actualizar(diplomaDTO);

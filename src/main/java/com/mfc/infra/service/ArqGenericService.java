@@ -17,7 +17,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -40,11 +39,14 @@ public class ArqGenericService<T, D extends IArqDTO, ID> implements ArqServicePo
 
     private final ArqPortRepository<T, ID> commonRepository;
 
-    private final Class<D> dtoClass;
+    private Class<D> dtoClass;
 
     @Autowired
-    public ArqGenericService(ArqPortRepository<T, ID> commonRepository, Class<D> dtoClass) {
+    public ArqGenericService(ArqPortRepository<T, ID> commonRepository) {
         this.commonRepository = commonRepository;
+    }
+
+    public void setDtoClass(Class<D> dtoClass) {
         this.dtoClass = dtoClass;
     }
 
@@ -257,10 +259,7 @@ public class ArqGenericService<T, D extends IArqDTO, ID> implements ArqServicePo
 
 
     private Class<D> getClassOfDTO() {
-        Class<D> entityClass = (Class<D>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[1];
-        return entityClass;
+        return this.dtoClass;
     }
 
     private List<D> convertToDTOList(List<T> entities) {

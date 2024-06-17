@@ -36,7 +36,7 @@ public class RepositoryConfig {
         return repository;
     }
 
-    @Bean
+    /*@Bean
     @Profile("mongo")
     public ArqGenericService<DiplomaDocument, DiplomaDTO, Long>
         diplomaDocumentService(ArqPortRepository<DiplomaDocument, Long> repository) {
@@ -47,7 +47,7 @@ public class RepositoryConfig {
     @Profile("jpa")
     public ArqGenericService<Diploma, DiplomaDTO, Long> diplomaService(ArqPortRepository<Diploma, Long> repository) {
         return new ArqGenericService<>(repository, DiplomaDTO.class);
-    }
+    }*/
 
     /*** definir el resto de beans de cada entidad/document para Relational Databases o Mongo **/
 
