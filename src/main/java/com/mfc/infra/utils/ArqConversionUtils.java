@@ -57,6 +57,16 @@ public class ArqConversionUtils {
         }
     }
 
+    public static String objectToJsonString(Object obj) {
+        try {
+            return objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     public static <T> Map<String, Object> objectToMap(T object) {
         try {
             return objectMapper.convertValue(object, new TypeReference<Map<String, Object>>() {

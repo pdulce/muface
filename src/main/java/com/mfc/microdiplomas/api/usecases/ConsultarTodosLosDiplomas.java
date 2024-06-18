@@ -6,19 +6,23 @@ import com.mfc.microdiplomas.api.dto.DiplomaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
-public class CrearDiplomaUseCase extends ArqAbstractUseCase<DiplomaDTO, DiplomaDTO> {
+public class ConsultarTodosLosDiplomas extends ArqAbstractUseCase<List<DiplomaDTO>, DiplomaDTO> {
 
     @Autowired
-    public CrearDiplomaUseCase(ArqGenericService commandService) {
+    public ConsultarTodosLosDiplomas(ArqGenericService commandService) {
         super.setParamType(DiplomaDTO.class);
         this.commandService = commandService;
         this.commandService.setDtoClass(DiplomaDTO.class);
     }
 
-    @Override
-    public DiplomaDTO execute(DiplomaDTO diplomaDTO) {
-        return (DiplomaDTO) this.commandService.crear(diplomaDTO);
+
+    public List<DiplomaDTO> execute(DiplomaDTO all) {
+        return this.commandService.buscarTodos();
     }
+
 
 }
