@@ -24,8 +24,8 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
         return this.entityClass;
     }
 
-    public void setMongoRepository(MongoRepository<T, ID> mongoRepository) {
-        this.mongoRepository = mongoRepository;
+    public void setMongoRepository(MongoRepository<?, ID> mongoRepository) {
+        this.mongoRepository = (MongoRepository<T, ID>) mongoRepository;
     }
     public void setMongoOperations(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;

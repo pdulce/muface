@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+arch:
+  application-id: application-Id-sample
+  event-broker-active: false
+
+spring:
+
+  profiles:
+    active: jpa # mongo
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    platform: h2
+    initialize: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+  # query domain
+  data:
+    mongodb:
+      host: 192.168.1.137
+      port: 27017
+      uri: mongodb://test:test@192.168.1.137:27017/queryDomainDB
+      authentication-database: queryDomainDB
+      connectTimeout: 3000 # Tiempo de espera de conexión en milisegundos
+      socketTimeout: 3000 # Tiempo de espera de socket en milisegundos
+      connectionRetryAttempts: 3 # Número de intentos de conexión
+      connectionRetryInterval: 1000 # Intervalo entre intentos de conexión en milisegundos
+
+    sql:
+      init:
+        mode: always
+    jpa:
+      hibernate:
+        ddl-auto: update
+        show-sql: true
+      properties:
+        hibernate:
+          format_sql: true

@@ -16,11 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Profile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Transactional
 @Service
@@ -37,13 +35,18 @@ public class ArqGenericService<T, D extends IArqDTO, ID> implements ArqServicePo
     @Autowired
     MessageSource messageSource;
 
-    private final ArqPortRepository<T, ID> commonRepository;
+    private ArqPortRepository<T, ID> commonRepository;
 
     private Class<D> dtoClass;
 
     @Autowired
-    public ArqGenericService(ArqPortRepository<T, ID> commonRepository) {
-        this.commonRepository = commonRepository;
+    public ArqGenericService(Map<Class<?>, ArqPortRepository<?, ID>> commonRepositories) {
+        if (!commonRepositories.isEmpty()) {
+            ArqPortRepository<?, ID> commonRepo = commonRepositories.values().iterator().next();
+            this.commonRepository = (ArqPortRepository<T, ID>) commonRepo;
+        } else {
+            throw new RuntimeException("No hay repositorios definidos");
+        }
     }
 
     public void setDtoClass(Class<D> dtoClass) {

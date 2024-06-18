@@ -20,7 +20,7 @@ public class DiplomaDTO extends ArqAbstractDTO {
 
     private String regionOComarca;
 
-    /** campo calculado transiet que no está en el modelo (entidad-relacional o document-non-relational) **/
+    /** campo calculado transient que no está en el modelo (entidad-relacional o document-non-relational) **/
     private String continente;
 
     @JsonIgnore
