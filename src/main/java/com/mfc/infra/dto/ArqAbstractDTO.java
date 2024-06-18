@@ -3,6 +3,7 @@ package com.mfc.infra.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 
 public abstract class ArqAbstractDTO implements IArqDTO {
@@ -10,6 +11,11 @@ public abstract class ArqAbstractDTO implements IArqDTO {
     @JsonIgnore
     public abstract Map<String, String> getMapaConversion();
 
+    @JsonIgnore
+    public abstract List<String> getModelEntities();
+
+    @JsonIgnore
+    public abstract String getEntidadPrincipal();
 
     private static Field getFieldByName(Class<?> clazz, String fieldName) {
         try {
@@ -19,14 +25,14 @@ public abstract class ArqAbstractDTO implements IArqDTO {
         }
     }
 
-    public static <T, D> D convertToDTO(T entity, Class<D> dtoClass) {
+    public static void incluirEnDTO(Object entity, IArqDTO dto) {
         try {
-            IArqDTO dto = (IArqDTO) dtoClass.getDeclaredConstructor().newInstance();
+            //IArqDTO dto = (IArqDTO) dtoClass.getDeclaredConstructor().newInstance();
             if (dto.getMapaConversion() == null || dto.getMapaConversion().isEmpty()) {
                 for (Field entityField : entity.getClass().getDeclaredFields()) {
                     entityField.setAccessible(true);
                     Object value = entityField.get(entity);
-                    for (Field dtoField : dtoClass.getDeclaredFields()) {
+                    for (Field dtoField : dto.getClass().getDeclaredFields()) {
                         dtoField.setAccessible(true);
                         if (dtoField.getName().equals(entityField.getName()) &&
                                 dtoField.getType().equals(entityField.getType())) {
@@ -41,7 +47,7 @@ public abstract class ArqAbstractDTO implements IArqDTO {
                     String dtoFieldName = entry.getKey();
 
                     Field entityField = getFieldByName(entity.getClass(), entityFieldName);
-                    Field dtoField = getFieldByName(dtoClass, dtoFieldName);
+                    Field dtoField = getFieldByName(dto.getClass(), dtoFieldName);
 
                     if (entityField != null && dtoField != null) {
                         entityField.setAccessible(true);
@@ -61,7 +67,6 @@ public abstract class ArqAbstractDTO implements IArqDTO {
                     }
                 }
             }
-            return (D) dto;
         } catch (Exception e) {
             throw new RuntimeException("Error in method::convertToDTO:: converting entity to DTO", e);
         }

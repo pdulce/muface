@@ -13,18 +13,20 @@ import java.util.Map;
 @Configuration
 public class RepositoryConfigDiplomas extends ArqRepositoriesConfig {
 
-
+    @Override
     public Map<Class<?>, Class<?>> getRepositoryJpaMap() {
         Map<Class<?>, Class<?>> mapa = new HashMap<>();
         mapa.put(Diploma.class, DiplomaJPARepository.class);
         return mapa;
     }
 
+    @Override
     public Map<Class<?>, Class<?>> getRepositoryMongoMap() {
         Map<Class<?>, Class<?>> mapa = new HashMap<>();
         mapa.put(DiplomaDocument.class, DiplomaMongoRepository.class);
         return mapa;
     }
+
 
 }
 

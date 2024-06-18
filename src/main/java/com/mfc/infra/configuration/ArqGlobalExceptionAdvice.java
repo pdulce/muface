@@ -6,6 +6,7 @@ import com.mfc.infra.exceptions.NotExistException;
 import com.mfc.infra.utils.ArqConstantMessages;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -90,6 +91,13 @@ public class ArqGlobalExceptionAdvice {
                 .stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
         return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({NotImplementedException.class})
+    public ResponseEntity<String> handleValidationErrors(NotImplementedException ex) {
+        return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+    }
+
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
         Map<String, List<String>> errorResponse = new HashMap<>();

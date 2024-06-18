@@ -2,9 +2,12 @@ package com.mfc.microdiplomas.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mfc.infra.dto.ArqAbstractDTO;
+import com.mfc.microdiplomas.domain.model.Diploma;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -40,6 +43,17 @@ public class DiplomaDTO extends ArqAbstractDTO {
 
     public Map<String, String> getMapaConversion() {
         return mapaConversion;
+    }
+
+    @Override
+    public List<String> getModelEntities() {
+        List<String> ar = new ArrayList<>();
+        ar.add(Diploma.class.getName());
+        return ar;
+    }
+
+    public String getEntidadPrincipal() {
+        return Diploma.class.getName();
     }
 
 

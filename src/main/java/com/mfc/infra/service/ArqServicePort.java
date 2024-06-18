@@ -5,19 +5,19 @@ import com.mfc.infra.dto.IArqDTO;
 import java.util.List;
 
 
-public interface ArqServicePort<T, D extends IArqDTO, ID> {
+public interface ArqServicePort<D extends IArqDTO, ID> {
 
     D crear(D entity);
 
-    D actualizar(D entity);
+    D actualizar(D entity) throws NoSuchMethodException;
+
+    D buscarPorId(ID id);
 
     int borrarEntidades(D entity);
 
     int borrarEntidades(List<D> entities);
 
     void borrarTodos();
-
-    D buscarPorId(ID id);
 
     List<D> buscarTodos();
 
