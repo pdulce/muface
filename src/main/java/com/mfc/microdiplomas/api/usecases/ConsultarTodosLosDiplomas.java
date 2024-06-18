@@ -3,7 +3,6 @@ package com.mfc.microdiplomas.api.usecases;
 import com.mfc.infra.command.ArqAbstractUseCase;
 import com.mfc.infra.service.ArqGenericService;
 import com.mfc.microdiplomas.api.dto.DiplomaDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.List;
 public class ConsultarTodosLosDiplomas extends ArqAbstractUseCase<List<DiplomaDTO>, DiplomaDTO> {
 
 
-    @Autowired
     public ConsultarTodosLosDiplomas(ArqGenericService commandService) {
         super(commandService);
     }
