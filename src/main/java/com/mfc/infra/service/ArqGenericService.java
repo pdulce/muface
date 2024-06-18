@@ -10,7 +10,6 @@ import com.mfc.infra.repository.ArqPortRepository;
 import com.mfc.infra.utils.ArqConstantMessages;
 import com.mfc.infra.utils.ArqConversionUtils;
 import jakarta.transaction.Transactional;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +80,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
             Class<D> dtoClass = (Class<D>) entityDto.getClass();
             D entityDtoResultado = dtoClass.getDeclaredConstructor().newInstance();
             // extraer todos los entities de este dto:
-            List<String> entidadesEnDto = entityDto.getModelEntities();
+            List<String> entidadesEnDto = getEntitiesOfDTO(entityDto);
             for (String entityName : entidadesEnDto) {
                 ArqPortRepository<Object, ID> commonRepository = (ArqPortRepository<Object, ID>)
                         this.commonRepositories.get(entityName);
@@ -116,7 +115,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
             Class<D> dtoClass = (Class<D>) entityDto.getClass();
             D entityDtoResultado = dtoClass.getDeclaredConstructor().newInstance();
             // extraer todos los entities de este dto:
-            List<String> entidadesEnDto = entityDto.getModelEntities();
+            List<String> entidadesEnDto = getEntitiesOfDTO(entityDto);
             for (String entityName : entidadesEnDto) {
                 ArqPortRepository<Object, ID> commonRepository = (ArqPortRepository<Object, ID>)
                         this.commonRepositories.get(entityName);
@@ -155,7 +154,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
             Class<D> dtoClass = (Class<D>) entityDto.getClass();
             D entityDtoResultado = dtoClass.getDeclaredConstructor().newInstance();
             // extraer todos los entities de este dto:
-            List<String> entidadesEnDto = entityDto.getModelEntities();
+            List<String> entidadesEnDto = getEntitiesOfDTO(entityDto);
             for (String entityName : entidadesEnDto) {
                 ArqPortRepository<?, ID> commonRepository = this.commonRepositories.get(entityName);
                 try {
@@ -210,7 +209,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
         try {
             D entityDto = dtoClass.getDeclaredConstructor().newInstance();
             // extraer todos los entities de este dto:
-            List<String> entidadesEnDto = entityDto.getModelEntities();
+            List<String> entidadesEnDto = getEntitiesOfDTO(entityDto);
             for (String entityName : entidadesEnDto) {
                 ArqPortRepository<Object, ID> commonRepository = (ArqPortRepository<Object, ID>)
                         this.commonRepositories.get(entityName);
@@ -240,9 +239,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
     public List<D> buscarTodos() {
         try {
             List<D> resultado = new ArrayList<>();
-            String entidadPrincipal = (dtoClass.getDeclaredConstructor().newInstance()).getEntidadPrincipal();
-            ArqPortRepository<Object, ID> commonRepositoryPral = (ArqPortRepository<Object, ID>)
-                    this.commonRepositories.get(entidadPrincipal);
+            ArqPortRepository<Object, ID> commonRepositoryPral = getRepositorioDePrincipal();
             commonRepositoryPral.findAll().forEach((objEntityPral) -> {
                 try {
                     D instanciaDTOResultado = dtoClass.getDeclaredConstructor().newInstance();
@@ -267,9 +264,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
 
         try {
             D entityDtoResultado = dtoClass.getDeclaredConstructor().newInstance();
-            String entidadPrincipal = entityDtoResultado.getEntidadPrincipal();
-            ArqPortRepository<Object, ID> commonRepositoryPral = (ArqPortRepository<Object, ID>)
-                    this.commonRepositories.get(entidadPrincipal);
+            ArqPortRepository<Object, ID> commonRepositoryPral = getRepositorioDePrincipal();
             Optional<?> optionalT = commonRepositoryPral.findById(id);
             if (optionalT.isPresent()) {
                 ArqAbstractDTO.incluirEnDTO(optionalT.get(), entityDtoResultado);
@@ -301,9 +296,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
     public List<D> buscarCoincidenciasEstricto(D filterObject) {
         try {
             List<D> resultado = new ArrayList<>();
-            String entidadPrincipal = (dtoClass.getDeclaredConstructor().newInstance()).getEntidadPrincipal();
-            ArqPortRepository<Object, ID> commonRepositoryPral = (ArqPortRepository<Object, ID>)
-                    this.commonRepositories.get(entidadPrincipal);
+            ArqPortRepository<Object, ID> commonRepositoryPral = getRepositorioDePrincipal();
             Object entity = ArqAbstractDTO.convertToEntity(filterObject, commonRepositoryPral.getClassOfEntity());
             commonRepositoryPral.findByExampleNotStricted(entity).forEach((objEntityPral) -> {
                 try {
@@ -328,9 +321,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
     public List<D> buscarCoincidenciasNoEstricto(D filterObject) {
         try {
             List<D> resultado = new ArrayList<>();
-            String entidadPrincipal = (dtoClass.getDeclaredConstructor().newInstance()).getEntidadPrincipal();
-            ArqPortRepository<Object, ID> commonRepositoryPral = (ArqPortRepository<Object, ID>)
-                    this.commonRepositories.get(entidadPrincipal);
+            ArqPortRepository<Object, ID> commonRepositoryPral = getRepositorioDePrincipal();
             Object entity = ArqAbstractDTO.convertToEntity(filterObject, commonRepositoryPral.getClassOfEntity());
             commonRepositoryPral.findByExampleNotStricted(entity).forEach((objEntityPral) -> {
                 try {
@@ -349,6 +340,27 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
             throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
                     new Object[]{dtoClass.getSimpleName(), noSuchMethodException.getCause()});
         }
+    }
+
+    private ArqPortRepository<Object, ID> getRepositorioDePrincipal()
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        IArqDTO instanceNew = dtoClass.getDeclaredConstructor().newInstance();
+        String entidadPrincipalJPA = instanceNew.getJPAEntidadPrincipal();
+        String entidadPrincipalMongo = instanceNew.getMongoEntidadPrincipal();
+
+        return (ArqPortRepository<Object, ID>) (this.commonRepositories.get(entidadPrincipalJPA) != null
+                        ? this.commonRepositories.get(entidadPrincipalJPA) :
+                        this.commonRepositories.get(entidadPrincipalMongo));
+    }
+
+    private List<String> getEntitiesOfDTO(IArqDTO dto)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        IArqDTO instanceNew = dtoClass.getDeclaredConstructor().newInstance();
+        String entidadPrincipalJPA = instanceNew.getJPAEntidadPrincipal();
+        String entidadPrincipalMongo = instanceNew.getMongoEntidadPrincipal();
+
+        return this.commonRepositories.get(entidadPrincipalJPA) != null ? instanceNew.getModelJPAEntities()
+                                                                        : instanceNew.getModelMongoEntities();
     }
 
 

@@ -3,6 +3,7 @@ package com.mfc.microdiplomas.api.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mfc.infra.dto.ArqAbstractDTO;
 import com.mfc.microdiplomas.domain.model.Diploma;
+import com.mfc.microdiplomas.domain.model.DiplomaDocument;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -46,14 +47,25 @@ public class DiplomaDTO extends ArqAbstractDTO {
     }
 
     @Override
-    public List<String> getModelEntities() {
+    public List<String> getModelJPAEntities() {
         List<String> ar = new ArrayList<>();
         ar.add(Diploma.class.getName());
         return ar;
     }
 
-    public String getEntidadPrincipal() {
+    @Override
+    public List<String> getModelMongoEntities() {
+        List<String> ar = new ArrayList<>();
+        ar.add(DiplomaDocument.class.getName());
+        return ar;
+    }
+
+    public String getJPAEntidadPrincipal() {
         return Diploma.class.getName();
+    }
+
+    public String getMongoEntidadPrincipal() {
+        return DiplomaDocument.class.getName();
     }
 
 

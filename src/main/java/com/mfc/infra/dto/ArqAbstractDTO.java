@@ -12,10 +12,16 @@ public abstract class ArqAbstractDTO implements IArqDTO {
     public abstract Map<String, String> getMapaConversion();
 
     @JsonIgnore
-    public abstract List<String> getModelEntities();
+    public abstract List<String> getModelMongoEntities();
 
     @JsonIgnore
-    public abstract String getEntidadPrincipal();
+    public abstract List<String> getModelJPAEntities();
+
+    @JsonIgnore
+    public abstract String getJPAEntidadPrincipal();
+
+    @JsonIgnore
+    public abstract String getMongoEntidadPrincipal();
 
     private static Field getFieldByName(Class<?> clazz, String fieldName) {
         try {

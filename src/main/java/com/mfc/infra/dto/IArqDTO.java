@@ -7,8 +7,12 @@ public interface IArqDTO {
 
     Map<String, String> getMapaConversion();
     Object getId();
-    List<String> getModelEntities();
+    List<String> getModelMongoEntities();
 
-    String getEntidadPrincipal();
+    List<String> getModelJPAEntities();
+
+    String getMongoEntidadPrincipal();
+
+    String getJPAEntidadPrincipal();
 
 }
