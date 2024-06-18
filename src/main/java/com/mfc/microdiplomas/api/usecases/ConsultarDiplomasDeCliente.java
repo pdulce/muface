@@ -11,12 +11,12 @@ import java.util.List;
 @Component
 public class ConsultarDiplomasDeCliente extends ArqAbstractUseCase<List<DiplomaDTO>, DiplomaDTO> {
 
+
     @Autowired
     public ConsultarDiplomasDeCliente(ArqGenericService commandService) {
-        super.setParamType(DiplomaDTO.class);
-        this.commandService = commandService;
-        this.commandService.setDtoClass(DiplomaDTO.class);
+        super(commandService);
     }
+
     public List<DiplomaDTO> execute(DiplomaDTO diplomaDTO) {
         List<DiplomaDTO> resultados = this.commandService.buscarCoincidenciasEstricto(diplomaDTO);
         return resultados;

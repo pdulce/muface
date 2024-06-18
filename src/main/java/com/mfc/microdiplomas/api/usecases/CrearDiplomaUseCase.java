@@ -11,9 +11,7 @@ public class CrearDiplomaUseCase extends ArqAbstractUseCase<DiplomaDTO, DiplomaD
 
     @Autowired
     public CrearDiplomaUseCase(ArqGenericService commandService) {
-        super.setParamType(DiplomaDTO.class);
-        this.commandService = commandService;
-        this.commandService.setDtoClass(DiplomaDTO.class);
+        super(commandService);
     }
 
     @Override
