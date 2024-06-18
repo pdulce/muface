@@ -4,6 +4,14 @@ server:
 arch:
   application-id: application-Id-sample
   event-broker-active: false
+  api:
+    diplomas:
+      use-case-package: com.mfc.microdiplomas.api.usecases
+    customers:
+      use-case-package: com.mfc.microdiplomas.api.usecases.customers
+    suppliers:
+      use-case-package: com.mfc.microdiplomas.api.usecases.suppliers
+      # and more
 
 spring:
 

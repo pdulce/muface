@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ConsultarDiplomasPorNombreClientes extends ArqAbstractUseCase<List<DiplomaDTO>, DiplomaDTO> {
+public class ConsultarDiplomasPorNombreDePila extends ArqAbstractUseCase<List<DiplomaDTO>, DiplomaDTO> {
 
     @Autowired
-    public ConsultarDiplomasPorNombreClientes(ArqGenericService commandService) {
+    public ConsultarDiplomasPorNombreDePila(ArqGenericService commandService) {
         super.setParamType(DiplomaDTO.class);
         this.commandService = commandService;
         this.commandService.setDtoClass(DiplomaDTO.class);

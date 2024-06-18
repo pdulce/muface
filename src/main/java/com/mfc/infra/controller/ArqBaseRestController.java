@@ -1,10 +1,16 @@
 package com.mfc.infra.controller;
 
+import com.mfc.infra.configuration.ArqConfigProperties;
+import com.mfc.infra.usecase.ArqUseCaseExecutor;
+import com.mfc.infra.usecase.ArqUseCaseParams;
 import com.mfc.infra.utils.ArqConstantMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
@@ -12,11 +18,12 @@ public abstract class ArqBaseRestController {
 
     Logger logger = LoggerFactory.getLogger(ArqBaseRestController.class);
 
-    /*@Autowired(required=false)
-    protected ArqSagaOrchestratorPort orchestratorManager;*/
-
+    @Autowired
+    ArqUseCaseExecutor useCaseExecutor;
     @Autowired
     protected MessageSource messageSource;
+
+    protected String uriBase;
 
     public static final String EUSKERA = "euskera";
     public static final String GALLEGO = "gallego";
@@ -35,6 +42,15 @@ public abstract class ArqBaseRestController {
         }
         Locale locale = mapLocales.get(idioma);
         return locale == null ? Locale.getDefault() : locale;
+    }
+
+    protected abstract String getBaseUseCasePackage();
+
+    public ResponseEntity<Object> executeUseCase(@RequestBody ArqUseCaseParams useCaseParams) {
+        String useCaseName = useCaseParams.getUseCaseName();
+        Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").concat(useCaseName),
+                useCaseParams.getParams());
+        return ResponseEntity.ok(result);
     }
 
     public String saludar() {

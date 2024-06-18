@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "arch")
 public class ArqConfigProperties {
 
-
     private boolean eventBrokerActive;
     private String applicationId;
 

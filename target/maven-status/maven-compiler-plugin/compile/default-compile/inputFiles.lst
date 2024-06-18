@@ -28,7 +28,6 @@ C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\api\usecases\C
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\event\ArqContextInfo.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\configuration\ArqMongoConfig.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\usecase\ArqUseCaseParams.java
-C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\api\usecases\ConsultarDiplomasPorNombreClientes.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\domain\repository\DiplomaMongoRepository.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\exceptions\ArqBussinessRuleException.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\domain\repository\DiplomaJPARepository.java
@@ -45,3 +44,4 @@ C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\service\ArqGenericServ
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\Application.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\domain\model\Diploma.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\utils\ArqConversionUtils.java
+C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\api\usecases\ConsultarDiplomasPorNombreDePila.java
