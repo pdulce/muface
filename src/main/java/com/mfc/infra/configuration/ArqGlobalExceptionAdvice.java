@@ -8,7 +8,6 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.UnexpectedTypeException;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
@@ -117,13 +116,6 @@ public class ArqGlobalExceptionAdvice {
         });
         return ResponseEntity.badRequest().body(errors);
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({NotImplementedException.class})
-    public ResponseEntity<String> handleNotImplementedException(NotImplementedException ex) {
-        return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND);
-    }
-
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
         Map<String, List<String>> errorResponse = new HashMap<>();
