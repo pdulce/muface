@@ -2,6 +2,7 @@ package com.mfc.infra.usecase;
 
 import com.mfc.infra.command.ArqAbstractUseCase;
 import com.mfc.infra.exceptions.ArqBussinessRuleException;
+import com.mfc.infra.exceptions.NotExistException;
 import com.mfc.infra.utils.ArqConversionUtils;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,14 @@ public class ArqUseCaseExecutor {
         } catch (ConstraintViolationException excConstraint) {
 
             throw excConstraint;
+
+        } catch (NotExistException notExistException) {
+
+            throw notExistException;
+
+        } catch (ArqBussinessRuleException arqBussinessRuleException) {
+
+            throw arqBussinessRuleException;
 
         } catch (Throwable exc) {
 
