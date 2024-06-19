@@ -19,7 +19,10 @@ public class ArqUseCaseExecutor {
         try {
             Class<?> useCaseClass = Class.forName(useCaseName);
             ArqAbstractUseCase<R, P> useCase = (ArqAbstractUseCase<R, P>) applicationContext.getBean(useCaseClass);
-            return useCase.execute((P) paramObj);
+            if (useCase == null) {
+                throw new ClassNotFoundException(useCaseName);
+            }
+            return useCase.execute(paramObj);
 
         } catch (ClassNotFoundException e) {
 

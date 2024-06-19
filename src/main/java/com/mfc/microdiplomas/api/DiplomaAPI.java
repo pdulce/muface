@@ -34,7 +34,7 @@ public class DiplomaAPI extends ArqBaseRestController {
 
     @GetMapping
     public ResponseEntity<Object> consultaPorNombrePila(@RequestParam(value = "clienteId", required = false)
-                                                            String clienteId,
+                                                            Long clienteId,
                                                          @RequestParam(value = "nombrePila", required = false)
                                                          String nombrePila) {
         if (clienteId != null) {
