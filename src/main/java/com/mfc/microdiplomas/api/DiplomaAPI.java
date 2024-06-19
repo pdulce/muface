@@ -38,7 +38,7 @@ public class DiplomaAPI extends ArqBaseRestController {
                                                          @RequestParam(value = "nombrePila", required = false)
                                                          String nombrePila) {
         if (clienteId != null) {
-            super.executeUseQueryCaseWithReqParams("ConsultarDiplomasDeCliente", clienteId);
+            return super.executeUseQueryCaseWithReqParams("ConsultarDiplomasDeCliente", clienteId);
         } else if (nombrePila != null) {
             return super.executeUseQueryCaseWithReqParams("ConsultarDiplomasPorNombreDePila", nombrePila);
         }

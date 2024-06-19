@@ -15,14 +15,11 @@ public class ArqUseCaseExecutor {
     @Autowired
     ApplicationContext applicationContext;
 
-    public <R, P> R executeUseCase(String useCaseName, P paramsMap) {
+    public <R, P> R executeUseCase(String useCaseName, P paramObj) {
         try {
             Class<?> useCaseClass = Class.forName(useCaseName);
             ArqAbstractUseCase<R, P> useCase = (ArqAbstractUseCase<R, P>) applicationContext.getBean(useCaseClass);
-            String jsonParams = ArqConversionUtils.map2Jsonstring((LinkedHashMap<String, Object>) paramsMap);
-            P params = ArqConversionUtils.jsonStringToObject(jsonParams, useCase.getParamType());
-
-            return useCase.execute(params);
+            return useCase.execute((P) paramObj);
 
         } catch (ClassNotFoundException e) {
 

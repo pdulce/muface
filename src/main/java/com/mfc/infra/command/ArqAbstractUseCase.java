@@ -1,5 +1,6 @@
 package com.mfc.infra.command;
 
+import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.service.ArqGenericService;
 import com.mfc.microdiplomas.api.dto.DiplomaDTO;
 import org.springframework.beans.factory.annotation.Autowired;

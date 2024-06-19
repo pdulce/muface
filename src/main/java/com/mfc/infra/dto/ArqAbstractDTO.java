@@ -23,6 +23,7 @@ public abstract class ArqAbstractDTO implements IArqDTO {
     @JsonIgnore
     public abstract String getMongoEntidadPrincipal();
 
+    @JsonIgnore
     private static Field getFieldByName(Class<?> clazz, String fieldName) {
         try {
             return clazz.getDeclaredField(fieldName);
@@ -31,6 +32,7 @@ public abstract class ArqAbstractDTO implements IArqDTO {
         }
     }
 
+    @JsonIgnore
     public static void incluirEnDTO(Object entity, IArqDTO dto) {
         try {
             //IArqDTO dto = (IArqDTO) dtoClass.getDeclaredConstructor().newInstance();
@@ -78,6 +80,7 @@ public abstract class ArqAbstractDTO implements IArqDTO {
         }
     }
 
+    @JsonIgnore
     public static <T, D> T convertToEntity(D dtoObj, Class<T> entityClass) {
         try {
             IArqDTO dto = (IArqDTO) dtoObj;
