@@ -34,20 +34,14 @@ public class DiplomaAPI extends ArqBaseRestController {
 
     @GetMapping
     public ResponseEntity<Object> consultaPorCampos(@RequestParam(value = "id", required = false) Long id,
-                                                    @RequestParam(value = "clienteId", required = false)
-                                                            Long clienteId,
-                                                         @RequestParam(value = "nombrePila", required = false)
-                                                         String nombrePila) {
-        if (id != null) {
-            return super.executeUseQueryCaseWithReqParams("ConsultarDiplomaPorId", id);
-        } else if (clienteId != null) {
-            return super.executeUseQueryCaseWithReqParams("ConsultarDiplomasDeCliente", clienteId);
-        } else if (nombrePila != null) {
-            return super.executeUseQueryCaseWithReqParams("ConsultarDiplomasPorNombreDePila", nombrePila);
-        } else {
-            // si no hay filtro, consultamos todos los registros
-            return super.executeUseQueryCaseWithReqParams("ConsultarTodosLosDiplomas", null);
-        }
+                              @RequestParam(value = "clienteId", required = false) Long clienteId,
+                              @RequestParam(value = "nombrePila", required = false) String nombrePila) {
+
+        DiplomaDTO filter = new DiplomaDTO();
+        filter.setId(id.toString());
+        filter.setIdCliente(clienteId);
+        filter.setNombreCompleto(nombrePila);
+        return super.executeDeleteUseCase("ConsultasDiplomasUseCase", filter);
     }
 
 
