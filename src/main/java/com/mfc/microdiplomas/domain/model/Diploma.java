@@ -16,7 +16,6 @@ public class Diploma {
     private Long id;
 
     @Column
-    //@NotNull(message = "{" + ArqConstantMessages.NOT_EMPTY_LET + "}")
     @Max(value = 999999, message = "{idCliente.max}")
     private Long idcustomer;
 

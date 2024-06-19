@@ -28,7 +28,7 @@ public class DiplomaAPI extends ArqBaseRestController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Object> borrar(@RequestBody Object id) {
+    public ResponseEntity<Object> borrar(@RequestParam(value = "id", required = false) Long id) {
         return super.executeDeleteUseCase("BorrarTodosLosDiplomasUseCase", id);
     }
 
