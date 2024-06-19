@@ -46,6 +46,7 @@ public abstract class ArqBaseRestController {
 
     protected abstract String getBaseUseCasePackage();
 
+    @PostMapping("execute")
     public ResponseEntity<Object> executeUseCase(@RequestBody ArqUseCaseParams useCaseParams) {
         String useCaseName = useCaseParams.getUseCaseName();
         Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").concat(useCaseName),
