@@ -6,13 +6,13 @@ C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\exceptions\NotExistExc
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\api\usecases\ConsultarTodosLosDiplomas.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\config\RepositoryConfigDiplomas.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\configuration\ArqConfigProperties.java
+C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\configuration\LocaleInterceptor.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\controller\ArqBaseRestController.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\dto\ArqAbstractDTO.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\utils\ArqConstantMessages.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\usecase\ArqUseCaseExecutor.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\command\ArqGenericCommand.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\configuration\ArqAppConfig.java
-C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\configuration\ArqSwaggerConfig.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\event\ArqSagaStepInfo.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\repository\ArqPortRepository.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\repository\ArqRelationalAdapterRepository.java
@@ -27,7 +27,6 @@ C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\controller\ArqLoggerRe
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\api\usecases\ConsultarDiplomasDeCliente.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\event\ArqContextInfo.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\configuration\ArqMongoConfig.java
-C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\usecase\ArqUseCaseParams.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\domain\repository\DiplomaMongoRepository.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\exceptions\ArqBussinessRuleException.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\domain\repository\DiplomaJPARepository.java
@@ -40,6 +39,7 @@ C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\command\IArqCommand.ja
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\api\usecases\CrearDiplomaUseCase.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\configuration\ArqMultipleCacheConfig.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\api\DiplomaAPI.java
+C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\configuration\WebConfig.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\infra\service\ArqGenericService.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\Application.java
 C:\pedro.dulce\develop\muface\src\main\java\com\mfc\microdiplomas\domain\model\Diploma.java

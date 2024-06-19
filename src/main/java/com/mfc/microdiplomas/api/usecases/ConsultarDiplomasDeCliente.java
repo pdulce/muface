@@ -8,16 +8,17 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ConsultarDiplomasDeCliente extends ArqAbstractUseCase<List<DiplomaDTO>, DiplomaDTO> {
+public class ConsultarDiplomasDeCliente extends ArqAbstractUseCase<List<DiplomaDTO>, Long> {
 
 
     public ConsultarDiplomasDeCliente(ArqGenericService commandService) {
         super(commandService);
     }
 
-    public List<DiplomaDTO> execute(DiplomaDTO diplomaDTO) {
-        List<DiplomaDTO> resultados = this.commandService.buscarCoincidenciasEstricto(diplomaDTO);
-        return resultados;
+    public List<DiplomaDTO> execute(Long customerId) {
+        DiplomaDTO diplomaDTO = new DiplomaDTO();
+        diplomaDTO.setIdCliente(customerId);
+        return this.commandService.buscarCoincidenciasEstricto(diplomaDTO);
     }
 
 

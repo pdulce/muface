@@ -9,7 +9,6 @@ com\mfc\infra\dto\IArqDTO.class
 com\mfc\microdiplomas\api\usecases\ActualizarDiplomaUseCase.class
 com\mfc\infra\event\ArqInnerEvent.class
 com\mfc\infra\utils\ArqConversionUtils$1.class
-com\mfc\infra\usecase\ArqUseCaseParams.class
 com\mfc\microdiplomas\api\usecases\BorrarTodosLosDiplomasUseCase.class
 com\mfc\microdiplomas\api\dto\DiplomaDTO.class
 com\mfc\microdiplomas\api\usecases\ConsultarTodosLosDiplomas.class
@@ -24,11 +23,12 @@ com\mfc\microdiplomas\domain\model\DiplomaDocument.class
 com\mfc\infra\repository\ArqPortRepository.class
 com\mfc\infra\utils\ArqConstantMessages.class
 com\mfc\infra\command\ArqGenericCommand.class
+com\mfc\infra\configuration\WebConfig.class
 com\mfc\infra\service\ArqGenericService.class
-com\mfc\infra\configuration\ArqSwaggerConfig.class
 com\mfc\infra\repository\ArqMongoAdapterRepository.class
 com\mfc\microdiplomas\api\usecases\ConsultarDiplomasPorNombreDePila.class
 com\mfc\infra\event\ArqSagaStepInfo.class
+com\mfc\infra\configuration\LocaleInterceptor.class
 com\mfc\infra\exceptions\ArqBussinessRuleException.class
 com\mfc\infra\configuration\ArqMultipleCacheConfig.class
 com\mfc\infra\command\ArqCommandHandler.class

@@ -146,10 +146,46 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
         }
     }
 
+    @Override
+    @Transactional
+    public int borrarEntidad(ID idPral) {
+        try {
+            D entityDto = buscarPorId(idPral);
+            // extraer todos los entities de este dto:
+            List<String> entidadesEnDto = getEntitiesOfDTO(entityDto);
+            for (String entityName : entidadesEnDto) {
+                ArqPortRepository<?, ID> commonRepository = this.commonRepositories.get(entityName);
+                try {
+                    Object entity = ArqAbstractDTO.convertToEntity(entityDto, commonRepository.getClassOfEntity());
+                    ID id = (ID) ArqConversionUtils.convertToMap(entity).get("id");
+                    this.buscarPorId(id);
+                    ArqPortRepository<Object, ID> castedRepository = (ArqPortRepository<Object, ID>) commonRepository;
+                    castedRepository.delete(entity);
+                    this.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
+                    String info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
+                            new Object[]{this.getCollectionName(commonRepository)}, new Locale("es"));
+                    logger.info(info);
+                } catch (Throwable exc) {
+                    String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,
+                            new Object[]{this.getCollectionName(commonRepository), exc.getCause()},
+                            new Locale("es"));
+                    logger.error(error);
+                    throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
+                            new Object[]{this.getCollectionName(commonRepository), exc.getCause()});
+                }
+            }
+            return 1;
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+                 | InvocationTargetException noSuchMethodException) {
+            throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
+                    new Object[]{dtoClass.getSimpleName(), noSuchMethodException.getCause()});
+        }
+    }
+
 
     @Override
     @Transactional
-    public int borrarEntidades(D entityDto) {
+    public int borrarEntidad(D entityDto) {
         try {
             Class<D> dtoClass = (Class<D>) entityDto.getClass();
             D entityDtoResultado = dtoClass.getDeclaredConstructor().newInstance();
@@ -190,7 +226,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
     public int borrarEntidades(List<D> entities) {
         try{
             entities.forEach((entityDTO) -> {
-                borrarEntidades(entityDTO);
+                borrarEntidad(entityDTO);
             });
             String info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
                     new Object[]{"entidades de dto"}, new Locale("es"));

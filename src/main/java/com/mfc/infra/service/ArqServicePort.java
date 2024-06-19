@@ -13,7 +13,8 @@ public interface ArqServicePort<D extends IArqDTO, ID> {
 
     D buscarPorId(ID id);
 
-    int borrarEntidades(D entity);
+    int borrarEntidad(ID id);
+    int borrarEntidad(D entity);
 
     int borrarEntidades(List<D> entities);
 
