@@ -3,6 +3,7 @@ package com.mfc.infra.usecase;
 import com.mfc.infra.command.ArqAbstractUseCase;
 import com.mfc.infra.exceptions.ArqBussinessRuleException;
 import com.mfc.infra.utils.ArqConversionUtils;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,10 @@ public class ArqUseCaseExecutor {
         } catch (ClassNotFoundException e) {
 
             throw new RuntimeException(e);
+
+        } catch (ConstraintViolationException excConstraint) {
+
+            throw excConstraint;
 
         } catch (Throwable exc) {
 

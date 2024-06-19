@@ -10,6 +10,7 @@ import com.mfc.infra.repository.ArqPortRepository;
 import com.mfc.infra.utils.ArqConstantMessages;
 import com.mfc.infra.utils.ArqConversionUtils;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +93,8 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
                     String info = messageSource.getMessage(ArqConstantMessages.CREATED_OK,
                             new Object[]{this.getCollectionName(commonRepository)}, new Locale("es"));
                     logger.info(info);
+                } catch (ConstraintViolationException ctExc) {
+                    throw ctExc;
                 } catch (Throwable exc) {
                     String error = messageSource.getMessage(ArqConstantMessages.CREATED_KO,
                             new Object[]{this.getCollectionName(commonRepository), exc.getCause()},
@@ -129,6 +132,8 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
                     String info = messageSource.getMessage(ArqConstantMessages.UPDATED_OK,
                             new Object[]{this.getCollectionName(commonRepository)}, new Locale("es"));
                     logger.info(info);
+                } catch (ConstraintViolationException ctExc) {
+                    throw ctExc;
                 } catch (Throwable exc) {
                     String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
                             new Object[]{this.getCollectionName(commonRepository), exc.getCause()},
