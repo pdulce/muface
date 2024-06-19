@@ -16,7 +16,7 @@ arch:
       # and more
 
 spring:
-
+  mandatory-file-encoding: UTF-8
   profiles:
     active: jpa # mongo, jpa
 
