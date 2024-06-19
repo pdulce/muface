@@ -134,6 +134,8 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
                     logger.info(info);
                 } catch (ConstraintViolationException ctExc) {
                     throw ctExc;
+                } catch (NotExistException notExistException) {
+                    throw notExistException;
                 } catch (Throwable exc) {
                     String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
                             new Object[]{this.getCollectionName(commonRepository), exc.getCause()},
@@ -170,6 +172,10 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
                     String info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
                             new Object[]{this.getCollectionName(commonRepository)}, new Locale("es"));
                     logger.info(info);
+                } catch (ConstraintViolationException ctExc) {
+                    throw ctExc;
+                } catch (NotExistException notExistException) {
+                    throw notExistException;
                 } catch (Throwable exc) {
                     String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,
                             new Object[]{this.getCollectionName(commonRepository), exc.getCause()},
@@ -209,6 +215,10 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
                     String info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
                             new Object[]{this.getCollectionName(commonRepository)}, new Locale("es"));
                     logger.info(info);
+                } catch (ConstraintViolationException ctExc) {
+                    throw ctExc;
+                } catch (NotExistException notExistException) {
+                    throw notExistException;
                 } catch (Throwable exc) {
                     String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,
                             new Object[]{this.getCollectionName(commonRepository), exc.getCause()},
@@ -237,8 +247,12 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
                     new Object[]{"entidades de dto"}, new Locale("es"));
             logger.info(info);
             return entities.size();
-        } catch (ArqBaseOperationsException notExists) {
-            throw notExists;
+        } catch (ConstraintViolationException ctExc) {
+            throw ctExc;
+        } catch (NotExistException notExistException) {
+            throw notExistException;
+        } catch (ArqBaseOperationsException arqBaseOperationsException) {
+            throw arqBaseOperationsException;
         } catch (Throwable exc) {
             throw exc;
         }
