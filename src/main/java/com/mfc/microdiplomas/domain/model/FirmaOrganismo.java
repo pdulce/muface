@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Entity
 @Data
 public class FirmaOrganismo {
@@ -17,7 +19,10 @@ public class FirmaOrganismo {
     private Diploma diploma;
 
     @Column
-    @NotEmpty(message = "{nombreCliente.notnull}")
-    private String name;
+    @NotEmpty
+    private String organismoFirmante;
+
+    @Column
+    private Date fechaEmision;
 
 }

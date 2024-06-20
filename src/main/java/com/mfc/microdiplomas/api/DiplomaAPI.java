@@ -18,7 +18,8 @@ public class DiplomaAPI extends ArqBaseRestController {
     }
 
     // TODO: cómo resolver la problemática de recibir un DTO que tiene información insuficiente
-    // TODO: de sus entidades a ser persistidas en Base de datos
+    // TODO: de sus entidades a ser persistidas en Base de datos--> solución, deben mantener en el DTO la información
+    // TODO: mínima necesaria para poder crear las entidades hijas de la entidad principal, sean one-to-one o many-to-one
     @PostMapping
     public ResponseEntity<Object> crear(@RequestBody DiplomaDTO dtoInBody) { // usaríamos la Entidad no el DTO
         return super.executeCreateUseCaseWithInputBody("CrearDiplomaUseCase", dtoInBody);
@@ -29,8 +30,6 @@ public class DiplomaAPI extends ArqBaseRestController {
         return super.executeUpdateUseCaseWithInputBody("ActualizarDiplomaUseCase", dtoInBody);
     }
 
-    // TODO: cómo resolver la problemática de recibir un DTO que tiene información insuficiente
-    // TODO: de sus entidades a ser persistidas en Base de datos
 
     @DeleteMapping
     public ResponseEntity<Object> borrar(@RequestParam(value = "id", required = false) Long id) {

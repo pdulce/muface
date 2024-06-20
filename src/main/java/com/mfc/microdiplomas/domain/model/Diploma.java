@@ -24,9 +24,6 @@ public class Diploma {
     private String name;
 
     @Column
-    private String titulo;
-
-    @Column
     private String region;
 
     @OneToOne(mappedBy = "diploma", cascade = CascadeType.ALL)

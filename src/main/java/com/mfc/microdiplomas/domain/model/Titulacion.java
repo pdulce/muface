@@ -17,7 +17,7 @@ public class Titulacion {
     private Diploma diploma;
 
     @Column
-    @NotEmpty(message = "{nombreCliente.notnull}")
+    @NotEmpty(message = "El nombre de la titulacion no puede estar vacío")
     private String name;
 
 }
