@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 public class ArqConversionUtils {
 
@@ -30,7 +31,7 @@ public class ArqConversionUtils {
 
         // Definir el formato deseado
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy HH:mm:ss",
-                new Locale("es", "ES"));
+                LocaleContextHolder.getLocale());
 
         // Formatear la fecha
         String formattedDate = localDateTime.format(formatter);
