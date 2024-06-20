@@ -33,7 +33,7 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
         this.id = this.diploma.getId();
         this.idCliente = this.diploma.getIdcustomer();
         this.nombreCompleto = this.diploma.getName();
-        this.titulacion = this.diploma.getTitulacion().getName();
+        this.titulacion = this.diploma.getTitulacion() == null ? null: this.diploma.getTitulacion().getName();
         this.regionOComarca = this.diploma.getRegion();
         this.firmas = new HashMap<>();
         if (this.diploma.getFirmas() != null) {
@@ -54,6 +54,7 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
         if (this.titulacion != null) {
             this.diploma.setTitulacion(new Titulacion());
             this.diploma.getTitulacion().setName(this.titulacion);
+            this.diploma.getTitulacion().setDiploma(this.diploma);
         }
 
         if (this.firmas != null && !this.firmas.isEmpty())  {
@@ -63,6 +64,7 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
                 String firmante = firmantesIterator.next();
                 Date fechaEmisionFirma = firmas.get(firmante);
                 FirmaOrganismo firmaOrganismo = new FirmaOrganismo();
+                firmaOrganismo.setDiploma(this.diploma);
                 firmaOrganismo.setOrganismoFirmante(firmante);
                 firmaOrganismo.setFechaEmision(fechaEmisionFirma);
                 diploma.getFirmas().add(firmaOrganismo);
