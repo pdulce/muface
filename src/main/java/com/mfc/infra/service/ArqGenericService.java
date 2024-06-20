@@ -235,13 +235,14 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
 
     @Override
     @Transactional
-    public void borrarTodos() {
+    public String borrarTodos() {
+        String info = "";
         try {
             D entityDto = dtoClass.getDeclaredConstructor().newInstance();
             try {
                 this.repositoryOfThisDto.deleteAll();
                 this.registrarEvento(entityDto, ArqEvent.EVENT_TYPE_DELETE);
-                String info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
+                info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
                         new Object[]{this.getCollectionName(this.repositoryOfThisDto)}, new Locale("es"));
                 logger.info(info);
             } catch (Throwable exc) {
@@ -252,7 +253,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
                 throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
                         new Object[]{this.getCollectionName(this.repositoryOfThisDto), exc.getCause()});
             }
-
+            return info;
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
                  | InvocationTargetException noSuchMethodException) {
             throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,

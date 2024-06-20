@@ -42,12 +42,8 @@ public abstract class ArqBaseRestController {
     }
 
     protected final ResponseEntity executeDeleteUseCase(final String useCase, Object id) {
-        useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").concat(useCase), id);
-        Locale locale = LocaleContextHolder.getLocale();
-        String successMessage = messageSource.getMessage(id == null ? ArqConstantMessages.DELETED_ALL_OK :
-                ArqConstantMessages.DELETED_OK, null, locale);
-        logger.info(successMessage);
-        return ResponseEntity.ok(successMessage);
+        Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").concat(useCase), id);
+        return ResponseEntity.ok(result);
     }
 
     protected final ResponseEntity executeUseQueryCaseWithReqParams(final String useCase, Object param) {
