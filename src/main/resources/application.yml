@@ -46,10 +46,10 @@ spring:
       port: 27017
       uri: mongodb://test:test@192.168.1.137:27017/queryDomainDB
       authentication-database: queryDomainDB
-      connectTimeout: 3000 # Tiempo de espera de conexión en milisegundos
-      socketTimeout: 3000 # Tiempo de espera de socket en milisegundos
-      connectionRetryAttempts: 3 # Número de intentos de conexión
-      connectionRetryInterval: 1000 # Intervalo entre intentos de conexión en milisegundos
+      #connectTimeout: 3000 # Tiempo de espera de conexión en milisegundos
+      #socketTimeout: 3000 # Tiempo de espera de socket en milisegundos
+      #connectionRetryAttempts: 3 # Número de intentos de conexión
+      #connectionRetryInterval: 1000 # Intervalo entre intentos de conexión en milisegundos
 
     sql:
       init:
