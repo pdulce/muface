@@ -152,6 +152,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
             Class<D> dtoClass = (Class<D>) entityDto.getClass();
             D entityDtoResultado = dtoClass.getDeclaredConstructor().newInstance();
             try {
+                buscarPorId((ID) entityDto.getId());
                 entityDtoResultado.setEntity(this.repositoryOfThisDto.save(entityDto.getEntity()));
                 this.registrarEvento(entityDtoResultado.getEntity(), ArqEvent.EVENT_TYPE_UPDATE);
                 String info = messageSource.getMessage(ArqConstantMessages.UPDATED_OK,
