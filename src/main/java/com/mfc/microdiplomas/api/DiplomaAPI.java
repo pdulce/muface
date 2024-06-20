@@ -43,7 +43,7 @@ public class DiplomaAPI extends ArqBaseRestController {
         filter.setId(id);
         filter.setIdCliente(clienteId);
         filter.setNombreCompleto(nombrePila);
-        return super.executeDeleteUseCase("ConsultasDiplomasUseCase", filter);
+        return super.executeUseQueryCaseWithReqParams("ConsultasDiplomasUseCase", filter);
     }
 
 
