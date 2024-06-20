@@ -10,20 +10,21 @@ import java.util.List;
 
 
 @Component
-public class BorrarTodosLosDiplomasUseCase extends ArqAbstractUseCase<List<DiplomaDTO>, DiplomaDTO>  {
+public class BorrarDiplomasUseCase extends ArqAbstractUseCase<String, DiplomaDTO>  {
 
-    public BorrarTodosLosDiplomasUseCase(ArqGenericService commandService) {
+    public BorrarDiplomasUseCase(ArqGenericService commandService) {
         super(commandService);
     }
 
     @Override
-    public List<DiplomaDTO> execute(DiplomaDTO diplomaDTO) {
+    public String execute(DiplomaDTO diplomaDTO) {
+        String msgBorrado = "";
         if (diplomaDTO.getId() == null) {
-            this.commandService.borrarTodos();
+            msgBorrado = this.commandService.borrarTodos();
         } else {
-            this.commandService.borrarEntidad(diplomaDTO.getId());
+            msgBorrado = String.valueOf(this.commandService.borrarEntidad(diplomaDTO.getId()));
         }
-        return new ArrayList<>();
+        return msgBorrado;
     }
 
 }
