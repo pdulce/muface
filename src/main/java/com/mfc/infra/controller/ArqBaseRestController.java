@@ -2,42 +2,25 @@ package com.mfc.infra.controller;
 
 import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.usecase.ArqUseCaseExecutor;
-import com.mfc.infra.utils.ArqConstantMessages;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
-
-import java.util.*;
 
 public abstract class ArqBaseRestController {
 
-    Logger logger = LoggerFactory.getLogger(ArqBaseRestController.class);
-
     @Autowired
     protected ArqUseCaseExecutor useCaseExecutor;
-    @Autowired
-    protected MessageSource messageSource;
 
     protected abstract String getBaseUseCasePackage();
 
     protected final ResponseEntity executeCreateUseCaseWithInputBody(final String useCase, IArqDTO dtoInBody) {
         Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").
                 concat(useCase), dtoInBody);
-        Locale locale = LocaleContextHolder.getLocale();
-        String successMessage = messageSource.getMessage(ArqConstantMessages.SUCCESS_CREATED, null, locale);
-        logger.info(successMessage);
         return ResponseEntity.ok(result);
     }
 
     protected final ResponseEntity executeUpdateUseCaseWithInputBody(final String useCase, IArqDTO dtoInBody) {
         Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").
                 concat(useCase), dtoInBody);
-        Locale locale = LocaleContextHolder.getLocale();
-        String successMessage = messageSource.getMessage(ArqConstantMessages.UPDATED_OK, null, locale);
-        logger.info(successMessage);
         return ResponseEntity.ok(result);
     }
 

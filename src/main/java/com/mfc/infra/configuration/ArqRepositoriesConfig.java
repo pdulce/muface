@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.HashMap;
 import java.util.Map;
 
-//@Configuration
 public abstract class ArqRepositoriesConfig {
 
     public abstract Map<Class<?>, Class<?>> getRepositoryJpaMap();

@@ -1,11 +1,11 @@
 package com.mfc.microdiplomas.domain.model;
 
-import com.mfc.infra.utils.ArqConstantMessages;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -29,5 +29,11 @@ public class Diploma {
     @Column
     private String region;
 
+    @OneToOne(mappedBy = "diploma", cascade = CascadeType.ALL)
+    private Titulacion titulacion;
+
+    @OneToMany(mappedBy = "diploma", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FirmaOrganismo> firmas;
 
 }
+
