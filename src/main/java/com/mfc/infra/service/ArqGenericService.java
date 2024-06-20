@@ -127,14 +127,14 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
                 entityDtoResultado.setEntity(this.repositoryOfThisDto.save(entityDto.getEntity()));
                 this.registrarEvento(entityDtoResultado.getEntity(), ArqEvent.EVENT_TYPE_CREATE);
                 String info = messageSource.getMessage(ArqConstantMessages.CREATED_OK,
-                        new Object[]{this.getCollectionName(this.repositoryOfThisDto)}, LocaleContextHolder.getLocale());
+                        new Object[]{this.getCollectionName(this.repositoryOfThisDto)}, new Locale("es"));
                 logger.info(info);
             } catch (ConstraintViolationException ctExc) {
                 throw ctExc;
             } catch (Throwable exc) {
                 String error = messageSource.getMessage(ArqConstantMessages.CREATED_KO,
                         new Object[]{this.getCollectionName(this.repositoryOfThisDto), exc.getCause()},
-                        LocaleContextHolder.getLocale());
+                        new Locale("es"));
                 logger.error(error);
                 throw new ArqBaseOperationsException(ArqConstantMessages.CREATED_KO,
                         new Object[]{this.getCollectionName(this.repositoryOfThisDto), exc.getCause()});
@@ -157,7 +157,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
                 entityDtoResultado.setEntity(this.repositoryOfThisDto.save(entityDto.getEntity()));
                 this.registrarEvento(entityDtoResultado.getEntity(), ArqEvent.EVENT_TYPE_UPDATE);
                 String info = messageSource.getMessage(ArqConstantMessages.UPDATED_OK,
-                        new Object[]{this.getCollectionName(this.repositoryOfThisDto)}, LocaleContextHolder.getLocale());
+                        new Object[]{this.getCollectionName(this.repositoryOfThisDto)}, new Locale("es"));
                 logger.info(info);
             } catch (ConstraintViolationException ctExc) {
                 throw ctExc;
@@ -166,7 +166,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
             } catch (Throwable exc) {
                 String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
                         new Object[]{this.getCollectionName(this.repositoryOfThisDto), exc.getCause()},
-                        LocaleContextHolder.getLocale());
+                        new Locale("es"));
                 logger.error(error);
                 throw new ArqBaseOperationsException(ArqConstantMessages.UPDATED_KO,
                         new Object[]{this.getCollectionName(this.repositoryOfThisDto), exc.getCause()});
@@ -189,7 +189,8 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
             this.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
             info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
                     new Object[]{this.getCollectionName(this.repositoryOfThisDto)}, LocaleContextHolder.getLocale());
-            logger.info(info);
+            logger.info(messageSource.getMessage(ArqConstantMessages.DELETED_OK,
+                    new Object[]{this.getCollectionName(this.repositoryOfThisDto)}, new Locale("es")));
         } catch (ConstraintViolationException ctExc) {
             throw ctExc;
         } catch (NotExistException notExistException) {
@@ -224,7 +225,8 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
             info = messageSource.getMessage(ArqConstantMessages.DELETED_LIST_OK,
                     new Object[]{entities.size(), this.getCollectionName(this.repositoryOfThisDto)},
                     LocaleContextHolder.getLocale());
-            logger.info(info);
+            logger.info(messageSource.getMessage(ArqConstantMessages.DELETED_LIST_OK,
+                    new Object[]{this.getCollectionName(this.repositoryOfThisDto)}, new Locale("es")));
             return info;
         } catch (ConstraintViolationException ctExc) {
             throw ctExc;
@@ -253,11 +255,12 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
                     this.registrarEvento(entityDto, ArqEvent.EVENT_TYPE_DELETE);
                     info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
                             new Object[]{this.getCollectionName(this.repositoryOfThisDto)}, LocaleContextHolder.getLocale());
-                    logger.info(info);
+                    logger.info(messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
+                            new Object[]{this.getCollectionName(this.repositoryOfThisDto)}, new Locale("es")));
                 } catch (Throwable exc) {
                     String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
                             new Object[]{this.getCollectionName(this.repositoryOfThisDto), exc.getCause()},
-                            LocaleContextHolder.getLocale());
+                            new Locale("es"));
                     logger.error(error);
                     throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
                             new Object[]{this.getCollectionName(this.repositoryOfThisDto), exc.getCause()});
@@ -275,9 +278,8 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
     public List<D> buscarTodos() {
         List<D> resultado = new ArrayList<>();
         this.repositoryOfThisDto.findAll().forEach((entity) -> {
-            D instanciaDTOResultado = null;
             try {
-                instanciaDTOResultado = dtoClass.getDeclaredConstructor().newInstance();
+                D instanciaDTOResultado = dtoClass.getDeclaredConstructor().newInstance();
                 instanciaDTOResultado.setEntity(entity);
                 resultado.add(instanciaDTOResultado);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
@@ -310,12 +312,10 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
 
     @Override
     public List<D> buscarCoincidenciasEstricto(D filterObject) {
-
         List<D> resultado = new ArrayList<>();
         this.repositoryOfThisDto.findByExampleStricted(filterObject.getEntity()).forEach((entity) -> {
-            D instanciaDTOResultado = null;
             try {
-                instanciaDTOResultado = dtoClass.getDeclaredConstructor().newInstance();
+                D instanciaDTOResultado = dtoClass.getDeclaredConstructor().newInstance();
                 instanciaDTOResultado.setEntity(entity);
                 resultado.add(instanciaDTOResultado);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
@@ -329,12 +329,10 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
 
     @Override
     public List<D> buscarCoincidenciasNoEstricto(D filterObject) {
-
         List<D> resultado = new ArrayList<>();
         this.repositoryOfThisDto.findByExampleNotStricted(filterObject.getEntity()).forEach((entity) -> {
-            D instanciaDTOResultado = null;
             try {
-                instanciaDTOResultado = dtoClass.getDeclaredConstructor().newInstance();
+                D instanciaDTOResultado = dtoClass.getDeclaredConstructor().newInstance();
                 instanciaDTOResultado.setEntity(entity);
                 resultado.add(instanciaDTOResultado);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
