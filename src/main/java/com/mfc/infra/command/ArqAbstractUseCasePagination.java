@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 public abstract class ArqAbstractUseCasePagination<R, P> {
 
     protected ArqGenericService commandService;
-    public abstract Page<R> executeQueryPaginada(P params, int page, int size);
+    public abstract R executeQueryPaginada(P params, int page, int size);
 
     @Autowired
     public ArqAbstractUseCasePagination(ArqGenericService commandService) {

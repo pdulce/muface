@@ -50,7 +50,7 @@ public class ArqUseCaseExecutor {
         }
     }
 
-    public <R, P> Page<R> executePaginationUseCase(String useCaseName, P paramObj, int page, int size) {
+    public <R, P> R executePaginationUseCase(String useCaseName, P paramObj, int page, int size) {
         try {
             Class<?> useCaseClass = Class.forName(useCaseName);
             ArqAbstractUseCasePagination<R, P> useCase =

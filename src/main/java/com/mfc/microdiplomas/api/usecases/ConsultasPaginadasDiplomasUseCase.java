@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConsultasPaginadasDiplomasUseCase extends ArqAbstractUseCasePagination<DiplomaDTO, DiplomaDTO> {
+public class ConsultasPaginadasDiplomasUseCase extends ArqAbstractUseCasePagination<Page<DiplomaDTO>, DiplomaDTO> {
 
 
     public ConsultasPaginadasDiplomasUseCase(ArqGenericService commandService) {
