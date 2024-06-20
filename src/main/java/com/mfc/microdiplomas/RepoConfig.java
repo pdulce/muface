@@ -21,7 +21,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public class RepoConfig {
     @Bean
     @Profile("mongo")
-    public ArqPortRepository<DiplomaDocumentDTO, String> mongoDiplomaDTORepository(MongoOperations mongoOperations) {
+    public ArqPortRepository<?, String> mongoDiplomaDTORepository(MongoOperations mongoOperations) {
         ArqMongoAdapterRepository<DiplomaDocumentDTO, String> repository = new ArqMongoAdapterRepository<>(DiplomaDocumentDTO.class);
         MongoRepository<DiplomaDocument, String> mongoRepository = getBean(DiplomaMongoRepository.class);
         repository.setMongoRepository(mongoRepository);
@@ -31,7 +31,7 @@ public class RepoConfig {
 
     @Bean
     @Profile("jpa")
-    public ArqPortRepository<DiplomaDTO, Long> jpaCommonRepositories() {
+    public ArqPortRepository<?, Long> jpaCommonRepositories() {
         ArqRelationalAdapterRepository<DiplomaDTO, Long> repository = new ArqRelationalAdapterRepository<>(DiplomaDTO.class);
         JpaRepository<Diploma, Long> jpaRepository = getBean(DiplomaJPARepository.class);
         repository.setJpaRepository(jpaRepository);
