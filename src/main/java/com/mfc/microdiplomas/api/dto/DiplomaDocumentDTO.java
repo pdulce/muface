@@ -4,10 +4,11 @@ package com.mfc.microdiplomas.api.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mfc.infra.dto.IArqDTO;
 import com.mfc.microdiplomas.domain.model.Diploma;
+import com.mfc.microdiplomas.domain.model.DiplomaDocument;
 
-public class DiplomaDTO implements IArqDTO<Long, Diploma> {
+public class DiplomaDocumentDTO implements IArqDTO<String, DiplomaDocument> {
 
-    private Long id;
+    private String id;
     private Long idCliente;
     private String nombreCompleto;
     private String titulacion;
@@ -16,19 +17,19 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
     /** campo calculado transient que no está en el modelo (entidad-relacional o document-non-relational) **/
     private String continente;
 
-    private Diploma diploma = new Diploma();
+    private DiplomaDocument diploma = new DiplomaDocument();
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
         diploma.setId(id);
     }
 
-    public Long getId() {
+    public String getId() {
         return this.id;
     }
 
     @Override
-    public void setEntity(Diploma diploma) {
+    public void setEntity(DiplomaDocument diploma) {
         this.diploma = diploma;
         this.id = this.diploma.getId();
         this.idCliente = this.diploma.getIdcustomer();
@@ -39,7 +40,7 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
 
     @Override
     @JsonIgnore
-    public Diploma getEntity() {
+    public DiplomaDocument getEntity() {
         return this.diploma;
     }
 
