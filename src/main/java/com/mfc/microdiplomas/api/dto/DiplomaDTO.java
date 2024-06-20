@@ -15,8 +15,8 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
     private Long idCliente;
     private String nombreCompleto;
     private String regionOComarca;
-    private String titulacion;
-    private Map<String, Date> firmas;
+    private Map<Long, String> titulacion;
+    private Map<Long, Map<String, Date>> firmas;
 
     /** campo calculado transient que no está en el modelo (entidad-relacional o document-non-relational) **/
     private String continente;
@@ -33,12 +33,19 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
         this.id = this.diploma.getId();
         this.idCliente = this.diploma.getIdcustomer();
         this.nombreCompleto = this.diploma.getName();
-        this.titulacion = this.diploma.getTitulacion() == null ? null: this.diploma.getTitulacion().getName();
+        if (this.diploma.getTitulacion() != null) {
+            Map<Long, String> tiulacionContent = new HashMap<>();
+            tiulacionContent.put(this.diploma.getTitulacion().getId(), this.diploma.getTitulacion().getName());
+            this.titulacion = tiulacionContent;
+        }
+
         this.regionOComarca = this.diploma.getRegion();
         this.firmas = new HashMap<>();
         if (this.diploma.getFirmas() != null) {
             this.diploma.getFirmas().forEach((firma) -> {
-                this.firmas.put(firma.getOrganismoFirmante(), firma.getFechaEmision());
+                Map<String, Date> contenidoFirma = new HashMap<>();
+                contenidoFirma.put(firma.getOrganismoFirmante(), firma.getFechaEmision());
+                this.firmas.put(firma.getId(), contenidoFirma);
             });
         }
     }
@@ -53,16 +60,19 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
 
         if (this.titulacion != null) {
             this.diploma.setTitulacion(new Titulacion());
-            this.diploma.getTitulacion().setName(this.titulacion);
+            Map<Long, String> tiulacionContent = new HashMap<>();
+            tiulacionContent.put(this.diploma.getTitulacion().getId(), this.diploma.getTitulacion().getName());
+            this.titulacion = tiulacionContent;
             this.diploma.getTitulacion().setDiploma(this.diploma);
         }
 
         if (this.firmas != null && !this.firmas.isEmpty())  {
             this.diploma.setFirmas(new ArrayList<>());
-            Iterator<String> firmantesIterator = this.firmas.keySet().iterator();
+            Iterator<Long> firmantesIterator = this.firmas.keySet().iterator();
             while (firmantesIterator.hasNext()) {
-                String firmante = firmantesIterator.next();
-                Date fechaEmisionFirma = firmas.get(firmante);
+                Long idFirmante = firmantesIterator.next();
+                String firmante = firmas.get(idFirmante).entrySet().iterator().next().getKey();
+                Date fechaEmisionFirma = firmas.get(idFirmante).entrySet().iterator().next().getValue();
                 FirmaOrganismo firmaOrganismo = new FirmaOrganismo();
                 firmaOrganismo.setDiploma(this.diploma);
                 firmaOrganismo.setOrganismoFirmante(firmante);
@@ -78,19 +88,20 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
         this.diploma.setId(id);
     }
 
-    public Map<String, Date> getFirmas() {
+    public Map<Long, Map<String, Date>> getFirmas() {
         return this.firmas;
     }
 
-    public void setFirmas(Map<String, Date> firmas) {
-        this.firmas = firmas;
+    public void setFirmas(Map<Long, Map<String, Date>> firmasInput) {
+        this.firmas = firmasInput;
         if (this.diploma.getFirmas() == null) {
             this.diploma.setFirmas(new ArrayList<>());
         }
-        Iterator<String> firmantesIterator = firmas.keySet().iterator();
+        Iterator<Long> firmantesIterator = firmasInput.keySet().iterator();
         while (firmantesIterator.hasNext()) {
-            String firmante = firmantesIterator.next();
-            Date fechaEmisionFirma = firmas.get(firmante);
+            Long idFirmante = firmantesIterator.next();
+            String firmante = firmasInput.get(idFirmante).entrySet().iterator().next().getKey();
+            Date fechaEmisionFirma = firmasInput.get(idFirmante).entrySet().iterator().next().getValue();
             FirmaOrganismo firmaOrganismo = new FirmaOrganismo();
             firmaOrganismo.setDiploma(this.diploma);
             firmaOrganismo.setOrganismoFirmante(firmante);
@@ -123,16 +134,26 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
     }
 
     public String getTitulacion() {
-        return this.titulacion;
+        Map.Entry<Long, String> entry = titulacion.entrySet().iterator().hasNext() ? null
+                : titulacion.entrySet().iterator().next();
+        if (entry != null) {
+            return entry.getValue();
+        }
+        return null;
     }
 
-    public void setTitulacion(String titulacion) {
+    public void setTitulacion(Map<Long, String> titulacion) {
         this.titulacion = titulacion;
         if (diploma.getTitulacion() == null) {
             Titulacion titulacion1 = new Titulacion();
             diploma.setTitulacion(titulacion1);
         }
-        diploma.getTitulacion().setName(titulacion);
+        Map.Entry<Long, String> entry = titulacion.entrySet().iterator().hasNext() ? null
+                : titulacion.entrySet().iterator().next();
+        if (entry != null) {
+            diploma.getTitulacion().setId(entry.getKey());
+            diploma.getTitulacion().setName(entry.getValue());
+        }
     }
 
     public String getRegionOComarca() {
