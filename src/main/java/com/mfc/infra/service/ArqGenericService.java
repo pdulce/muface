@@ -180,12 +180,13 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
 
     @Override
     @Transactional
-    public int borrarEntidad(ID id) {
+    public String borrarEntidad(ID id) {
+        String info = "";
         try {
             Object entity = this.buscarPorId(id).getEntity();
             this.repositoryOfThisDto.delete(entity);
             this.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
-            String info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
+            info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
                     new Object[]{this.getCollectionName(this.repositoryOfThisDto)}, new Locale("es"));
             logger.info(info);
         } catch (ConstraintViolationException ctExc) {
@@ -200,28 +201,30 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
             throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
                     new Object[]{this.getCollectionName(this.repositoryOfThisDto), exc.getCause()});
         }
-        return 1;
+        return info;
     }
 
 
     @Override
     @Transactional
-    public int borrarEntidad(D entityDto) {
+    public String borrarEntidad(D entityDto) {
         Object id = entityDto.getId();
         return this.borrarEntidad((ID) id);
     }
 
     @Override
     @Transactional
-    public int borrarEntidades(List<D> entities) {
+    public String borrarEntidades(List<D> entities) {
+        String info = "";
         try{
             entities.forEach((entityDTO) -> {
                 borrarEntidad(entityDTO);
             });
-            String info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
-                    new Object[]{"entidades de dto"}, new Locale("es"));
+            info = messageSource.getMessage(ArqConstantMessages.DELETED_LIST_OK,
+                    new Object[]{entities.size(), this.getCollectionName(this.repositoryOfThisDto)},
+                    new Locale("es"));
             logger.info(info);
-            return entities.size();
+            return info;
         } catch (ConstraintViolationException ctExc) {
             throw ctExc;
         } catch (NotExistException notExistException) {

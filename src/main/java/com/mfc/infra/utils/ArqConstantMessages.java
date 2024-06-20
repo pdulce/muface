@@ -25,9 +25,8 @@ public final class ArqConstantMessages {
     public static final String UPDATED_OK = "success.updated";
     public static final String DELETED_OK = "success.deleted";
     public static final String DELETED_ALL_OK = "success.all_deleted";
-
+    public static final String DELETED_LIST_OK = "success.list_deleted";
     public static final String NOTHING_TO_DELETE = "no_data.found";
-
     public static final String CREATED_KO = "exception.created";
     public static final String UPDATED_KO = "exception.updated";
     public static final String DELETED_KO = "exception.deleted";
