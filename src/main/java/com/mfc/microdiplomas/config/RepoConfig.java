@@ -1,4 +1,4 @@
-package com.mfc.microdiplomas;
+package com.mfc.microdiplomas.config;
 
 import com.mfc.infra.configuration.ApplicationContextProvider;
 import com.mfc.infra.repository.ArqMongoAdapterRepository;
