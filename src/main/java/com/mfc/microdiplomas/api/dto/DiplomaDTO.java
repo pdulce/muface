@@ -1,72 +1,83 @@
 package com.mfc.microdiplomas.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mfc.infra.dto.ArqAbstractDTO;
+
+import com.mfc.infra.dto.IArqDTO;
 import com.mfc.microdiplomas.domain.model.Diploma;
-import com.mfc.microdiplomas.domain.model.DiplomaDocument;
-import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+public class DiplomaDTO implements IArqDTO<Long, Diploma> {
 
-@Data
-public class DiplomaDTO extends ArqAbstractDTO {
-
-    private String id;
-
+    private Long id;
     private Long idCliente;
-
     private String nombreCompleto;
-
     private String titulacion;
-
     private String regionOComarca;
 
     /** campo calculado transient que no está en el modelo (entidad-relacional o document-non-relational) **/
     private String continente;
 
-    @JsonIgnore
-    private static Map<String, String> mapaConversion;
+    private Diploma diploma;
 
-    static {
-        // Keys: los miembros del DTO
-        // Values: los miembros del Entity
-        mapaConversion = new HashMap<>();
-        mapaConversion.put("id", "id");
-        mapaConversion.put("idCliente", "idcustomer");
-        mapaConversion.put("nombreCompleto", "name");
-        mapaConversion.put("titulacion", "titulo");
-        mapaConversion.put("regionOComarca", "region");
+    public void setId(Long id) {
+        this.id = id;
+        diploma.setId(id);
     }
 
-
-    public Map<String, String> getMapaConversion() {
-        return mapaConversion;
+    public Long getId() {
+        return this.id;
     }
 
     @Override
-    public List<String> getModelJPAEntities() {
-        List<String> ar = new ArrayList<>();
-        ar.add(Diploma.class.getName());
-        return ar;
+    public void setEntity(Diploma diploma) {
+        this.diploma = diploma;
     }
 
     @Override
-    public List<String> getModelMongoEntities() {
-        List<String> ar = new ArrayList<>();
-        ar.add(DiplomaDocument.class.getName());
-        return ar;
+    public Diploma getEntity() {
+        return this.diploma;
     }
 
-    public String getJPAEntidadPrincipal() {
-        return Diploma.class.getName();
+    public Long getIdCliente() {
+        return idCliente;
     }
 
-    public String getMongoEntidadPrincipal() {
-        return DiplomaDocument.class.getName();
+    public void setIdCliente(Long idCliente) {
+        this.idCliente = idCliente;
+        diploma.setIdcustomer(id);
     }
 
+    public String getNombreCompleto() {
+        return nombreCompleto;
+    }
+
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
+        diploma.setName(nombreCompleto);
+    }
+
+    public String getTitulacion() {
+        return titulacion;
+    }
+
+    public void setTitulacion(String titulacion) {
+        this.titulacion = titulacion;
+        diploma.setTitulo(titulacion);
+    }
+
+    public String getRegionOComarca() {
+        return regionOComarca;
+    }
+
+    public void setRegionOComarca(String regionOComarca) {
+        this.regionOComarca = regionOComarca;
+        diploma.setRegion(regionOComarca);
+    }
+
+    public String getContinente() {
+        return continente;
+    }
+
+    public void setContinente(String continente) {
+        this.continente = continente;
+    }
 
 }

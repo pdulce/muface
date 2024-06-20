@@ -1,19 +1,15 @@
 package com.mfc.infra.dto;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
-public interface IArqDTO extends Serializable {
 
-    Map<String, String> getMapaConversion();
-    Object getId();
-    List<String> getModelMongoEntities();
+public interface IArqDTO<ID, D> extends Serializable {
 
-    List<String> getModelJPAEntities();
 
-    String getMongoEntidadPrincipal();
+    ID getId();
 
-    String getJPAEntidadPrincipal();
+    void setEntity(D entity);
+
+    D getEntity();
 
 }

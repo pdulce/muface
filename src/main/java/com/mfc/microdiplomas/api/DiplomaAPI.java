@@ -38,7 +38,7 @@ public class DiplomaAPI extends ArqBaseRestController {
                               @RequestParam(value = "nombrePila", required = false) String nombrePila) {
 
         DiplomaDTO filter = new DiplomaDTO();
-        filter.setId(id == null ? null : id.toString());
+        filter.setId(id);
         filter.setIdCliente(clienteId);
         filter.setNombreCompleto(nombrePila);
         return super.executeDeleteUseCase("ConsultasDiplomasUseCase", filter);
