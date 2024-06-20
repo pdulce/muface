@@ -23,6 +23,9 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
 
     private Diploma diploma = new Diploma();
 
+    public DiplomaDTO() {
+
+    }
 
     @Override
     public void setEntity(Diploma diploma) {

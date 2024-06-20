@@ -303,7 +303,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         if (myDtoClass == null) {
             myDtoClass = (Class<D>) ((ParameterizedType) getClass()
                     .getGenericSuperclass())
-                    .getActualTypeArguments()[1];
+                    .getActualTypeArguments()[0];
         }
         return this.myDtoClass;
     }
