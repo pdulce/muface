@@ -1,6 +1,7 @@
 package com.mfc.infra.service;
 
 import com.mfc.infra.dto.IArqDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -25,5 +26,11 @@ public interface ArqServicePort<D extends IArqDTO, ID> {
     List<D> buscarCoincidenciasEstricto(D filterObject);
 
     List<D> buscarCoincidenciasNoEstricto(D filterObject);
+
+    Page<D> buscarTodosPaginados(int page, int size);
+
+    Page<D> buscarCoincidenciasEstrictoPaginados(D filterObject, int page, int size);
+
+    Page<D> buscarCoincidenciasNoEstrictoPaginados(D filterObject, int page, int size);
 
 }

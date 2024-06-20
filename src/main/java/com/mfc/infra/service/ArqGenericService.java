@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.lang.reflect.InvocationTargetException;
@@ -104,9 +107,10 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             Class<D> dtoClass = (Class<D>) entityDto.getClass();
             D entityDtoResultado = dtoClass.getDeclaredConstructor().newInstance();
             try {
-                buscarPorId((ID) entityDto.getId());
+                D searched = buscarPorId((ID) entityDto.getId());
                 ArqPortRepository<Object, ID> commandRepo = (ArqPortRepository<Object, ID>) getRepository();
-                entityDtoResultado.setEntity(commandRepo.save(entityDto.getEntity()));
+                Object objToUpdate = entityDto.getEntity();
+                entityDtoResultado.setEntity(commandRepo.save(objToUpdate));
                 this.registrarEvento(entityDtoResultado.getEntity(), ArqEvent.EVENT_TYPE_UPDATE);
                 String info = messageSource.getMessage(ArqConstantMessages.UPDATED_OK,
                         new Object[]{this.getCollectionName(this.getRepository())}, new Locale("es"));
@@ -299,7 +303,51 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         return resultado;
     }
 
-    protected Class<D> getClassOfDTO() {
+    /*** Consultas paginadas ***/
+    @Override
+    public Page<D> buscarCoincidenciasEstrictoPaginados(D filterObject, int page, int size) {
+        if (page < 0 || size < 0) {
+            logger.error("Parámetro page es menor que 0 parámeto size es menor que 0");
+            throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
+                    new Object[]{"Parámetro page es menor que 0 parámeto size es menor que 0"});
+        }
+        List<D> todos = buscarCoincidenciasEstricto(filterObject);
+        int start = Math.min(page * size, todos.size());
+        int end = Math.min((page + 1) * size, todos.size());
+        List<D> subList = todos.subList(start, end);
+        return new PageImpl<>(subList, PageRequest.of(page, size), todos.size());
+    }
+
+    @Override
+    public Page<D> buscarCoincidenciasNoEstrictoPaginados(D filterObject, int page, int size) {
+        if (page < 0 || size < 0) {
+            logger.error("Parámetro page es menor que 0 parámeto size es menor que 0");
+            throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
+                    new Object[]{"Parámetro page es menor que 0 parámeto size es menor que 0"});
+        }
+        List<D> todos = buscarCoincidenciasNoEstricto(filterObject);
+        int start = Math.min(page * size, todos.size());
+        int end = Math.min((page + 1) * size, todos.size());
+        List<D> subList = todos.subList(start, end);
+        return new PageImpl<>(subList, PageRequest.of(page, size), todos.size());
+    }
+
+    @Override
+    public Page<D> buscarTodosPaginados(int page, int size) {
+        if (page < 0 || size < 0) {
+            logger.error("Parámetro page es menor que 0 parámeto size es menor que 0");
+            throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
+                    new Object[]{"Parámetro page es menor que 0 parámeto size es menor que 0"});
+        }
+        List<D> todos = buscarTodos();
+        int start = Math.min(page * size, todos.size());
+        int end = Math.min((page + 1) * size, todos.size());
+        List<D> subList = todos.subList(start, end);
+        return new PageImpl<>(subList, PageRequest.of(page, size), todos.size());
+    }
+
+
+    private Class<D> getClassOfDTO() {
         if (myDtoClass == null) {
             myDtoClass = (Class<D>) ((ParameterizedType) getClass()
                     .getGenericSuperclass())

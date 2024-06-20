@@ -50,5 +50,18 @@ public class DiplomaAPI extends ArqBaseRestController {
         return super.executeUseQueryCaseWithReqParams("ConsultasDiplomasUseCase", filter);
     }
 
+    @GetMapping
+    public ResponseEntity<Object> consultaPaginadaPorCampos(@RequestParam(value = "id", required = false) Long id,
+                            @RequestParam(value = "clienteId", required = false) Long clienteId,
+                            @RequestParam(value = "nombrePila", required = false) String nombrePila,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "10") int size) {
+
+        DiplomaDTO filter = new DiplomaDTO();
+        filter.setId(id);
+        filter.setIdCliente(clienteId);
+        filter.setNombreCompleto(nombrePila);
+        return super.executeUseQuerypagCaseWithReqParams("ConsultasPaginadasDiplomasUseCase", filter, page, size);
+    }
 
 }

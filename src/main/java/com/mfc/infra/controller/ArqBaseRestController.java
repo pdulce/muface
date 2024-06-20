@@ -35,6 +35,13 @@ public abstract class ArqBaseRestController {
         return ResponseEntity.ok(result);
     }
 
+    protected final ResponseEntity executeUseQuerypagCaseWithReqParams(final String useCase, Object param,
+                                                                       int page, int size) {
+        Object result = useCaseExecutor.executePaginationUseCase(getBaseUseCasePackage().concat(".").
+                concat(useCase), param, page, size);
+        return ResponseEntity.ok(result);
+    }
+
     /*protected String saludar() {
         //logger.info("orchestratorManager charged ? " +  (this.orchestratorManager != null));
         String message = messageSource.getMessage(ArqConstantMessages.GREETING, null, LocaleContextHolder.getLocale());
