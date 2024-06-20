@@ -40,28 +40,20 @@ public class DiplomaAPI extends ArqBaseRestController {
 
     @GetMapping
     public ResponseEntity<Object> consultaPorCampos(@RequestParam(value = "id", required = false) Long id,
-                              @RequestParam(value = "clienteId", required = false) Long clienteId,
-                              @RequestParam(value = "nombrePila", required = false) String nombrePila) {
-
-        DiplomaDTO filter = new DiplomaDTO();
-        filter.setId(id);
-        filter.setIdCliente(clienteId);
-        filter.setNombreCompleto(nombrePila);
-        return super.executeUseQueryCaseWithReqParams("ConsultasDiplomasUseCase", filter);
-    }
-
-    @GetMapping
-    public ResponseEntity<Object> consultaPaginadaPorCampos(@RequestParam(value = "id", required = false) Long id,
                             @RequestParam(value = "clienteId", required = false) Long clienteId,
                             @RequestParam(value = "nombrePila", required = false) String nombrePila,
-                            @RequestParam(defaultValue = "0") int page,
-                            @RequestParam(defaultValue = "10") int size) {
+                            @RequestParam(required = false) Integer page,
+                            @RequestParam(required = false) Integer size) {
 
         DiplomaDTO filter = new DiplomaDTO();
         filter.setId(id);
         filter.setIdCliente(clienteId);
         filter.setNombreCompleto(nombrePila);
-        return super.executeUseQuerypagCaseWithReqParams("ConsultasPaginadasDiplomasUseCase", filter, page, size);
+        if (page == null && size == null) {
+            return super.executeUseQueryCaseWithReqParams("ConsultasDiplomasUseCase", filter);
+        } else {
+            return super.executeUseQuerypagCaseWithReqParams("ConsultasPaginadasDiplomasUseCase", filter, page, size);
+        }
     }
 
 }
