@@ -11,9 +11,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mfc.infra.dto.IArqDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 public class ArqConversionUtils {
 
@@ -21,6 +25,14 @@ public class ArqConversionUtils {
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     private ArqConversionUtils() {}
+
+    public static final Pageable changePageableOrderFields(IArqDTO dto, Pageable pageable) {
+        Sort sort = (Sort) pageable.getSort().map(order -> {
+            String realEntityField = dto.getInnerOrderField(order.getProperty());
+            return new  Sort.Order(order.getDirection(), realEntityField);
+        });
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+    }
 
     public static final String getKeyAlmacen(String typeOfStore, String applicationId, String almacen) {
         return typeOfStore + ":" + applicationId + ":" + almacen;

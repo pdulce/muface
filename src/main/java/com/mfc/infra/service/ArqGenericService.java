@@ -362,38 +362,47 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     /*** Consultas paginadas ***/
     @Override
     public Page<D> buscarCoincidenciasEstrictoPaginados(D filterObject, Pageable pageable) {
-        if (pageable == null) {
+        Pageable newPageable = ArqConversionUtils.changePageableOrderFields(filterObject, pageable);
+        if (newPageable == null) {
             logger.error("Parámetro pageable es nulo");
             throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
                     new Object[]{"Parámetro pageable es nulo"});
         }
         ArqPortRepository<Object, ID> commandRepo = getRepository();
-        Page<Object> resultado = commandRepo.findByExampleStrictedPaginated(filterObject.getEntity(), pageable);
-        return convertirAPageOfDtos(resultado, pageable);
+        Page<Object> resultado = commandRepo.findByExampleStrictedPaginated(filterObject.getEntity(), newPageable);
+        return convertirAPageOfDtos(resultado, newPageable);
     }
 
     @Override
     public Page<D> buscarCoincidenciasNoEstrictoPaginados(D filterObject, Pageable pageable) {
-        if (pageable == null) {
+        Pageable newPageable = ArqConversionUtils.changePageableOrderFields(filterObject, pageable);
+        if (newPageable == null) {
             logger.error("Parámetro pageable es nulo");
             throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
                     new Object[]{"Parámetro pageable es nulo"});
         }
         ArqPortRepository<Object, ID> commandRepo = getRepository();
-        Page<Object> resultado = commandRepo.findByExampleNotStrictedPaginated(filterObject.getEntity(), pageable);
-        return convertirAPageOfDtos(resultado, pageable);
+        Page<Object> resultado = commandRepo.findByExampleNotStrictedPaginated(filterObject.getEntity(), newPageable);
+        return convertirAPageOfDtos(resultado, newPageable);
     }
 
     @Override
     public Page<D> buscarTodosPaginados(Pageable pageable) {
-        if (pageable == null) {
-            logger.error("Parámetro pageable es nulo");
+        try {
+            D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
+            Pageable newPageable = ArqConversionUtils.changePageableOrderFields(instanciaDTOResultado, pageable);
+            if (newPageable == null) {
+                logger.error("Parámetro pageable es nulo");
+                throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
+                        new Object[]{"Parámetro pageable es nulo"});
+            }
+            ArqPortRepository<Object, ID> commandRepo = getRepository();
+            Page<Object> resultado = commandRepo.findAllPaginated(newPageable);
+            return convertirAPageOfDtos(resultado, newPageable);
+        } catch (Throwable noSuchMethodException) {
             throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
-                    new Object[]{"Parámetro pageable es nulo"});
+                    new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
         }
-        ArqPortRepository<Object, ID> commandRepo = getRepository();
-        Page<Object> resultado = commandRepo.findAllPaginated(pageable);
-        return convertirAPageOfDtos(resultado, pageable);
     }
 
     protected final Page<D> convertirAPageOfDtos(Page pageimpl, Pageable pageable) {
@@ -403,8 +412,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
                 D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
                 instanciaDTOResultado.setEntity(entity);
                 listConverted.add(instanciaDTOResultado);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                     | InvocationTargetException noSuchMethodException) {
+            } catch (Throwable noSuchMethodException) {
                 throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
                         new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
             }

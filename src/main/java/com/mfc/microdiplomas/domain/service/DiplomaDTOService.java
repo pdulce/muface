@@ -2,6 +2,7 @@ package com.mfc.microdiplomas.domain.service;
 
 import com.mfc.infra.repository.ArqPortRepository;
 import com.mfc.infra.service.ArqGenericService;
+import com.mfc.infra.utils.ArqConversionUtils;
 import com.mfc.microdiplomas.api.dto.DiplomaDTO;
 import com.mfc.microdiplomas.domain.model.Diploma;
 import com.mfc.microdiplomas.domain.repository.DiplomaJPARepository;
@@ -41,8 +42,9 @@ public class DiplomaDTOService extends ArqGenericService<DiplomaDTO, Long> {
 
     public Page<DiplomaDTO> buscarDiplomasPorNombreDeTitulacion(String nameOfTitulacion, Pageable pageable) {
         DiplomaJPARepository diplomaJPARepository = applicationContext.getBean(DiplomaJPARepository.class);
-        Page<Diploma> resultado = diplomaJPARepository.findDiplomasByTitulacionName(nameOfTitulacion, pageable);
-        return convertirAPageOfDtos(resultado, pageable);
+        Pageable newPageable = ArqConversionUtils.changePageableOrderFields(new DiplomaDTO(), pageable);
+        Page<Diploma> resultado = diplomaJPARepository.findDiplomasByTitulacionName(nameOfTitulacion, newPageable);
+        return convertirAPageOfDtos(resultado, newPageable);
     }
 
 

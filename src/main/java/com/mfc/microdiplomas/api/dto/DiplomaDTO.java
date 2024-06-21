@@ -23,7 +23,7 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
     private String continente;
 
     public void setTitulacionDeno(String titulacionDeno) {
-        this.titulacion = new HashMap<Long, String>();
+        this.titulacion = new HashMap<>();
         this.titulacion.put(Long.valueOf("0"), titulacionDeno);
     }
 
@@ -50,6 +50,20 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
             });
         }
     }
+    public String getInnerOrderField(String fieldInDto) {
+        if (fieldInDto.contentEquals("id")) {
+            return "id";
+        } else if (fieldInDto.contentEquals("idCliente")) {
+            return "idcustomer";
+        } else if (fieldInDto.contentEquals("nombreCompleto")) {
+            return "name";
+        } else if (fieldInDto.contentEquals("regionOComarca")) {
+            return "region";
+        } else {
+            return "";
+        }
+    }
+
     @Override
     @JsonIgnore
     public Diploma getEntity() {
