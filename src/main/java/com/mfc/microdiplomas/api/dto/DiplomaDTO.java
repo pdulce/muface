@@ -78,6 +78,48 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
         return diploma;
     }
 
+    @Override
+    public void actualizarEntidad(Diploma entidadBBDD) {
+        if (entidadBBDD == null) {
+            return;
+        }
+
+        entidadBBDD.setIdcustomer(this.idCliente);
+        entidadBBDD.setName(this.nombreCompleto);
+        entidadBBDD.setRegion(this.regionOComarca);
+
+        // Actualizar Titulacion
+        if (this.titulacion != null && !this.titulacion.isEmpty()) {
+            Map.Entry<Long, String> entry = this.titulacion.entrySet().iterator().next();
+            if (entidadBBDD.getTitulacion() == null) {
+                Titulacion titulacion = new Titulacion();
+                titulacion.setDiploma(entidadBBDD);
+                entidadBBDD.setTitulacion(titulacion);
+            }
+            entidadBBDD.getTitulacion().setName(entry.getValue());
+        } else {
+            entidadBBDD.setTitulacion(null);
+        }
+
+        // Actualizar Firmas
+        if (this.firmas != null) {
+            List<FirmaOrganismo> firmasNuevas = new ArrayList<>();
+            this.firmas.forEach((idFirmante, contenidoFirma) -> {
+                FirmaOrganismo firmaOrganismo = new FirmaOrganismo();
+                firmaOrganismo.setId(idFirmante);
+                firmaOrganismo.setOrganismoFirmante(contenidoFirma.keySet().iterator().next());
+                firmaOrganismo.setFechaEmision(contenidoFirma.values().iterator().next());
+                firmaOrganismo.setDiploma(entidadBBDD);
+                firmasNuevas.add(firmaOrganismo);
+            });
+            entidadBBDD.getFirmas().clear();
+            entidadBBDD.getFirmas().addAll(firmasNuevas);
+        } else {
+            entidadBBDD.getFirmas().clear();
+        }
+    }
+
+
     public Long getId() {
         return this.id;
     }

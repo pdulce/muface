@@ -44,48 +44,9 @@ public class DiplomaDocumentDTO implements IArqDTO<String, DiplomaDocument> {
         return this.diploma;
     }
 
-    public Long getIdCliente() {
-        return this.idCliente;
-    }
-
-    public void setIdCliente(Long idCliente) {
-        this.idCliente = idCliente;
-        diploma.setIdcustomer(idCliente);
-    }
-
-    public String getNombreCompleto() {
-        return nombreCompleto;
-    }
-
-    public void setNombreCompleto(String nombreCompleto) {
-        this.nombreCompleto = nombreCompleto;
-        diploma.setName(nombreCompleto);
-    }
-
-    public String getTitulacion() {
-        return this.titulacion;
-    }
-
-    public void setTitulacion(String titulacion) {
-        this.titulacion = titulacion;
-        diploma.setTitulo(titulacion);
-    }
-
-    public String getRegionOComarca() {
-        return this.regionOComarca;
-    }
-
-    public void setRegionOComarca(String regionOComarca) {
-        this.regionOComarca = regionOComarca;
-        diploma.setRegion(regionOComarca);
-    }
-
-    public String getContinente() {
-        return this.continente;
-    }
-
-    public void setContinente(String continente) {
-        this.continente = continente;
+    @Override
+    public void actualizarEntidad(DiplomaDocument entity) {
+        setEntity(entity);
     }
 
 }

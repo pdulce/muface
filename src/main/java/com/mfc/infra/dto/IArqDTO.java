@@ -12,4 +12,6 @@ public interface IArqDTO<ID, D> extends Serializable {
 
     D getEntity();
 
+    void actualizarEntidad(D entity);
+
 }

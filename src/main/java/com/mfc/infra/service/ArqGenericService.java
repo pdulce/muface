@@ -105,35 +105,33 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     @Transactional
     public D actualizar(D entityDto) {
         try {
-            Class<D> dtoClass = (Class<D>) entityDto.getClass();
-            D entityDtoResultado = dtoClass.getDeclaredConstructor().newInstance();
-            try {
-                D searched = buscarPorId((ID) entityDto.getId());
-                ArqPortRepository<Object, ID> commandRepo = (ArqPortRepository<Object, ID>) getRepository();
-                Object objToUpdate = entityDto.getEntity();
-                entityDtoResultado.setEntity(commandRepo.save(objToUpdate));
-                this.registrarEvento(entityDtoResultado.getEntity(), ArqEvent.EVENT_TYPE_UPDATE);
+            ArqPortRepository<Object, ID> commandRepo = (ArqPortRepository<Object, ID>) getRepository();
+            Optional<?> optionalT = commandRepo.findById((ID) entityDto.getId());
+            if (optionalT.isPresent()) {
+                Object searched = optionalT.orElse(null);
+                entityDto.actualizarEntidad(searched);
+                Object updated = commandRepo.save(searched);
+                this.registrarEvento(updated, ArqEvent.EVENT_TYPE_UPDATE);
                 String info = messageSource.getMessage(ArqConstantMessages.UPDATED_OK,
                         new Object[]{this.getCollectionName(this.getRepository())}, new Locale("es"));
                 logger.info(info);
-            } catch (ConstraintViolationException ctExc) {
-                throw ctExc;
-            } catch (NotExistException notExistException) {
-                throw notExistException;
-            } catch (Throwable exc) {
-                String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
-                        new Object[]{this.getCollectionName(this.getRepository()), exc.getCause()},
-                        new Locale("es"));
-                logger.error(error);
-                throw new ArqBaseOperationsException(ArqConstantMessages.UPDATED_KO,
-                        new Object[]{this.getCollectionName(this.getRepository()), exc.getCause()});
+            } else {
+                throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
+                        new Object[]{this.getCollectionName(this.getRepository()), (ID) entityDto.getId()});
             }
-            return entityDtoResultado;
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                 | InvocationTargetException noSuchMethodException) {
+        } catch (ConstraintViolationException ctExc) {
+            throw ctExc;
+        } catch (NotExistException notExistException) {
+            throw notExistException;
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
+                    new Object[]{this.getCollectionName(this.getRepository()), exc.getCause()},
+                    new Locale("es"));
+            logger.error(error);
             throw new ArqBaseOperationsException(ArqConstantMessages.UPDATED_KO,
-                    new Object[]{entityDto.getClass().getSimpleName(), noSuchMethodException.getCause()});
+                    new Object[]{this.getCollectionName(this.getRepository()), exc.getCause()});
         }
+        return entityDto;
     }
 
     @Override
