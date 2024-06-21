@@ -42,9 +42,9 @@ spring:
   # query domain
   data:
     mongodb:
-      host: 192.168.1.163
+      host: 192.168.1.137
       port: 27017
-      uri: mongodb://test:test@192.168.1.163:27017/queryDomainDB
+      uri: mongodb://test:test@192.168.1.137:27017/queryDomainDB
       authentication-database: queryDomainDB
       #connectTimeout: 3000 # Tiempo de espera de conexión en milisegundos
       #socketTimeout: 3000 # Tiempo de espera de socket en milisegundos

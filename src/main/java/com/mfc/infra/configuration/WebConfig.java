@@ -10,9 +10,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
     private LocaleInterceptor localeInterceptor;
+    @Autowired
+    private SessionInterceptor sessionInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(sessionInterceptor).addPathPatterns("/**");
         registry.addInterceptor(localeInterceptor);
     }
 

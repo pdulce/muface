@@ -18,7 +18,7 @@ public class LocaleInterceptor implements HandlerInterceptor {
     public static final String CATALAN = "ca";
     public static final String CASTELLANO = "es";
     public static final String ENGLISH = "en";
-    public final Map<String, Locale> mapLocales = new HashMap<>();
+    public final static Map<String, Locale> mapLocales = new HashMap<>();
 
     private Locale getLocale(String idioma) {
         if (mapLocales.isEmpty()) {
