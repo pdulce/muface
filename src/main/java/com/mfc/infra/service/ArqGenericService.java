@@ -13,6 +13,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.*;
@@ -34,6 +35,8 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
 
     private Class<D> myDtoClass;
 
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     public abstract String getRepositoryEntityOfDTO();
 
