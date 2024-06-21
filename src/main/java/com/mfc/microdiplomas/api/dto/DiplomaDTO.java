@@ -22,10 +22,14 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
     /** campo calculado transient que no está en el modelo (entidad-relacional o document-non-relational) **/
     private String continente;
 
-    public static final String getEntityName() {
-        return Diploma.class.getName();
+    public void setTitulacionDeno(String titulacionDeno) {
+        this.titulacion = new HashMap<Long, String>();
+        this.titulacion.put(Long.valueOf("0"), titulacionDeno);
     }
 
+    public String getTitulacionDeno() {
+        return this.titulacion != null && this.titulacion.isEmpty() ? "" : this.titulacion.values().iterator().next();
+    }
     @Override
     public void setEntity(Diploma diploma) {
         this.id = diploma.getId();

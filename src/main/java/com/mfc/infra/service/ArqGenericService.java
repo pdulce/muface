@@ -15,9 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.core.ResolvableType;
 import org.springframework.data.domain.*;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -50,7 +48,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         }
         return this.myDtoClass;
     }
-    public ArqPortRepository<Object, ID> getRepository() {
+    protected ArqPortRepository<Object, ID> getRepository() {
         String entityClassName = "";
         try {
             D entityDtoResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
@@ -388,7 +386,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         return convertirAPageOfDtos(resultado, pageable);
     }
 
-    private final Page<D> convertirAPageOfDtos(Page<Object> pageimpl, Pageable pageable) {
+    protected final Page<D> convertirAPageOfDtos(Page pageimpl, Pageable pageable) {
         List<D> listConverted = new ArrayList<>();
         pageimpl.stream().toList().forEach((entity) -> {
             try {

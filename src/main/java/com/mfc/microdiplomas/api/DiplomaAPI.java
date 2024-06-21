@@ -43,12 +43,14 @@ public class DiplomaAPI extends ArqBaseRestController {
     public ResponseEntity<Object> consultaPorCampos(@RequestParam(value = "id", required = false) Long id,
                             @RequestParam(value = "clienteId", required = false) Long clienteId,
                             @RequestParam(value = "nombrePila", required = false) String nombrePila,
-                            Pageable pageable) {
+                            @RequestParam(value = "titulacion", required = false) String titulacion,
+                            @RequestParam(required = false) Pageable pageable) {
 
         DiplomaDTO filter = new DiplomaDTO();
         filter.setId(id);
         filter.setIdCliente(clienteId);
         filter.setNombreCompleto(nombrePila);
+        filter.setTitulacionDeno(titulacion);
         if (id != null || pageable == null) {
             return super.executeUseQueryCaseWithReqParams("ConsultasDiplomasUseCase", filter);
         } else {
