@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-public class SessionInterceptor implements HandlerInterceptor {
+public class ArqSessionInterceptor implements HandlerInterceptor {
     private static final ThreadLocal<HttpSession> currentSession = new ThreadLocal<>();
 
     @Override

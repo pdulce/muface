@@ -8,7 +8,7 @@ import java.util.List;
 import org.springdoc.core.customizers.PropertyCustomizer;
 
 @Configuration
-public class SpringDocConfiguration {
+public class ArqSpringDocConfiguration {
 
     @Bean
     public PropertyCustomizingConverter propertyCustomizingConverter(

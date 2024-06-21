@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 
 @Component
-public class LocaleInterceptor implements HandlerInterceptor {
+public class ArqLocaleInterceptor implements HandlerInterceptor {
 
     public static final String EUSKERA = "eu";
     public static final String GALLEGO = "gl";

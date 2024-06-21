@@ -4,6 +4,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,17 +13,11 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
     private MongoRepository<T, ID> mongoRepository;
     private MongoOperations mongoOperations;
 
-    protected final Class<T> entityClass;
-
-    @SuppressWarnings("unchecked")
-    public ArqMongoAdapterRepository(Class<T> classZ) {
-        this.entityClass = classZ;
-    }
-
     public Class<T> getClassOfEntity() {
-        return this.entityClass;
+        return (Class<T>) ((ParameterizedType) getClass()
+                .getGenericSuperclass())
+                .getActualTypeArguments()[0];
     }
-
     public void setMongoRepository(MongoRepository<?, ID> mongoRepository) {
         this.mongoRepository = (MongoRepository<T, ID>) mongoRepository;
     }

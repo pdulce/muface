@@ -3,6 +3,7 @@ package com.mfc.infra.repository;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,16 +16,12 @@ public class ArqRelationalAdapterRepository<T, ID> implements ArqPortRepository<
         this.jpaRepository = (JpaRepository<T, ID>) jpaRepository;
     }
 
-    protected final Class<T> entityClass;
-
-    @SuppressWarnings("unchecked")
-    public ArqRelationalAdapterRepository(Class<T> classZ) {
-        this.entityClass = classZ;
-    }
-
     public Class<T> getClassOfEntity() {
-        return this.entityClass;
+        return (Class<T>) ((ParameterizedType) getClass()
+                .getGenericSuperclass())
+                .getActualTypeArguments()[0];
     }
+
 
     @Override
     public T save(T entity) {
