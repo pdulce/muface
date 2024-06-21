@@ -5,6 +5,7 @@ import com.mfc.infra.command.ArqAbstractUseCasePagination;
 import com.mfc.infra.exceptions.ArqBussinessRuleException;
 import com.mfc.infra.exceptions.NotExistException;
 import com.mfc.infra.utils.ArqConversionUtils;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -20,6 +21,7 @@ public class ArqUseCaseExecutor {
     @Autowired
     ApplicationContext applicationContext;
 
+    @Transactional
     public <R, P> R executeUseCase(String useCaseName, P paramObj) {
         try {
             Class<?> useCaseClass = Class.forName(useCaseName);

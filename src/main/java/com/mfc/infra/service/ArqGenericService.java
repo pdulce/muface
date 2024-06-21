@@ -79,6 +79,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             try {
                 ArqPortRepository<Object, ID> commandRepo = (ArqPortRepository<Object, ID>) getRepository();
                 entityDtoResultado.setEntity(commandRepo.save(entityDto.getEntity()));
+                //D searched = buscarPorId((ID) entityDtoResultado.getId());
                 this.registrarEvento(entityDtoResultado.getEntity(), ArqEvent.EVENT_TYPE_CREATE);
                 String info = messageSource.getMessage(ArqConstantMessages.CREATED_OK,
                         new Object[]{this.getCollectionName(this.getRepository())}, new Locale("es"));

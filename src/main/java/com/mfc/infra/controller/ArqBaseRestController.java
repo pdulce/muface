@@ -2,6 +2,7 @@ package com.mfc.infra.controller;
 
 import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.usecase.ArqUseCaseExecutor;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -13,18 +14,21 @@ public abstract class ArqBaseRestController {
 
     protected abstract String getBaseUseCasePackage();
 
+    @Transactional
     protected final ResponseEntity executeCreateUseCaseWithInputBody(final String useCase, IArqDTO dtoInBody) {
         Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").
                 concat(useCase), dtoInBody);
         return ResponseEntity.ok(result);
     }
 
+    @Transactional
     protected final ResponseEntity executeUpdateUseCaseWithInputBody(final String useCase, IArqDTO dtoInBody) {
         Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").
                 concat(useCase), dtoInBody);
         return ResponseEntity.ok(result);
     }
 
+    @Transactional
     protected final ResponseEntity executeDeleteUseCase(final String useCase, Object id) {
         Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").concat(useCase), id);
         return ResponseEntity.ok(result);
