@@ -49,11 +49,12 @@ public class DiplomaAPI extends ArqBaseRestController {
         filter.setId(id);
         filter.setIdCliente(clienteId);
         filter.setNombreCompleto(nombrePila);
-        if (pageable == null) {
+        if (id != null || pageable == null) {
             return super.executeUseQueryCaseWithReqParams("ConsultasDiplomasUseCase", filter);
         } else {
             return super.executeUseQuerypagCaseWithReqParams("ConsultasPaginadasDiplomasUseCase", filter, pageable);
         }
+
     }
 
 }

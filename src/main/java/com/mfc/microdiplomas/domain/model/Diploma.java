@@ -26,10 +26,10 @@ public class Diploma {
     @Column
     private String region;
 
-    @OneToOne(mappedBy = "diploma", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "diploma", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Titulacion titulacion;
 
-    @OneToMany(mappedBy = "diploma", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "diploma", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FirmaOrganismo> firmas;
 
 }
