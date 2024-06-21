@@ -1,9 +1,7 @@
 package com.mfc.microdiplomas.api.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mfc.infra.dto.IArqDTO;
-import com.mfc.microdiplomas.domain.model.Diploma;
 import com.mfc.microdiplomas.domain.model.DiplomaDocument;
 
 public class DiplomaDocumentDTO implements IArqDTO<String, DiplomaDocument> {
@@ -17,11 +15,10 @@ public class DiplomaDocumentDTO implements IArqDTO<String, DiplomaDocument> {
     /** campo calculado transient que no está en el modelo (entidad-relacional o document-non-relational) **/
     private String continente;
 
-    private DiplomaDocument diploma = new DiplomaDocument();
+    //private DiplomaDocument diploma = new DiplomaDocument();
 
     public void setId(String id) {
         this.id = id;
-        diploma.setId(id);
     }
 
     public String getId() {
@@ -30,18 +27,22 @@ public class DiplomaDocumentDTO implements IArqDTO<String, DiplomaDocument> {
 
     @Override
     public void setEntity(DiplomaDocument diploma) {
-        this.diploma = diploma;
-        this.id = this.diploma.getId();
-        this.idCliente = this.diploma.getIdcustomer();
-        this.nombreCompleto = this.diploma.getName();
-        this.titulacion = this.diploma.getTitulo();
-        this.regionOComarca = this.diploma.getRegion();
+        this.id = diploma.getId();
+        this.idCliente = diploma.getIdcustomer();
+        this.nombreCompleto = diploma.getName();
+        this.titulacion = diploma.getTitulo();
+        this.regionOComarca = diploma.getRegion();
     }
 
     @Override
     @JsonIgnore
     public DiplomaDocument getEntity() {
-        return this.diploma;
+        DiplomaDocument diploma = new DiplomaDocument();
+        diploma.setId(this.id);
+        diploma.setIdcustomer(this.idCliente);
+        diploma.setName(this.nombreCompleto);
+        diploma.setRegion(this.regionOComarca);
+        return diploma;
     }
 
     @Override
