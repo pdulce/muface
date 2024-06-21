@@ -53,6 +53,11 @@ public class ArqRelationalAdapterRepository<T, ID> implements ArqPortRepository<
     }
 
     @Override
+    public List<T> findByIds(List<ID> ids) {
+        return jpaRepository.findAllById(ids);
+    }
+
+    @Override
     public List<T> findAll() {
         return jpaRepository.findAll();
     }

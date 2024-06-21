@@ -17,6 +17,8 @@ public interface ArqServicePort<D extends IArqDTO, ID> {
 
     D buscarPorId(ID id);
 
+    List<D> buscarPorIds(List<ID> ids);
+
     String borrarEntidad(ID id);
     String borrarEntidad(D entity);
 

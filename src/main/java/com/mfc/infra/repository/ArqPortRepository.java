@@ -20,6 +20,9 @@ public interface ArqPortRepository<T, ID> {
 
     void deleteAll();
     Optional<T> findById(ID id);
+
+    List<T> findByIds(List<ID> ids);
+
     List<T> findAll();
 
     List<T> findAll(Sort sort);

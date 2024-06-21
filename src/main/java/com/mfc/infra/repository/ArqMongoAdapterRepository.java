@@ -59,6 +59,11 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
     }
 
     @Override
+    public List<T> findByIds(List<ID> ids) {
+        return mongoRepository.findAllById(ids);
+    }
+
+    @Override
     public List<T> findAll() {
         return mongoRepository.findAll();
     }

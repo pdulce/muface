@@ -317,9 +317,16 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     }
 
     @Override
+    public List<D> buscarPorIds(List<ID> ids) {
+        ArqPortRepository<Object, ID> commandRepo = getRepository();
+        List<Object> resultado = commandRepo.findByIds(ids);
+        return convertirListaADtos(resultado);
+    }
+
+    @Override
     public List<D> buscarCoincidenciasEstricto(D filterObject) {
         List<D> resultado = new ArrayList<>();
-        ArqPortRepository<Object, ID> commandRepo = (ArqPortRepository<Object, ID>) getRepository();
+        ArqPortRepository<Object, ID> commandRepo = getRepository();
         commandRepo.findByExampleStricted(filterObject.getEntity()).forEach((entity) -> {
             try {
                 D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
@@ -405,6 +412,23 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         return new PageImpl<>(listConverted,
                 PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()),
                 pageimpl.getTotalElements());
+    }
+
+
+    protected final List<D> convertirListaADtos(List listaOrigen) {
+        List<D> listConverted = new ArrayList<>();
+        listaOrigen.stream().toList().forEach((entity) -> {
+            try {
+                D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
+                instanciaDTOResultado.setEntity(entity);
+                listConverted.add(instanciaDTOResultado);
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+                     | InvocationTargetException noSuchMethodException) {
+                throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
+                        new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
+            }
+        });
+        return listConverted;
     }
 
 
