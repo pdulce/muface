@@ -57,6 +57,7 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
             if (entry != null) {
                 diploma.setTitulacion(new Titulacion());
                 diploma.getTitulacion().setName(entry.getValue());
+                diploma.getTitulacion().setDiploma(diploma);
             }
         }
 
@@ -70,6 +71,7 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
                 FirmaOrganismo firmaOrganismo = new FirmaOrganismo();
                 firmaOrganismo.setOrganismoFirmante(firmante);
                 firmaOrganismo.setFechaEmision(fechaEmisionFirma);
+                firmaOrganismo.setDiploma(diploma);
                 diploma.getFirmas().add(firmaOrganismo);
             }
         }

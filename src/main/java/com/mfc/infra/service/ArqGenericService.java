@@ -275,7 +275,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             D entityDtoResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
             Optional<?> optionalT = this.getRepository().findById(id);
             if (optionalT.isPresent()) {
-                entityDtoResultado.setEntity(optionalT.get());
+                entityDtoResultado.setEntity(optionalT.orElse(null));
                 return entityDtoResultado;
             } else {
                 throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
