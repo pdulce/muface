@@ -13,9 +13,9 @@ import java.util.List;
 @Repository
 public interface DiplomaJPARepository extends JpaRepository<Diploma, Long> {
 
-    @Query("SELECT d FROM Diploma d JOIN d.titulacion t WHERE t.name = :titulacionName")
+    @Query("SELECT d FROM Diploma d JOIN d.titulacion t WHERE t.name LIKE %:titulacionName%")
     List<Diploma> findDiplomasByTitulacionName(@Param("titulacionName") String titulacionName);
-    @Query("SELECT d FROM Diploma d JOIN d.titulacion t WHERE t.name = :titulacionName")
+    @Query("SELECT d FROM Diploma d JOIN d.titulacion t WHERE t.name LIKE %:titulacionName%")
     Page<Diploma> findDiplomasByTitulacionName(@Param("titulacionName") String titulacionName, Pageable pageable);
 
 }

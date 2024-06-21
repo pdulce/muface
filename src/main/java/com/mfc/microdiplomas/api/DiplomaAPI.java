@@ -2,6 +2,7 @@ package com.mfc.microdiplomas.api;
 
 import com.mfc.infra.controller.ArqBaseRestController;
 import com.mfc.microdiplomas.api.dto.DiplomaDTO;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -41,10 +42,10 @@ public class DiplomaAPI extends ArqBaseRestController {
 
     @GetMapping
     public ResponseEntity<Object> consultaPorCampos(@RequestParam(value = "id", required = false) Long id,
-                            @RequestParam(value = "clienteId", required = false) Long clienteId,
-                            @RequestParam(value = "nombrePila", required = false) String nombrePila,
-                            @RequestParam(value = "titulacion", required = false) String titulacion,
-                            @RequestParam(required = false) Pageable pageable) {
+                                        @RequestParam(value = "clienteId", required = false) Long clienteId,
+                                        @RequestParam(value = "nombrePila", required = false) String nombrePila,
+                                        @RequestParam(value = "titulacion", required = false) String titulacion,
+                                        Pageable pageable) {
 
         DiplomaDTO filter = new DiplomaDTO();
         filter.setId(id);
