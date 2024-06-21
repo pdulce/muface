@@ -2,7 +2,6 @@ package com.mfc.microdiplomas.api;
 
 import com.mfc.infra.controller.ArqBaseRestController;
 import com.mfc.microdiplomas.api.dto.DiplomaDTO;
-import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +18,6 @@ public class DiplomaAPI extends ArqBaseRestController {
         return this.useCasePackage;
     }
 
-    // TODO: cómo resolver la problemática de recibir un DTO que tiene información insuficiente
-    // TODO: de sus entidades a ser persistidas en Base de datos--> solución, deben mantener en el DTO la información
-    // TODO: mínima necesaria para poder crear las entidades hijas de la entidad principal, sean one-to-one o many-to-one
     @PostMapping
     public ResponseEntity<Object> crear(@RequestBody DiplomaDTO dtoInBody) { // usaríamos la Entidad no el DTO
         return super.executeCreateUseCaseWithInputBody("CrearDiplomaUseCase", dtoInBody);
