@@ -42,7 +42,7 @@ public class ArqRepoConfig {
         Map<String, JpaRepository>  jpaRepositories = applicationContext.getBeansOfType(JpaRepository.class);
 
         jpaRepositories.keySet().forEach((repositorykey) -> {
-            ArqRelationalAdapterRepository<?, Long> repository = new ArqRelationalAdapterRepository<>();
+            ArqRelationalAdapterRepository<?, Long> repository = new ArqRelationalAdapterRepository();
             JpaRepository<?, Long> jpaRepository = jpaRepositories.get(repositorykey);
             repository.setJpaRepository(jpaRepository);
             repositoryMap.put(repositorykey, repository);

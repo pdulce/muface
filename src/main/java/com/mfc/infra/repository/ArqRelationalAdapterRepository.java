@@ -11,15 +11,19 @@ import java.util.Optional;
 public class ArqRelationalAdapterRepository<T, ID> implements ArqPortRepository<T, ID> {
 
     private JpaRepository<T, ID> jpaRepository;
+    private String classOfEntity;
 
     public void setJpaRepository(JpaRepository<?, ID> jpaRepository) {
         this.jpaRepository = (JpaRepository<T, ID>) jpaRepository;
     }
 
-    public Class<T> getClassOfEntity() {
-        return (Class<T>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[0];
+    @Override
+    public String getClassOfEntity() {
+        return this.classOfEntity;
+    }
+    @Override
+    public void setClassOfEntity(String classOfEntity) {
+        this.classOfEntity = classOfEntity;
     }
 
 

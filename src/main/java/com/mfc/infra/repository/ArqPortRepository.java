@@ -9,7 +9,9 @@ import java.util.Optional;
 
 public interface ArqPortRepository<T, ID> {
 
-    Class<T> getClassOfEntity();
+    //Class<T> getClassOfEntity();
+    String getClassOfEntity();
+    void setClassOfEntity(String classOfEntity);
 
     T save(T entity);
     void delete(T entity);

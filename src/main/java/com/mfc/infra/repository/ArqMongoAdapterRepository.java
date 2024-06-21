@@ -13,11 +13,17 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
     private MongoRepository<T, ID> mongoRepository;
     private MongoOperations mongoOperations;
 
-    public Class<T> getClassOfEntity() {
-        return (Class<T>) ((ParameterizedType) getClass()
-                .getGenericSuperclass())
-                .getActualTypeArguments()[0];
+    private String classOfEntity;
+
+    @Override
+    public String getClassOfEntity() {
+        return this.classOfEntity;
     }
+    @Override
+    public void setClassOfEntity(String classOfEntity) {
+        this.classOfEntity = classOfEntity;
+    }
+
     public void setMongoRepository(MongoRepository<?, ID> mongoRepository) {
         this.mongoRepository = (MongoRepository<T, ID>) mongoRepository;
     }

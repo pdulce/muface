@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface ArqServicePort<D extends IArqDTO, ID> {
 
+    String getRepositoryEntityOfDTO();
     D crear(D entity);
 
     D actualizar(D entity) throws NoSuchMethodException;

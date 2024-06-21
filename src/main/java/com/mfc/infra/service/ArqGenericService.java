@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.ResolvableType;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +24,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 @Transactional
-@Service
-public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<D, ID> {
+public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<D, ID> {
 
     Logger logger = LoggerFactory.getLogger(ArqGenericService.class);
 
@@ -35,6 +35,9 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
     //ArqCommandEventPublisherPort arqCommandEventPublisherPort;
 
     private Class<D> myDtoClass;
+
+
+    public abstract String getRepositoryEntityOfDTO();
 
     @Autowired
     MessageSource messageSource;
@@ -58,8 +61,7 @@ public class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<
         }
 
         for (String repoName : commandRepositories.keySet()) {
-            if (commandRepositories.get(repoName).getClassOfEntity().getName().
-                    contentEquals(entityClassName)) {
+            if (getRepositoryEntityOfDTO().contentEquals(entityClassName)) {
                 return (ArqPortRepository<Object, ID>) commandRepositories.get(repoName);
             }
         }
