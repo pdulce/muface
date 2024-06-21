@@ -26,6 +26,21 @@ public class DiplomaDocumentDTO implements IArqDTO<String, DiplomaDocument> {
     }
 
     @Override
+    public String getInnerOrderField(String fieldInDto) {
+        if (fieldInDto.contentEquals("id")) {
+            return "id";
+        } else if (fieldInDto.contentEquals("idCliente")) {
+            return "idcustomer";
+        } else if (fieldInDto.contentEquals("nombreCompleto")) {
+            return "name";
+        } else if (fieldInDto.contentEquals("regionOComarca")) {
+            return "region";
+        } else {
+            return "";
+        }
+    }
+
+    @Override
     public void setEntity(DiplomaDocument diploma) {
         this.id = diploma.getId();
         this.idCliente = diploma.getIdcustomer();
