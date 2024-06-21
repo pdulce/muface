@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -27,11 +29,19 @@ public class ArqConversionUtils {
     private ArqConversionUtils() {}
 
     public static final Pageable changePageableOrderFields(IArqDTO dto, Pageable pageable) {
-        Sort sort = (Sort) pageable.getSort().map(order -> {
-            String realEntityField = dto.getInnerOrderField(order.getProperty());
-            return new  Sort.Order(order.getDirection(), realEntityField);
-        });
-        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        if (pageable.getSort() == null || pageable.getSort().isEmpty()) {
+            return pageable;
+        }
+        Sort originalSort = pageable.getSort();
+        Sort newSort = Sort.unsorted();
+
+        for (Sort.Order order : originalSort) {
+            String property = order.getProperty();
+            String transformedProperty = dto.getInnerOrderField(property);
+            newSort = newSort.and(Sort.by(order.getDirection(), transformedProperty));
+        }
+
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), newSort);
     }
 
     public static final String getKeyAlmacen(String typeOfStore, String applicationId, String almacen) {
