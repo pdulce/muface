@@ -15,14 +15,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.xml.transform.Transformer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 //@Service
@@ -247,6 +247,27 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         });
         return resultado;
     }
+    @Override
+    public List<D> buscarTodosConOrdenacion(Sort sort) {
+        if (sort == null) {
+            logger.error("Parámetro sort es nulo");
+            throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
+                    new Object[]{"Parámetro sort es nulo"});
+        }
+        List<D> resultado = new ArrayList<>();
+        this.getRepository().findAll(sort).forEach((entity) -> {
+            try {
+                D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
+                instanciaDTOResultado.setEntity(entity);
+                resultado.add(instanciaDTOResultado);
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+                     | InvocationTargetException noSuchMethodException) {
+                throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
+                        new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
+            }
+        });
+        return resultado;
+    }
 
     @Override
     public D buscarPorId(ID id) {
@@ -305,47 +326,58 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
 
     /*** Consultas paginadas ***/
     @Override
-    public Page<D> buscarCoincidenciasEstrictoPaginados(D filterObject, int page, int size) {
-        if (page < 0 || size < 0) {
-            logger.error("Parámetro page es menor que 0 parámeto size es menor que 0");
+    public Page<D> buscarCoincidenciasEstrictoPaginados(D filterObject, Pageable pageable) {
+        if (pageable == null) {
+            logger.error("Parámetro pageable es nulo");
             throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
-                    new Object[]{"Parámetro page es menor que 0 parámeto size es menor que 0"});
+                    new Object[]{"Parámetro pageable es nulo"});
         }
-        List<D> todos = buscarCoincidenciasEstricto(filterObject);
-        int start = Math.min(page * size, todos.size());
-        int end = Math.min((page + 1) * size, todos.size());
-        List<D> subList = todos.subList(start, end);
-        return new PageImpl<>(subList, PageRequest.of(page, size), todos.size());
+        ArqPortRepository<Object, ID> commandRepo = (ArqPortRepository<Object, ID>) getRepository();
+        Page<Object> resultado = commandRepo.findByExampleStrictedPaginated(filterObject.getEntity(), pageable);
+        return convertirAPageOfDtos(resultado, pageable);
     }
 
     @Override
-    public Page<D> buscarCoincidenciasNoEstrictoPaginados(D filterObject, int page, int size) {
-        if (page < 0 || size < 0) {
-            logger.error("Parámetro page es menor que 0 parámeto size es menor que 0");
+    public Page<D> buscarCoincidenciasNoEstrictoPaginados(D filterObject, Pageable pageable) {
+        if (pageable == null) {
+            logger.error("Parámetro pageable es nulo");
             throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
-                    new Object[]{"Parámetro page es menor que 0 parámeto size es menor que 0"});
+                    new Object[]{"Parámetro pageable es nulo"});
         }
-        List<D> todos = buscarCoincidenciasNoEstricto(filterObject);
-        int start = Math.min(page * size, todos.size());
-        int end = Math.min((page + 1) * size, todos.size());
-        List<D> subList = todos.subList(start, end);
-        return new PageImpl<>(subList, PageRequest.of(page, size), todos.size());
+        ArqPortRepository<Object, ID> commandRepo = (ArqPortRepository<Object, ID>) getRepository();
+        Page<Object> resultado = commandRepo.findByExampleNotStrictedPaginated(filterObject.getEntity(), pageable);
+        return convertirAPageOfDtos(resultado, pageable);
     }
 
     @Override
-    public Page<D> buscarTodosPaginados(int page, int size) {
-        if (page < 0 || size < 0) {
-            logger.error("Parámetro page es menor que 0 parámeto size es menor que 0");
+    public Page<D> buscarTodosPaginados(Pageable pageable) {
+        if (pageable == null) {
+            logger.error("Parámetro pageable es nulo");
             throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
-                    new Object[]{"Parámetro page es menor que 0 parámeto size es menor que 0"});
+                    new Object[]{"Parámetro pageable es nulo"});
         }
-        List<D> todos = buscarTodos();
-        int start = Math.min(page * size, todos.size());
-        int end = Math.min((page + 1) * size, todos.size());
-        List<D> subList = todos.subList(start, end);
-        return new PageImpl<>(subList, PageRequest.of(page, size), todos.size());
+        ArqPortRepository<Object, ID> commandRepo = (ArqPortRepository<Object, ID>) getRepository();
+        Page<Object> resultado = commandRepo.findAllPaginated(pageable);
+        return convertirAPageOfDtos(resultado, pageable);
     }
 
+    private final Page<D> convertirAPageOfDtos(Page<Object> pageimpl, Pageable pageable) {
+        List<D> listConverted = new ArrayList<>();
+        pageimpl.stream().toList().forEach((entity) -> {
+            try {
+                D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
+                instanciaDTOResultado.setEntity(entity);
+                listConverted.add(instanciaDTOResultado);
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+                     | InvocationTargetException noSuchMethodException) {
+                throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
+                        new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
+            }
+        });
+        return new PageImpl<>(listConverted,
+                PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()),
+                pageimpl.getTotalElements());
+    }
 
     private Class<D> getClassOfDTO() {
         if (myDtoClass == null) {

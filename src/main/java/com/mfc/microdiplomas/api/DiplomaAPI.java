@@ -3,6 +3,7 @@ package com.mfc.microdiplomas.api;
 import com.mfc.infra.controller.ArqBaseRestController;
 import com.mfc.microdiplomas.api.dto.DiplomaDTO;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,17 +43,16 @@ public class DiplomaAPI extends ArqBaseRestController {
     public ResponseEntity<Object> consultaPorCampos(@RequestParam(value = "id", required = false) Long id,
                             @RequestParam(value = "clienteId", required = false) Long clienteId,
                             @RequestParam(value = "nombrePila", required = false) String nombrePila,
-                            @RequestParam(required = false) Integer page,
-                            @RequestParam(required = false) Integer size) {
+                            Pageable pageable) {
 
         DiplomaDTO filter = new DiplomaDTO();
         filter.setId(id);
         filter.setIdCliente(clienteId);
         filter.setNombreCompleto(nombrePila);
-        if (page == null && size == null) {
+        if (pageable == null) {
             return super.executeUseQueryCaseWithReqParams("ConsultasDiplomasUseCase", filter);
         } else {
-            return super.executeUseQuerypagCaseWithReqParams("ConsultasPaginadasDiplomasUseCase", filter, page, size);
+            return super.executeUseQuerypagCaseWithReqParams("ConsultasPaginadasDiplomasUseCase", filter, pageable);
         }
     }
 

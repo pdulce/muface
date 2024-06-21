@@ -9,6 +9,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
@@ -50,7 +51,7 @@ public class ArqUseCaseExecutor {
         }
     }
 
-    public <R, P> R executePaginationUseCase(String useCaseName, P paramObj, int page, int size) {
+    public <R, P> R executePaginationUseCase(String useCaseName, P paramObj, Pageable pageable) {
         try {
             Class<?> useCaseClass = Class.forName(useCaseName);
             ArqAbstractUseCasePagination<R, P> useCase =
@@ -58,7 +59,7 @@ public class ArqUseCaseExecutor {
             if (useCase == null) {
                 throw new ClassNotFoundException(useCaseName);
             }
-            return useCase.executeQueryPaginada(paramObj, page, size);
+            return useCase.executeQueryPaginada(paramObj, pageable);
 
         } catch (ClassNotFoundException e) {
 

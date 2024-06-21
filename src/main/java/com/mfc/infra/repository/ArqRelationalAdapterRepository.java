@@ -1,8 +1,7 @@
 package com.mfc.infra.repository;
 
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.domain.Example;
 
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +56,17 @@ public class ArqRelationalAdapterRepository<T, ID> implements ArqPortRepository<
         return jpaRepository.findAll();
     }
 
+    @Override
+    public List<T> findAll(Sort sort) {
+        return jpaRepository.findAll(sort);
+    }
+
+    @Override
+    public Page<T> findAllPaginated(Pageable pageable) {
+        return jpaRepository.findAll(pageable);
+    }
+
+    @Override
     public List<T> findByExampleStricted(T example) {
         ExampleMatcher matcher = ExampleMatcher.matchingAll()
                 .withIgnoreNullValues();
@@ -66,6 +76,15 @@ public class ArqRelationalAdapterRepository<T, ID> implements ArqPortRepository<
         return jpaRepository.findAll(exampleJPA);
     }
 
+    @Override
+    public Page<T> findByExampleStrictedPaginated(T example, Pageable pageable) {
+        ExampleMatcher matcher = ExampleMatcher.matchingAll()
+                .withIgnoreNullValues();
+
+        // Crear el Example con el matcher configurado
+        Example<T> exampleJPA = Example.of(example, matcher);
+        return jpaRepository.findAll(exampleJPA, pageable);
+    }
 
     @Override
     public List<T> findByExampleNotStricted(T example) {
@@ -76,6 +95,17 @@ public class ArqRelationalAdapterRepository<T, ID> implements ArqPortRepository<
         // Crear el Example con el matcher configurado
         Example<T> exampleJPA = Example.of(example, matcher);
         return jpaRepository.findAll(exampleJPA);
+    }
+
+    @Override
+    public Page<T> findByExampleNotStrictedPaginated(T example, Pageable pageable) {
+        ExampleMatcher matcher = ExampleMatcher.matchingAll()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING) // Realiza búsquedas LIKE %valor%
+                .withIgnoreCase(); // Ignorar mayúsculas/minúsculas
+
+        // Crear el Example con el matcher configurado
+        Example<T> exampleJPA = Example.of(example, matcher);
+        return jpaRepository.findAll(exampleJPA, pageable);
     }
 
 }

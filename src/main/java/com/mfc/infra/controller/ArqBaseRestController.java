@@ -3,6 +3,7 @@ package com.mfc.infra.controller;
 import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.usecase.ArqUseCaseExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 public abstract class ArqBaseRestController {
@@ -35,10 +36,10 @@ public abstract class ArqBaseRestController {
         return ResponseEntity.ok(result);
     }
 
-    protected final ResponseEntity executeUseQuerypagCaseWithReqParams(final String useCase, Object param,
-                                                                       int page, int size) {
+    protected final ResponseEntity executeUseQuerypagCaseWithReqParams(final String useCase, Object paramsObject,
+                                                                       Pageable pageable) {
         Object result = useCaseExecutor.executePaginationUseCase(getBaseUseCasePackage().concat(".").
-                concat(useCase), param, page, size);
+                concat(useCase), paramsObject, pageable);
         return ResponseEntity.ok(result);
     }
 

@@ -1,9 +1,8 @@
 package com.mfc.infra.repository;
 
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.domain.Example;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,6 +63,16 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
     }
 
     @Override
+    public List<T> findAll(Sort sort) {
+        return mongoRepository.findAll(sort);
+    }
+
+    @Override
+    public Page<T> findAllPaginated(Pageable pageable) {
+        return mongoRepository.findAll(pageable);
+    }
+
+    @Override
     public List<T> findByExampleStricted(T example) {
         ExampleMatcher matcher = ExampleMatcher.matchingAll()
                 .withIgnoreNullValues();
@@ -71,6 +80,16 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
         // Crear el Example con el matcher configurado
         Example<T> exampleMongo = Example.of(example, matcher);
         return mongoRepository.findAll(exampleMongo);
+    }
+
+    @Override
+    public Page<T> findByExampleStrictedPaginated(T example, Pageable pageable) {
+        ExampleMatcher matcher = ExampleMatcher.matchingAll()
+                .withIgnoreNullValues();
+
+        // Crear el Example con el matcher configurado
+        Example<T> exampleMongo = Example.of(example, matcher);
+        return mongoRepository.findAll(exampleMongo, pageable);
     }
 
     @Override
@@ -84,6 +103,16 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
         return mongoRepository.findAll(exampleMongo);
     }
 
+    @Override
+    public Page<T> findByExampleNotStrictedPaginated(T example, Pageable pageable) {
+        ExampleMatcher matcher = ExampleMatcher.matchingAll()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING) // Realiza búsquedas LIKE %valor%
+                .withIgnoreCase(); // Ignorar mayúsculas/minúsculas
+
+        // Crear el Example con el matcher configurado
+        Example<T> exampleMongo = Example.of(example, matcher);
+        return mongoRepository.findAll(exampleMongo, pageable);
+    }
 
 }
 

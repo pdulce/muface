@@ -2,6 +2,8 @@ package com.mfc.infra.service;
 
 import com.mfc.infra.dto.IArqDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -23,14 +25,16 @@ public interface ArqServicePort<D extends IArqDTO, ID> {
 
     List<D> buscarTodos();
 
+    List<D> buscarTodosConOrdenacion(Sort sort);
+
     List<D> buscarCoincidenciasEstricto(D filterObject);
 
     List<D> buscarCoincidenciasNoEstricto(D filterObject);
 
-    Page<D> buscarTodosPaginados(int page, int size);
+    Page<D> buscarTodosPaginados(Pageable pageable);
 
-    Page<D> buscarCoincidenciasEstrictoPaginados(D filterObject, int page, int size);
+    Page<D> buscarCoincidenciasEstrictoPaginados(D filterObject, Pageable pageable);
 
-    Page<D> buscarCoincidenciasNoEstrictoPaginados(D filterObject, int page, int size);
+    Page<D> buscarCoincidenciasNoEstrictoPaginados(D filterObject, Pageable pageable);
 
 }
