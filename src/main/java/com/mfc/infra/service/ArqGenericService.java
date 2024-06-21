@@ -141,14 +141,20 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     public String borrarEntidad(ID id) {
         String info = "";
         try {
-            Object entity = this.buscarPorId(id).getEntity();
             ArqPortRepository<Object, ID> commandRepo = (ArqPortRepository<Object, ID>) getRepository();
-            commandRepo.delete(entity);
-            this.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
-            info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
-                    new Object[]{this.getCollectionName(this.getRepository())}, LocaleContextHolder.getLocale());
-            logger.info(messageSource.getMessage(ArqConstantMessages.DELETED_OK,
-                    new Object[]{this.getCollectionName(this.getRepository())}, new Locale("es")));
+            Optional<?> optionalT = this.getRepository().findById(id);
+            if (optionalT.isPresent()) {
+                Object entity = optionalT.orElse(null);
+                commandRepo.delete(entity);
+                this.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE);
+                info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
+                        new Object[]{this.getCollectionName(this.getRepository())}, LocaleContextHolder.getLocale());
+                logger.info(messageSource.getMessage(ArqConstantMessages.DELETED_OK,
+                        new Object[]{this.getCollectionName(this.getRepository())}, new Locale("es")));
+            } else {
+                throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
+                        new Object[]{this.getCollectionName(this.getRepository()), id});
+            }
         } catch (ConstraintViolationException ctExc) {
             throw ctExc;
         } catch (NotExistException notExistException) {
