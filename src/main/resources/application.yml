@@ -42,24 +42,22 @@ spring:
   # query domain
   data:
     mongodb:
-      host: 192.168.1.163
+      host: 192.168.1.68
       port: 27017
-      uri: mongodb://pd:pass@192.168.1.163:27017/dbMongo
-      database: dbMongo
+      uri: mongodb://test:test@192.168.1.68:27017/bdMongo
+      database: bdMongo
 
 auditoria:
-
-
   data:
     mongodb:
-      host: 192.168.1.163
+      host: 192.168.1.68
       port: 27017
-      uri: mongodb://test:test@192.168.1.163:27017/auditDB
-      database: auditDB
+      uri: mongodb://test:test@192.168.1.68:27017/auditSagaDB
+      database: auditSagaDB
 
     sql:
       init:
-    auditDB    mode: always
+        mode: always
     jpa:
       hibernate:
         ddl-auto: update
