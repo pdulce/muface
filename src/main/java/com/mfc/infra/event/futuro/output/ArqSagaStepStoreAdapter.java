@@ -6,7 +6,9 @@ import com.mfc.infra.event.futuro.repository.ArqSagaStepMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,9 +19,16 @@ import java.util.stream.Collectors;
 public class ArqSagaStepStoreAdapter implements ArqSagaStepInputPort {
 
     Logger logger = LoggerFactory.getLogger(ArqSagaStepStoreAdapter.class);
+    private final MongoTemplate auditMongoTemplate;
+    private final ArqSagaStepMongoRepository repository;
 
     @Autowired
-    protected ArqSagaStepMongoRepository repository;
+    public ArqSagaStepStoreAdapter(
+            @Qualifier("auditMongoTemplate") MongoTemplate auditMongoTemplate,
+            ArqSagaStepMongoRepository auditRepository) {
+        this.auditMongoTemplate = auditMongoTemplate;
+        this.repository = auditRepository;
+    }
 
     @Override
     public void saveSagaStep(String applicationId, String saga, String stepId, ArqEvent<?> eventArch) {

@@ -44,14 +44,16 @@ spring:
     mongodb:
       host: 192.168.1.163
       port: 27017
-      uri: mongodb://test:test@192.168.1.163:27017/queryDomainDB
-      authentication-database: queryDomainDB
+      uri: mongodb://test:test@192.168.1.163:27017/bdMongo
+      database: bdMongo
 
 auditoria:
   data:
     mongodb:
+      host: 192.168.1.163
+      port: 27017
       uri: mongodb://test:test@192.168.1.163:27017/auditSagaDB
-      authentication-database: auditSagaDB
+      database: auditSagaDB
 
     sql:
       init:

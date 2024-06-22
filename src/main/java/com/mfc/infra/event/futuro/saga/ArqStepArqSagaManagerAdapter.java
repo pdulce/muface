@@ -4,34 +4,20 @@ import com.mfc.infra.configuration.ArqConfigProperties;
 import com.mfc.infra.dto.IArqDTO;
 import com.mfc.infra.event.ArqEvent;
 import com.mfc.infra.event.futuro.publishers.ArqCommandEventPublisherPort;
-import com.mfc.infra.repository.ArqPortRepository;
-import com.mfc.infra.service.ArqGenericService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Map;
-
 
 @Transactional
-public abstract class ArqRelationalServiceStepArqSagaAdapter<D extends IArqDTO, ID>
-        extends ArqGenericService<D, ID> implements ArqSagaStepPort<Object, ID> {
+public abstract class ArqStepArqSagaManagerAdapter<D extends IArqDTO, ID> implements ArqSagaStepPort<Object, ID> {
 
-    protected Logger logger = LoggerFactory.getLogger(ArqRelationalServiceStepArqSagaAdapter.class);
+    protected Logger logger = LoggerFactory.getLogger(ArqStepArqSagaManagerAdapter.class);
     @Autowired
     ArqConfigProperties arqConfigProperties;
     @Autowired(required = false)
     protected ArqCommandEventPublisherPort arqCommandEventPublisherPort;
-
-    @Autowired
-    protected JpaRepository<Object, ID> repository;
-
-    public ArqRelationalServiceStepArqSagaAdapter(Map<String, ArqPortRepository<?, ID>> repositories) {
-        super(repositories);
-    }
 
     /** metodos para conectar con transacciones distribuidas bajo el patrón SAGA **/
 
