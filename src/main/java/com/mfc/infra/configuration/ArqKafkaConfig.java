@@ -63,13 +63,16 @@ public class ArqKafkaConfig {
         return factory;
     }
 
-    @Bean
+    /*@Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         module.addDeserializer(Timestamp.class, new DateDeserializers.TimestampDeserializer());
         objectMapper.registerModule(module);
         return objectMapper;
-    }
+    }*/
+
+
+
 }
 

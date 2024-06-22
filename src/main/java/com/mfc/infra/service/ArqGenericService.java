@@ -79,7 +79,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         this.commandRepositories = repositories;
     }
 
-    private String fabricarIdUnico(String applicationId, String almacen, ID id) {
+    private String fabricarIdUnico(String applicationId, String almacen, Object id) {
         return applicationId + "-" + almacen + "-" + (id.toString());
     }
 
@@ -94,11 +94,9 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             arqCommandEventPublisherPort.publish(ArqEvent.TOPIC_AUDITORIAS, eventArch);
         }
     }
-    public void registrarEventos(List<Object> entities, String eventType, List<ID> ids) {
-        AtomicInteger i = new AtomicInteger(0);
+    public void registrarEventos(List<Object> entities, String eventType) {
         entities.forEach((entity) -> {
-            registrarEvento(entity, eventType, ids.get(i.get()));
-            i.set(i.get() + 1);
+            registrarEvento(entity, eventType, (ID) ArqConversionUtils.objectToMap(entity).get("id"));
         });
     }
 
@@ -112,7 +110,8 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             try {
                 ArqPortRepository<Object, ID> commandRepo = getRepository();
                 entityDtoResultado.setEntity(commandRepo.save(entityDto.getEntity()));
-                this.registrarEvento(entityDtoResultado.getEntity(), ArqEvent.EVENT_TYPE_CREATE, (ID) entityDto.getId());
+                this.registrarEvento(entityDtoResultado.getEntity(), ArqEvent.EVENT_TYPE_CREATE,
+                        (ID) entityDtoResultado.getId());
                 String info = messageSource.getMessage(ArqConstantMessages.CREATED_OK,
                         new Object[]{getClassOfDTO().getSimpleName()}, new Locale("es"));
                 logger.info(info);
@@ -231,36 +230,30 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     @Transactional
     public String borrarTodos() {
         String info = "";
-        try {
-            ArqPortRepository<Object, ID> commandRepo = getRepository();
-            if (commandRepo.findAll().isEmpty()) {
-                info = messageSource.getMessage(ArqConstantMessages.NOTHING_TO_DELETE, null,
-                        LocaleContextHolder.getLocale());
-                logger.info(info);
-            } else {
-                D entityDto = getClassOfDTO().getDeclaredConstructor().newInstance();
-                try {
-                    commandRepo.deleteAll();
-                    this.registrarEvento(entityDto, ArqEvent.EVENT_TYPE_DELETE, null);
-                    info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
-                            new Object[]{getClassOfDTO().getSimpleName()}, LocaleContextHolder.getLocale());
-                    logger.info(messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
-                            new Object[]{getClassOfDTO().getSimpleName()}, new Locale("es")));
-                } catch (Throwable exc) {
-                    String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
-                            new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()},
-                            new Locale("es"));
-                    logger.error(error);
-                    throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
-                            new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()});
-                }
+        ArqPortRepository<Object, ID> commandRepo = getRepository();
+        List<Object> registros = commandRepo.findAll();
+        if (registros.isEmpty()) {
+            info = messageSource.getMessage(ArqConstantMessages.NOTHING_TO_DELETE, null,
+                    LocaleContextHolder.getLocale());
+            logger.info(info);
+        } else {
+            try {
+                commandRepo.deleteAll();
+                this.registrarEventos(registros, ArqEvent.EVENT_TYPE_DELETE);
+                info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
+                        new Object[]{getClassOfDTO().getSimpleName()}, LocaleContextHolder.getLocale());
+                logger.info(messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
+                        new Object[]{getClassOfDTO().getSimpleName()}, new Locale("es")));
+            } catch (Throwable exc) {
+                String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
+                        new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()},
+                        new Locale("es"));
+                logger.error(error);
+                throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
+                        new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()});
             }
-            return info;
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                 | InvocationTargetException noSuchMethodException) {
-            throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
-                    new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
         }
+        return info;
     }
 
     @Override

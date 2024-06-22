@@ -1,12 +1,15 @@
 package com.mfc.microdiplomas.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Entity
 @Data
-public class Titulacion {
+public class Titulacion implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +17,7 @@ public class Titulacion {
 
     @OneToOne
     @JoinColumn(name = "diploma_id")
+    @JsonBackReference
     private Diploma diploma;
 
     @Column

@@ -26,7 +26,7 @@ public class ArqEvent<T> implements Serializable {
                     String traceId, String id, T data) {
         this.id = id;
         this.arqContextInfo = new ArqContextInfo(applicationId, almacen, sessionId, traceId);
-        this.innerEvent = new ArqInnerEvent<T>(typeEvent, data);
+        this.innerEvent = new ArqInnerEvent<>(typeEvent, data);
     }
 
 }

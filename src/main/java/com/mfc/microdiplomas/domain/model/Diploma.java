@@ -1,15 +1,17 @@
 package com.mfc.microdiplomas.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Data
-public class Diploma {
+public class Diploma implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +29,11 @@ public class Diploma {
     private String region;
 
     @OneToOne(mappedBy = "diploma", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Titulacion titulacion;
 
     @OneToMany(mappedBy = "diploma", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<FirmaOrganismo> firmas;
 
 }
