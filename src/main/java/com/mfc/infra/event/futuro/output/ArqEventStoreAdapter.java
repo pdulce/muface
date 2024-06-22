@@ -50,7 +50,8 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
     @Override
     public void update(String applicationId, String almacen, String entityId, String idEntry, ArqEvent<?> eventArch) {
         try {
-            List<ArqEventDocument> events = repository.findByApplicationIdAndAlmacenAndEntityId(applicationId, almacen, entityId);
+            List<ArqEventDocument> events = repository.findByApplicationIdAndAlmacenAndEntityId(applicationId,
+                    almacen, entityId);
             for (ArqEventDocument event : events) {
                 if (event.getIdEntry().equals(idEntry)) {
                     event.setEvent(eventArch);
@@ -59,16 +60,19 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
                     return;
                 }
             }
-            logger.warn("Event not found for update: type={}, applicationId={}, almacen={}, entityId={}, idEntry={}", applicationId, almacen, entityId, idEntry);
+            logger.warn("Event not found for update: type={}, applicationId={}, almacen={}, entityId={}, idEntry={}",
+                    applicationId, almacen, entityId, idEntry);
         } catch (Exception e) {
             logger.error("Error updating event: {}", e.getMessage());
         }
     }
 
     @Override
-    public List<Object> findAggregateByAppAndStoreAndAggregateId(String applicationId, String almacen, String entityId) {
+    public List<ArqEvent<?>> findAggregateByAppAndStoreAndAggregateId(String applicationId, String almacen,
+                                                                      String entityId) {
         try {
-            List<ArqEventDocument> events = repository.findByApplicationIdAndAlmacenAndEntityId(applicationId, almacen, entityId);
+            List<ArqEventDocument> events = repository.findByApplicationIdAndAlmacenAndEntityId(applicationId,
+                    almacen, entityId);
             return events.stream().map(ArqEventDocument::getEvent).collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("Error finding aggregate: {}", e.getMessage());
@@ -77,7 +81,7 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
     }
 
     @Override
-    public List<Object> findAllByAppAndStore(String applicationId, String almacen) {
+    public List<ArqEvent<?>> findAllByAppAndStore(String applicationId, String almacen) {
         try {
             List<ArqEventDocument> events = repository.findByApplicationIdAndAlmacen(applicationId, almacen);
             return events.stream().map(ArqEventDocument::getEvent).collect(Collectors.toList());
@@ -88,7 +92,7 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
     }
 
     @Override
-    public List<Object> findAllByApp(String applicationId) {
+    public List<ArqEvent<?>> findAllByApp(String applicationId) {
         try {
             List<ArqEventDocument> events = repository.findByApplicationId(applicationId);
             return events.stream().map(ArqEventDocument::getEvent).collect(Collectors.toList());
@@ -99,7 +103,7 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
     }
 
     @Override
-    public List<Object> findAll() {
+    public List<ArqEvent<?>> findAll() {
         try {
             List<ArqEventDocument> events = repository.findAll();
             return events.stream().map(ArqEventDocument::getEvent).collect(Collectors.toList());

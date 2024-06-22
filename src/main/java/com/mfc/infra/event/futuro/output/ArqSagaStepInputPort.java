@@ -10,13 +10,13 @@ public interface ArqSagaStepInputPort {
 
     void update(String applicationId, String saga, String id, String idEntry, ArqEvent<?> eventArch);
 
-    List<Object> findAggregateByAppAndStoreAndAggregateId(String applicationid, String saga, String id);
+    List<ArqEvent<?>> findAggregateByAppAndSagaAndAggregateId(String applicationid, String saga, String id);
 
-    List<Object> findAllByAppAndSaga(String applicationid, String saga);
+    List<ArqEvent<?>> findAllByAppAndSaga(String applicationid, String saga);
 
-    List<Object> findAllByApp(String applicationId);
+    List<ArqEvent<?>> findAllByApp(String applicationId);
 
-    List<Object> findAll();
+    List<ArqEvent<?>> findAll();
 
 
 

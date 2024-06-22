@@ -105,7 +105,8 @@ public class ArqSagaOrchestratorAdapter<T> implements ArqSagaOrchestratorPort<T>
 
     public String[] getLastStateOfTansactionInSaga(String applicationId, String saganame, String transaccId) {
         String[] msgAndArgs = new String[3];
-        List<Object> objetos = this.eventStoreConsumer.findAggregateByAppAndStoreAndAggregateId(applicationId, saganame, transaccId);
+        List<ArqEvent<?>> objetos = this.eventStoreConsumer.findAggregateByAppAndSagaAndAggregateId(applicationId,
+                saganame, transaccId);
         if (objetos == null || objetos.isEmpty()) {
             msgAndArgs[0] = ArqConstantMessages.ERROR_NOT_FOUND;
             msgAndArgs[1] = "núm. transaction: " + transaccId + " in saga: " + saganame;
@@ -203,8 +204,8 @@ public class ArqSagaOrchestratorAdapter<T> implements ArqSagaOrchestratorPort<T>
 
     private ArqEvent searchStepInTransaction(String applicationId, String sagaName, Integer stepNumber,
                                              Long transactionIdentifier) {
-        List<Object> objetosTransaccionados = this.eventStoreConsumer.
-                findAggregateByAppAndStoreAndAggregateId(applicationId, sagaName, String.valueOf(transactionIdentifier));
+        List<ArqEvent<?>> objetosTransaccionados = this.eventStoreConsumer.
+                findAggregateByAppAndSagaAndAggregateId(applicationId, sagaName, String.valueOf(transactionIdentifier));
         if (objetosTransaccionados == null || objetosTransaccionados.isEmpty()) {
             return null;
         }

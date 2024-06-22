@@ -1,6 +1,8 @@
 package com.mfc.infra.controller;
 
+import com.mfc.infra.event.ArqEvent;
 import com.mfc.infra.event.futuro.output.ArqEventStoreInputPort;
+import com.mfc.infra.event.futuro.output.ArqSagaStepInputPort;
 import com.mfc.infra.event.futuro.saga.ArqSagaOrchestratorPort;
 import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
@@ -29,24 +31,28 @@ public class ArqAuditoriasControllerAPI {
     protected ArqEventStoreInputPort auditoriasAdapter;
 
     @Autowired(required=false)
-    protected ArqEventStoreInputPort sagaAdapter;
+    protected ArqSagaStepInputPort sagaAdapter;
 
     /** ENDPOINTS QUE DAN ACCESO A LA INFORMACIÓN DE CUALQUIER AUDITORIA DE CUALQUIER APLICACION **/
 
+    @GetMapping
+    public List<ArqEvent<?>> getAllAuditorias() {
+        return this.auditoriasAdapter.findAll();
+    }
     @GetMapping(value = "{applicationId}", produces= MediaType.APPLICATION_JSON_VALUE)
-    public List<Object> getAllFromEventStoreCustomers(@PathVariable @NotEmpty String applicationId) {
+    public List<ArqEvent<?>> getAllAuditoriasByApp(@PathVariable @NotEmpty String applicationId) {
         return this.auditoriasAdapter.findAllByApp(applicationId);
     }
 
     @GetMapping(value = "{applicationId}/{almacen}", produces= MediaType.APPLICATION_JSON_VALUE)
-    public List<Object> getAllFromEventStoreCustomers(@PathVariable @NotEmpty String applicationId,
-                                                                   @PathVariable @NotEmpty String almacen) {
+    public List<ArqEvent<?>> getAllAuditoriasByAppAndStore(@PathVariable @NotEmpty String applicationId,
+                                                           @PathVariable @NotEmpty String almacen) {
         return this.auditoriasAdapter.findAllByAppAndStore(applicationId, almacen);
     }
 
     @GetMapping(value = "{applicationId}/{almacen}/{idAgregado}",
             produces=MediaType.APPLICATION_JSON_VALUE)
-    public Object getAllEventsFromIdFromRedis(@PathVariable @NotEmpty String applicationId,
+    public List<ArqEvent<?>> getAllAuditoriasByAppAndStoreAndIdAgregado(@PathVariable @NotEmpty String applicationId,
                                                     @PathVariable @NotEmpty String almacen,
                                                     @PathVariable @NotEmpty String idAgregado) {
         return this.auditoriasAdapter.findAggregateByAppAndStoreAndAggregateId(applicationId, almacen, idAgregado);
@@ -55,23 +61,23 @@ public class ArqAuditoriasControllerAPI {
     /** ENDPOINTS QUE DAN ACCESO A LA INFORMACIÓN DE CUALQUIER TRANSACCION EN CUALQUIER APLICACION **/
 
     @GetMapping(value = "transacciones-distribuidas/{applicationId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<Object> getAllTransactionsOfApplication(@PathVariable @NotEmpty String applicationId,
+    public List<ArqEvent<?>> getAllTransactionsOfApplication(@PathVariable @NotEmpty String applicationId,
                                                                      @PathVariable @NotEmpty String saga) {
         return this.sagaAdapter.findAllByApp(applicationId);
     }
 
     @GetMapping(value = "transacciones-distribuidas/{applicationId}/{saga}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<Object> getAllTransactionsOfSagaInApp(@PathVariable @NotEmpty String applicationId,
+    public List<ArqEvent<?>> getAllTransactionsOfSagaInApp(@PathVariable @NotEmpty String applicationId,
                                                                    @PathVariable @NotEmpty String saga) {
-        return this.sagaAdapter.findAllByAppAndStore(applicationId, saga);
+        return this.sagaAdapter.findAllByAppAndSaga(applicationId, saga);
     }
 
     @GetMapping(value = "transacciones-distribuidas/{applicationId}/{saga}/{transactionId}",
             produces=MediaType.APPLICATION_JSON_VALUE)
-    public Object getAllStepsInSagaTransactionId(@PathVariable @NotEmpty String applicationId,
+    public List<ArqEvent<?>> getAllStepsInSagaTransactionId(@PathVariable @NotEmpty String applicationId,
                                                        @PathVariable @NotEmpty String saga,
                                                        @PathVariable @NotEmpty String transactionId) {
-        return this.sagaAdapter.findAggregateByAppAndStoreAndAggregateId(applicationId, saga, transactionId);
+        return this.sagaAdapter.findAggregateByAppAndSagaAndAggregateId(applicationId, saga, transactionId);
     }
 
 

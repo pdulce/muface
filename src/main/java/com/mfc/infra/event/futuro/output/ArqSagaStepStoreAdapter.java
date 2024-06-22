@@ -67,7 +67,7 @@ public class ArqSagaStepStoreAdapter implements ArqSagaStepInputPort {
     }
 
     @Override
-    public List<Object> findAggregateByAppAndStoreAndAggregateId(String applicationId, String saga, String stepId) {
+    public List<ArqEvent<?>> findAggregateByAppAndSagaAndAggregateId(String applicationId, String saga, String stepId) {
         try {
             List<ArqSagaStepEventDocument> events = repository.findByApplicationIdAndSagaAndStepId(applicationId,
                     saga, stepId);
@@ -79,7 +79,7 @@ public class ArqSagaStepStoreAdapter implements ArqSagaStepInputPort {
     }
 
     @Override
-    public List<Object> findAllByAppAndSaga(String applicationId, String saga) {
+    public List<ArqEvent<?>> findAllByAppAndSaga(String applicationId, String saga) {
         try {
             List<ArqSagaStepEventDocument> events = repository.findByApplicationIdAndSaga(applicationId, saga);
             return events.stream().map(ArqSagaStepEventDocument::getEvent).collect(Collectors.toList());
@@ -90,7 +90,7 @@ public class ArqSagaStepStoreAdapter implements ArqSagaStepInputPort {
     }
 
     @Override
-    public List<Object> findAllByApp(String applicationId) {
+    public List<ArqEvent<?>> findAllByApp(String applicationId) {
         try {
             List<ArqSagaStepEventDocument> events = repository.findByApplicationId(applicationId);
             return events.stream().map(ArqSagaStepEventDocument::getEvent).collect(Collectors.toList());
@@ -101,7 +101,7 @@ public class ArqSagaStepStoreAdapter implements ArqSagaStepInputPort {
     }
 
     @Override
-    public List<Object> findAll() {
+    public List<ArqEvent<?>> findAll() {
         try {
             List<ArqSagaStepEventDocument> events = repository.findAll();
             return events.stream().map(ArqSagaStepEventDocument::getEvent).collect(Collectors.toList());
