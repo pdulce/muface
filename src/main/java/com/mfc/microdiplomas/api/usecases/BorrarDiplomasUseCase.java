@@ -5,9 +5,6 @@ import com.mfc.infra.service.ArqGenericService;
 import com.mfc.microdiplomas.api.dto.DiplomaDTO;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Component
 public class BorrarDiplomasUseCase extends ArqAbstractUseCase<String, DiplomaDTO>  {
@@ -18,13 +15,8 @@ public class BorrarDiplomasUseCase extends ArqAbstractUseCase<String, DiplomaDTO
 
     @Override
     public String execute(DiplomaDTO diplomaDTO) {
-        String msgBorrado = "";
-        if (diplomaDTO.getId() == null) {
-            msgBorrado = this.commandService.borrarTodos();
-        } else {
-            msgBorrado = String.valueOf(this.commandService.borrarEntidad(diplomaDTO.getId()));
-        }
-        return msgBorrado;
+        return diplomaDTO.getId() == null ? this.commandService.borrarTodos()
+                : this.commandService.borrarEntidad(diplomaDTO.getId());
     }
 
 }
