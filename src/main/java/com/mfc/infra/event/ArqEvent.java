@@ -1,13 +1,15 @@
 package com.mfc.infra.event;
 
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 
+@Document(collection = "auditorias")
 @Data
 public class ArqEvent<T> implements Serializable {
 
-    public static final String EVENT_TOPIC = "topic-command-event";
+    public static final String TOPIC_AUDITORIAS = "topic-auditorias";
     public static final String EVENT_TYPE_DELETE = "delete";
     public static final String EVENT_TYPE_CREATE = "create";
     public static final String EVENT_TYPE_UPDATE = "update";

@@ -94,7 +94,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
 
     @Override
     @Transactional
-    public D crear(D entityDto) {
+    public D insertar(D entityDto) {
         try {
             Class<D> dtoClass = (Class<D>) entityDto.getClass();
             D entityDtoResultado = dtoClass.getDeclaredConstructor().newInstance();
@@ -140,10 +140,8 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
                 throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
                         new Object[]{getClassOfDTO().getSimpleName(), (ID) entityDto.getId()});
             }
-        } catch (ConstraintViolationException ctExc) {
+        } catch (ConstraintViolationException | NotExistException ctExc) {
             throw ctExc;
-        } catch (NotExistException notExistException) {
-            throw notExistException;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
                     new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()},
@@ -174,10 +172,8 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
                 throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
                         new Object[]{getClassOfDTO().getSimpleName(), id});
             }
-        } catch (ConstraintViolationException ctExc) {
+        } catch (ConstraintViolationException | NotExistException ctExc) {
             throw ctExc;
-        } catch (NotExistException notExistException) {
-            throw notExistException;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,
                     new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()},
@@ -211,12 +207,6 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             logger.info(messageSource.getMessage(ArqConstantMessages.DELETED_LIST_OK,
                     new Object[]{getClassOfDTO().getSimpleName()}, new Locale("es")));
             return info;
-        } catch (ConstraintViolationException ctExc) {
-            throw ctExc;
-        } catch (NotExistException notExistException) {
-            throw notExistException;
-        } catch (ArqBaseOperationsException arqBaseOperationsException) {
-            throw arqBaseOperationsException;
         } catch (Throwable exc) {
             throw exc;
         }
@@ -298,6 +288,10 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
 
     @Override
     public D buscarPorId(ID id) {
+        if (id == null) {
+            throw new NotExistException(ArqConstantMessages.ERROR_BAD_REQUEST,
+                    new Object[]{getClassOfDTO().getSimpleName(), "id: <null>"});
+        }
         ArqPortRepository<Object, ID> commandRepo = getRepository();
         try {
             D entityDtoResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
@@ -332,8 +326,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
                 D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
                 instanciaDTOResultado.setEntity(entity);
                 resultado.add(instanciaDTOResultado);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                     | InvocationTargetException noSuchMethodException) {
+            } catch (Throwable noSuchMethodException) {
                 throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
                         new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
             }
@@ -350,8 +343,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
                 D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
                 instanciaDTOResultado.setEntity(entity);
                 resultado.add(instanciaDTOResultado);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                     | InvocationTargetException noSuchMethodException) {
+            } catch (Throwable noSuchMethodException) {
                 throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
                         new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
             }
@@ -399,7 +391,8 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             ArqPortRepository<Object, ID> commandRepo = getRepository();
             Page<Object> resultado = commandRepo.findAllPaginated(newPageable);
             return convertirAPageOfDtos(resultado, newPageable);
-        } catch (Throwable noSuchMethodException) {
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+                 | InvocationTargetException noSuchMethodException) {
             throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
                     new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
         }

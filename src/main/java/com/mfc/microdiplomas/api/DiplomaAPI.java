@@ -36,14 +36,18 @@ public class DiplomaAPI extends ArqBaseRestController {
         return super.executeDeleteUseCase("BorrarDiplomasUseCase", toDelete);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<Object> consultaPorId(@PathVariable Long id) {
+        return super.executeUseQueryCaseWithReqParams("ConsultaPorIdDiplomasUseCase", id);
+    }
+
+
     @GetMapping
-    public ResponseEntity<Object> consultaPorCampos(@RequestParam(value = "id", required = false) Long id,
-                                @RequestParam(value = "clienteId", required = false) Long clienteId,
+    public ResponseEntity<Object> consultaPorCampos(@RequestParam(value = "clienteId", required = false) Long clienteId,
                                 @RequestParam(value = "nombrePila", required = false) String nombrePila,
                                 @RequestParam(value = "titulacion", required = false) String titulacion) {
 
         DiplomaDTO filter = new DiplomaDTO();
-        filter.setId(id);
         filter.setIdCliente(clienteId);
         filter.setNombreCompleto(nombrePila);
         filter.setTitulacionDeno(titulacion);
@@ -51,24 +55,17 @@ public class DiplomaAPI extends ArqBaseRestController {
     }
 
     @GetMapping("paginados")
-    public ResponseEntity<Object> consultaPaginadaPorCampos(@RequestParam(value = "id", required = false) Long id,
-                                @RequestParam(value = "clienteId", required = false) Long clienteId,
+    public ResponseEntity<Object> consultaPaginadaPorCampos(@RequestParam(value = "clienteId", required = false)
+                                                                Long clienteId,
                                 @RequestParam(value = "nombrePila", required = false) String nombrePila,
                                 @RequestParam(value = "titulacion", required = false) String titulacion,
                                 Pageable pageable) {
 
         DiplomaDTO filter = new DiplomaDTO();
-        filter.setId(id);
         filter.setIdCliente(clienteId);
         filter.setNombreCompleto(nombrePila);
         filter.setTitulacionDeno(titulacion);
-        if (id != null) {
-            return super.executeUseQueryCaseWithReqParams("ConsultasDiplomasUseCase", filter);
-        } else {
-            return super.executeUseQuerypagCaseWithReqParams("ConsultasPaginadasDiplomasUseCase", filter,
-                    pageable);
-        }
-
+        return super.executeUseQuerypagCaseWithReqParams("ConsultasPaginadasDiplomasUseCase", filter, pageable);
     }
 
 }
