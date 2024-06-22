@@ -1,7 +1,7 @@
 package com.mfc.infra.event.futuro.output;
 
 import com.mfc.infra.event.ArqEvent;
-import com.mfc.infra.event.ArqEventDocument;
+import com.mfc.infra.event.ArqAuditoriaDocument;
 import com.mfc.infra.event.futuro.repository.ArqEventMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
     @Override
     public void saveEvent(String applicationId, String almacen, String entityId, ArqEvent<?> eventArch) {
         try {
-            ArqEventDocument eventDocument = new ArqEventDocument();
+            ArqAuditoriaDocument eventDocument = new ArqAuditoriaDocument();
             eventDocument.setApplicationId(applicationId);
             eventDocument.setAlmacen(almacen);
             eventDocument.setEntityId(entityId);
@@ -50,9 +50,9 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
     @Override
     public void update(String applicationId, String almacen, String entityId, String idEntry, ArqEvent<?> eventArch) {
         try {
-            List<ArqEventDocument> events = repository.findByApplicationIdAndAlmacenAndEntityId(applicationId,
+            List<ArqAuditoriaDocument> events = repository.findByApplicationIdAndAlmacenAndEntityId(applicationId,
                     almacen, entityId);
-            for (ArqEventDocument event : events) {
+            for (ArqAuditoriaDocument event : events) {
                 if (event.getIdEntry().equals(idEntry)) {
                     event.setEvent(eventArch);
                     repository.save(event);
@@ -71,9 +71,9 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
     public List<ArqEvent<?>> findAggregateByAppAndStoreAndAggregateId(String applicationId, String almacen,
                                                                       String entityId) {
         try {
-            List<ArqEventDocument> events = repository.findByApplicationIdAndAlmacenAndEntityId(applicationId,
+            List<ArqAuditoriaDocument> events = repository.findByApplicationIdAndAlmacenAndEntityId(applicationId,
                     almacen, entityId);
-            return events.stream().map(ArqEventDocument::getEvent).collect(Collectors.toList());
+            return events.stream().map(ArqAuditoriaDocument::getEvent).collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("Error finding aggregate: {}", e.getMessage());
             return null;
@@ -83,8 +83,8 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
     @Override
     public List<ArqEvent<?>> findAllByAppAndStore(String applicationId, String almacen) {
         try {
-            List<ArqEventDocument> events = repository.findByApplicationIdAndAlmacen(applicationId, almacen);
-            return events.stream().map(ArqEventDocument::getEvent).collect(Collectors.toList());
+            List<ArqAuditoriaDocument> events = repository.findByApplicationIdAndAlmacen(applicationId, almacen);
+            return events.stream().map(ArqAuditoriaDocument::getEvent).collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("Error finding events: {}", e.getMessage());
             return null;
@@ -94,8 +94,8 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
     @Override
     public List<ArqEvent<?>> findAllByApp(String applicationId) {
         try {
-            List<ArqEventDocument> events = repository.findByApplicationId(applicationId);
-            return events.stream().map(ArqEventDocument::getEvent).collect(Collectors.toList());
+            List<ArqAuditoriaDocument> events = repository.findByApplicationId(applicationId);
+            return events.stream().map(ArqAuditoriaDocument::getEvent).collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("Error finding events: {}", e.getMessage());
             return null;
@@ -105,8 +105,8 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
     @Override
     public List<ArqEvent<?>> findAll() {
         try {
-            List<ArqEventDocument> events = repository.findAll();
-            return events.stream().map(ArqEventDocument::getEvent).collect(Collectors.toList());
+            List<ArqAuditoriaDocument> events = repository.findAll();
+            return events.stream().map(ArqAuditoriaDocument::getEvent).collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("Error finding events: {}", e.getMessage());
             return null;

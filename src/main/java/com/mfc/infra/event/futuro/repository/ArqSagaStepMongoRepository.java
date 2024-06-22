@@ -1,6 +1,5 @@
 package com.mfc.infra.event.futuro.repository;
 
-import com.mfc.infra.event.ArqEventDocument;
 import com.mfc.infra.event.ArqSagaStepEventDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

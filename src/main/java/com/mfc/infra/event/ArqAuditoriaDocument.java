@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "auditorias")
 @Data
-public class ArqEventDocument {
+public class ArqAuditoriaDocument {
 
     @Id
     private String id;

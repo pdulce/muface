@@ -1,7 +1,6 @@
 package com.mfc.infra.event.futuro.output;
 
 import com.mfc.infra.event.ArqEvent;
-import com.mfc.infra.event.ArqEventDocument;
 
 import java.util.List;
 
