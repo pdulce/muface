@@ -156,6 +156,10 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     @Override
     @Transactional
     public String borrarEntidad(ID id) {
+        if (id == null) {
+            throw new NotExistException(ArqConstantMessages.ERROR_BAD_REQUEST,
+                    new Object[]{getClassOfDTO().getSimpleName(), "id: <null>"});
+        }
         String info = "";
         try {
             ArqPortRepository<Object, ID> commandRepo = getRepository();
@@ -312,6 +316,10 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
 
     @Override
     public List<D> buscarPorIds(List<ID> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new NotExistException(ArqConstantMessages.ERROR_BAD_REQUEST,
+                    new Object[]{getClassOfDTO().getSimpleName(), "ids: <null or empty list>"});
+        }
         ArqPortRepository<Object, ID> commandRepo = getRepository();
         List<Object> resultado = commandRepo.findByIds(ids);
         return convertirListaADtos(resultado);
