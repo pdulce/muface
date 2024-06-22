@@ -3,7 +3,7 @@ server:
 
 arch:
   application-id: application-Id-sample
-  event-broker-active: false
+  event-broker-active: true
   repository-type:
     active: jpa # mongo o jpa
   api:
@@ -72,8 +72,8 @@ auditoria:
     mongodb:
       host: 192.168.1.68
       port: 27017
-      uri: mongodb://test:test@192.168.1.68:27017/auditSagaDB
-      database: auditSagaDB
+      uri: mongodb://test:test@192.168.1.68:27017/auditDB
+      database: auditDB
 
     sql:
       init:
