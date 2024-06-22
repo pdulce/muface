@@ -24,7 +24,7 @@ public class ArqEventStoreAdapter implements ArqEventStoreInputPort {
     private final ArqEventMongoRepository repository;
 
     @Autowired
-    public ArqEventStoreAdapter(@Qualifier("auditMongoTemplate") MongoTemplate auditMongoTemplate,
+    public ArqEventStoreAdapter(@Qualifier("arqAuditMongoTemplate") MongoTemplate auditMongoTemplate,
             ArqEventMongoRepository auditRepository) {
         this.auditMongoTemplate = auditMongoTemplate;
         this.repository = auditRepository;

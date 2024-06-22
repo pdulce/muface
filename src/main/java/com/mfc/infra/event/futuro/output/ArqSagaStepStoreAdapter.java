@@ -24,9 +24,9 @@ public class ArqSagaStepStoreAdapter implements ArqSagaStepInputPort {
 
     @Autowired
     public ArqSagaStepStoreAdapter(
-            @Qualifier("auditMongoTemplate") MongoTemplate auditMongoTemplate,
+            @Qualifier("arqAuditMongoTemplate") MongoTemplate arqAuditMongoTemplate,
             ArqSagaStepMongoRepository auditRepository) {
-        this.auditMongoTemplate = auditMongoTemplate;
+        this.auditMongoTemplate = arqAuditMongoTemplate;
         this.repository = auditRepository;
     }
 
