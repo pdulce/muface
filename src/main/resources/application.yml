@@ -3,7 +3,7 @@ server:
 
 arch:
   application-id: application-Id-sample
-  event-broker-active: true
+  event-broker-active: false
   repository-type:
     active: jpa # mongo o jpa
   api:
