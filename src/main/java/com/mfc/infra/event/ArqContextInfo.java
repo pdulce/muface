@@ -7,14 +7,17 @@ import java.io.Serializable;
 @Data
 public class ArqContextInfo implements Serializable {
     private String almacen;
-    private String author;
+    //private String author;
+    private String traceId;
+    private String sessionId;
     private String applicationId;
 
     public ArqContextInfo(){}
 
-    public ArqContextInfo(String almacen, String author, String applicationId) {
+    public ArqContextInfo(String applicationId, String almacen, String sessionId, String traceId) {
+        this.sessionId = sessionId;
+        this.traceId = traceId;
         this.almacen = almacen;
-        this.author = author;
         this.applicationId = applicationId;
     }
 }

@@ -1,11 +1,8 @@
 package com.mfc.infra.event;
 
 import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.io.Serializable;
 
-@Document(collection = "auditorias")
 @Data
 public class ArqEvent<T> implements Serializable {
 
@@ -13,9 +10,7 @@ public class ArqEvent<T> implements Serializable {
     public static final String EVENT_TYPE_DELETE = "delete";
     public static final String EVENT_TYPE_CREATE = "create";
     public static final String EVENT_TYPE_UPDATE = "update";
-
     public static final String STEP_ID_PREFIX = "step-";
-
     public static final int SAGA_OPE_FAILED = -1;
     public static final int SAGA_OPE_SUCCESS = 200;
 
@@ -25,13 +20,13 @@ public class ArqEvent<T> implements Serializable {
     private ArqInnerEvent<T> innerEvent;
 
     public ArqEvent() {
+
     }
-    public ArqEvent(String almacen, String author, String applicationId,
-                    String id, String typeEvent, T data) {
-        this.arqContextInfo = new ArqContextInfo(almacen, author, applicationId);
+    public ArqEvent(String applicationId, String almacen, String typeEvent, String sessionId,
+                    String traceId, String id, T data) {
         this.id = id;
+        this.arqContextInfo = new ArqContextInfo(applicationId, almacen, sessionId, traceId);
         this.innerEvent = new ArqInnerEvent<T>(typeEvent, data);
     }
-
 
 }
