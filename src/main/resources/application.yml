@@ -2,7 +2,7 @@ server:
   port: 8080
 
 arch:
-  application-id: application-Id-sample
+  application-id: sampleDiplomas
   event-broker-active: false
   repository-type:
     active: jpa # mongo o jpa
