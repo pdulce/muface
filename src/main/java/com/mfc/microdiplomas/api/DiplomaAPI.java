@@ -30,10 +30,15 @@ public class DiplomaAPI extends ArqBaseRestController {
 
 
     @DeleteMapping
-    public ResponseEntity<Object> borrar(@RequestParam(value = "id", required = false) Long id) {
+    public ResponseEntity<Object> borrar() {
+        return super.executeDeleteUseCase("BorrarDiplomasUseCase", new DiplomaDTO());
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> borrarPorId(@PathVariable Long id) {
         DiplomaDTO toDelete = new DiplomaDTO();
         toDelete.setId(id);
-        return super.executeDeleteUseCase("BorrarDiplomasUseCase", toDelete);
+        return super.executeDeleteUseCase("BorrarDiplomaPorIdUseCase", toDelete);
     }
 
     @GetMapping("{id}")

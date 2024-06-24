@@ -7,15 +7,15 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class BorrarDiplomasUseCase extends ArqAbstractUseCase<String, DiplomaDTO>  {
+public class BorrarDiplomaPorIdUseCase extends ArqAbstractUseCase<String, DiplomaDTO>  {
 
-    public BorrarDiplomasUseCase(ArqGenericService commandService) {
+    public BorrarDiplomaPorIdUseCase(ArqGenericService commandService) {
         super(commandService);
     }
 
     @Override
     public String execute(DiplomaDTO diplomaDTO) {
-        return this.commandService.borrarTodos();
+        return this.commandService.borrarEntidad(diplomaDTO.getId());
     }
 
 }
