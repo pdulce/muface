@@ -83,7 +83,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         return applicationId + "-" + almacen + "-" + (id.toString());
     }
 
-    public void registrarEvento(Object entity, String eventType, ID id) {
+    private void registrarEvento(Object entity, String eventType, ID id) {
         if (entity != null && arqConfigProperties.isEventBrokerActive()) {
             String applicationId = (String) ArqSessionInterceptor.getCurrentSession().getAttribute("applicationId");
             String sessionId = (String) ArqSessionInterceptor.getCurrentSession().getAttribute("sessionId");
@@ -94,7 +94,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             arqCommandEventPublisherPort.publish(ArqEvent.TOPIC_AUDITORIAS, eventArch);
         }
     }
-    public void registrarEventos(List<Object> entities, String eventType) {
+    private void registrarEventos(List<Object> entities, String eventType) {
         entities.forEach((entity) -> {
             registrarEvento(entity, eventType, (ID) ArqConversionUtils.objectToMap(entity).get("id"));
         });
