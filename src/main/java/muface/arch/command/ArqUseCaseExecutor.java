@@ -37,8 +37,9 @@ public class ArqUseCaseExecutor {
 
     public <R, P> R executePaginationUseCase(String useCaseName, P paramObj, Pageable pageable) {
         try {
+            String usecaseCamelNotacion = useCaseName.substring(0,1).toLowerCase().concat(useCaseName.substring(1));
             ArqAbstractUseCasePagination<R, P> useCase = (ArqAbstractUseCasePagination<R, P>)
-                    applicationContext.getBean(useCaseName);
+                    applicationContext.getBean(usecaseCamelNotacion);
             if (useCase == null) {
                 throw new RuntimeException("El caso de Uso <" + useCaseName + "> no existe");
             }
