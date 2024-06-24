@@ -1,6 +1,6 @@
 package muface.arch.service;
 
-import muface.arch.dto.IArqDTO;
+import muface.arch.command.IArqDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

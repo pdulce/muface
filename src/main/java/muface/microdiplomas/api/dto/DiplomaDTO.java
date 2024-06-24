@@ -1,7 +1,7 @@
 package muface.microdiplomas.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import muface.arch.dto.IArqDTO;
+import muface.arch.command.IArqDTO;
 import muface.microdiplomas.domain.model.Diploma;
 import muface.microdiplomas.domain.model.FirmaOrganismo;
 import muface.microdiplomas.domain.model.Titulacion;

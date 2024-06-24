@@ -1,6 +1,6 @@
 package muface.arch.controller;
 
-import muface.arch.dto.IArqDTO;
+import muface.arch.command.IArqDTO;
 import muface.arch.command.ArqUseCaseExecutor;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

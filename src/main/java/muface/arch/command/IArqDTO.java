@@ -1,4 +1,4 @@
-package muface.arch.dto;
+package muface.arch.command;
 
 import java.io.Serializable;
 

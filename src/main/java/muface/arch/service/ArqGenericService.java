@@ -2,7 +2,7 @@ package muface.arch.service;
 
 import muface.arch.configuration.ArqConfigProperties;
 import muface.arch.configuration.ArqSessionInterceptor;
-import muface.arch.dto.IArqDTO;
+import muface.arch.command.IArqDTO;
 import muface.arch.event.ArqEvent;
 import muface.arch.event.futuro.publishers.ArqCommandEventPublisherPort;
 import muface.arch.exceptions.ArqBaseOperationsException;
