@@ -3,7 +3,6 @@ package com.mfc.infra.repository;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
 
