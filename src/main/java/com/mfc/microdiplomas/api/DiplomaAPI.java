@@ -28,7 +28,6 @@ public class DiplomaAPI extends ArqBaseRestController {
         return super.executeUpdateUseCaseWithInputBody("ActualizarDiplomaUseCase", dtoInBody);
     }
 
-
     @DeleteMapping
     public ResponseEntity<Object> borrar() {
         return super.executeDeleteUseCase("BorrarDiplomasUseCase", new DiplomaDTO());
@@ -36,16 +35,13 @@ public class DiplomaAPI extends ArqBaseRestController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> borrarPorId(@PathVariable Long id) {
-        DiplomaDTO toDelete = new DiplomaDTO();
-        toDelete.setId(id);
-        return super.executeDeleteUseCase("BorrarDiplomaPorIdUseCase", toDelete);
+        return super.executeDeleteUseCase("BorrarDiplomaPorIdUseCase", id);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Object> consultaPorId(@PathVariable Long id) {
         return super.executeUseQueryCaseWithReqParams("ConsultaPorIdDiplomasUseCase", id);
     }
-
 
     @GetMapping
     public ResponseEntity<Object> consultaPorCampos(@RequestParam(value = "clienteId", required = false) Long clienteId,
