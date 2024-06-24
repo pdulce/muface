@@ -12,38 +12,32 @@ public abstract class ArqBaseRestController {
     @Autowired
     protected ArqUseCaseExecutor useCaseExecutor;
 
-    protected abstract String getBaseUseCasePackage();
-
     @Transactional
     protected final ResponseEntity executeCreateUseCaseWithInputBody(final String useCase, IArqDTO dtoInBody) {
-        Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").
-                concat(useCase), dtoInBody);
+        Object result = useCaseExecutor.executeUseCase(useCase, dtoInBody);
         return ResponseEntity.ok(result);
     }
 
     @Transactional
     protected final ResponseEntity executeUpdateUseCaseWithInputBody(final String useCase, IArqDTO dtoInBody) {
-        Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").
-                concat(useCase), dtoInBody);
+        Object result = useCaseExecutor.executeUseCase(useCase, dtoInBody);
         return ResponseEntity.ok(result);
     }
 
     @Transactional
     protected final ResponseEntity executeDeleteUseCase(final String useCase, Object id) {
-        Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").concat(useCase), id);
+        Object result = useCaseExecutor.executeUseCase(useCase, id);
         return ResponseEntity.ok(result);
     }
 
     protected final ResponseEntity executeUseQueryCaseWithReqParams(final String useCase, Object param) {
-        Object result = useCaseExecutor.executeUseCase(getBaseUseCasePackage().concat(".").
-                concat(useCase), param);
+        Object result = useCaseExecutor.executeUseCase(useCase, param);
         return ResponseEntity.ok(result);
     }
 
     protected final ResponseEntity executeUseQuerypagCaseWithReqParams(final String useCase, Object paramsObject,
                                                                        Pageable pageable) {
-        Object result = useCaseExecutor.executePaginationUseCase(getBaseUseCasePackage().concat(".").
-                concat(useCase), paramsObject, pageable);
+        Object result = useCaseExecutor.executePaginationUseCase(useCase, paramsObject, pageable);
         return ResponseEntity.ok(result);
     }
 

@@ -6,14 +6,8 @@ arch:
   event-broker-active: false
   repository-type:
     active: jpa # mongo o jpa
-  api:
-    diplomas:
-      use-case-package: com.mfc.microdiplomas.api.usecases
-    customers:
-      use-case-package: com.mfc.microdiplomas.api.usecases.customers
-    suppliers:
-      use-case-package: com.mfc.microdiplomas.api.usecases.suppliers
-      # and more
+
+
 
 spring:
   mandatory-file-encoding: UTF-8

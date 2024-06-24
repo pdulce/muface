@@ -1,7 +1,5 @@
 package muface.arch.command;
 
-import muface.arch.command.ArqAbstractUseCase;
-import muface.arch.command.ArqAbstractUseCasePagination;
 import muface.arch.exceptions.ArqBussinessRuleException;
 import muface.arch.exceptions.NotExistException;
 import jakarta.transaction.Transactional;
@@ -20,8 +18,8 @@ public class ArqUseCaseExecutor {
     @Transactional
     public <R, P> R executeUseCase(String useCaseName, P paramObj) {
         try {
-            Class<?> useCaseClass = Class.forName(useCaseName);
-            ArqAbstractUseCase<R, P> useCase = (ArqAbstractUseCase<R, P>) applicationContext.getBean(useCaseClass);
+            String usecaseCamelNotacion = useCaseName.substring(0,1).toLowerCase().concat(useCaseName.substring(1));
+            ArqAbstractUseCase<R, P> useCase = (ArqAbstractUseCase<R, P>) applicationContext.getBean(usecaseCamelNotacion);
             if (useCase == null) {
                 throw new ClassNotFoundException(useCaseName);
             }
@@ -51,9 +49,10 @@ public class ArqUseCaseExecutor {
 
     public <R, P> R executePaginationUseCase(String useCaseName, P paramObj, Pageable pageable) {
         try {
-            Class<?> useCaseClass = Class.forName(useCaseName);
+            //Class<?> useCaseClass = Class.forName(useCaseName);
+            String usecaseCamelNotacion = useCaseName.substring(0,1).toLowerCase().concat(useCaseName.substring(1));
             ArqAbstractUseCasePagination<R, P> useCase =
-                    (ArqAbstractUseCasePagination<R, P>) applicationContext.getBean(useCaseClass);
+                    (ArqAbstractUseCasePagination<R, P>) applicationContext.getBean(usecaseCamelNotacion);
             if (useCase == null) {
                 throw new ClassNotFoundException(useCaseName);
             }
