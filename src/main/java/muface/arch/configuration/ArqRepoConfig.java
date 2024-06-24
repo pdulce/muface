@@ -4,6 +4,7 @@ import muface.arch.repository.ArqMongoAdapterRepository;
 import muface.arch.repository.ArqPortRepository;
 import muface.arch.repository.ArqRelationalAdapterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,7 @@ public class ArqRepoConfig {
     @Autowired
     private ApplicationContext applicationContext;
     @Bean
-    @Profile("mongo")
+    @ConditionalOnProperty(name = "arch.repository-type.active", havingValue = "mongo", matchIfMissing = false)
     public Map<String, ArqPortRepository<?, String>> mongoDiplomaDTORepository(MongoOperations mongoOperations) {
         Map<String, ArqPortRepository<?, String>> repositoryMap = new HashMap<>();
         Map<String, MongoRepository> mongoRepositories = applicationContext.getBeansOfType(MongoRepository.class);
@@ -36,7 +37,7 @@ public class ArqRepoConfig {
     }
 
     @Bean
-    @Profile("jpa")
+    @ConditionalOnProperty(name = "arch.repository-type.active", havingValue = "jpa", matchIfMissing = false)
     public Map<String, ArqPortRepository<?, Long>> jpaCommonRepositories() {
         Map<String, ArqPortRepository<?, Long>> repositoryMap = new HashMap<>();
         Map<String, JpaRepository>  jpaRepositories = applicationContext.getBeansOfType(JpaRepository.class);

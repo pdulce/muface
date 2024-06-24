@@ -26,7 +26,7 @@ public class ArqMongoDBConfig {
 
     @Primary
     @Bean(name = "bdMongoTemplate")
-    @Profile("mongo")
+    @ConditionalOnProperty(name = "arch.repository-type.active", havingValue = "mongo", matchIfMissing = false)
     public MongoTemplate bdMongoTemplate(MongoCustomConversions custombdMongoConversions) {
         MongoProperties mongoProperties = bdMongoProperties();
         MongoDatabaseFactory myMongoDbFactory = new SimpleMongoClientDatabaseFactory(

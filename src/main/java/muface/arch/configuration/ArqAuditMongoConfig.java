@@ -24,7 +24,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class ArqAuditMongoConfig {
 
     @Bean(name = "arqAuditMongoTemplate")
-    @Profile("mongo")
+    @ConditionalOnProperty(name = "arch.repository-type.active", havingValue = "mongo", matchIfMissing = false)
     public MongoTemplate arqAuditMongoTemplate(MongoCustomConversions customConversions) {
         MongoProperties mongoProperties = arqAuditMongoProperties();
         MongoDatabaseFactory myMongoDbFactory = new SimpleMongoClientDatabaseFactory(
@@ -36,7 +36,7 @@ public class ArqAuditMongoConfig {
     }
 
     @Bean(name = "arqAuditMongoProperties")
-    @Profile("mongo")
+    @ConditionalOnProperty(name = "arch.repository-type.active", havingValue = "mongo", matchIfMissing = false)
     @ConfigurationProperties(prefix = "auditoria.data.mongodb")
     public MongoProperties arqAuditMongoProperties() {
         return new MongoProperties();
