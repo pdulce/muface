@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
         basePackages = "com.mfc.microdiplomas.domain.repository",
         mongoTemplateRef = "bdMongoTemplate"
 )
-@ConditionalOnProperty(name = "arch.repository-type.active", havingValue = "mongo", matchIfMissing = false)
+
 public class MongoDBConfig extends ArqMongoDBConfig {
 
 
