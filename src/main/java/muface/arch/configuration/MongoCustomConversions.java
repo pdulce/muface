@@ -1,5 +1,7 @@
 package muface.arch.configuration;
 
+import muface.arch.utils.DateToTimestampConverter;
+import muface.arch.utils.TimestampToDateConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

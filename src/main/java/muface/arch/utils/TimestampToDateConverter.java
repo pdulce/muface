@@ -1,4 +1,4 @@
-package muface.arch.configuration;
+package muface.arch.utils;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.WritingConverter;
