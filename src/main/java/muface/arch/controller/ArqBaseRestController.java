@@ -1,7 +1,7 @@
 package muface.arch.controller;
 
 import muface.arch.dto.IArqDTO;
-import muface.arch.usecase.ArqUseCaseExecutor;
+import muface.arch.command.ArqUseCaseExecutor;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;

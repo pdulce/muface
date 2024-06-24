@@ -1,4 +1,4 @@
-package muface.arch.usecase;
+package muface.arch.command;
 
 import muface.arch.command.ArqAbstractUseCase;
 import muface.arch.command.ArqAbstractUseCasePagination;
