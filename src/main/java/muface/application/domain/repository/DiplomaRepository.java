@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
 public interface DiplomaRepository {
 
     List<Diploma> findDiplomasByTitulacionName(String titulacionName);
