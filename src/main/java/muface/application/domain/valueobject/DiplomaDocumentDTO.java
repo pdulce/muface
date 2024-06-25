@@ -3,7 +3,9 @@ package muface.application.domain.valueobject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import muface.arch.command.IArqDTO;
 import muface.application.domain.model.DiplomaDocument;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DiplomaDocumentDTO implements IArqDTO<String, DiplomaDocument> {
 
     private String id;
