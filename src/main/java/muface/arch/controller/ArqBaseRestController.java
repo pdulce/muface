@@ -29,12 +29,12 @@ public abstract class ArqBaseRestController {
 
     @PutMapping
     public ResponseEntity<Object> actualizar(@RequestBody DiplomaDTO dtoInBody) { // usaríamos la Entidad no el DTO
-        return this.executeUpdateUseCaseWithInputBody(getCasoUsoModificacion(), dtoInBody);
+        return this.executeCreateUseCaseWithInputBody(getCasoUsoModificacion(), dtoInBody);
     }
 
     @DeleteMapping
     public ResponseEntity<Object> borrar() {
-        return this.executeUpdateUseCaseWithInputBody(getCasoUsoBorrado(), new DiplomaDTO());
+        return this.executeCreateUseCaseWithInputBody(getCasoUsoBorrado(), new DiplomaDTO());
     }
 
     @DeleteMapping("{id}")
@@ -62,12 +62,6 @@ public abstract class ArqBaseRestController {
 
     @Transactional
     protected final ResponseEntity executeCreateUseCaseWithInputBody(final String useCase, IArqDTO dtoInBody) {
-        Object result = useCaseExecutor.executeUseCase(useCase, dtoInBody);
-        return ResponseEntity.ok(result);
-    }
-
-    @Transactional
-    protected final ResponseEntity executeUpdateUseCaseWithInputBody(final String useCase, IArqDTO dtoInBody) {
         Object result = useCaseExecutor.executeUseCase(useCase, dtoInBody);
         return ResponseEntity.ok(result);
     }
