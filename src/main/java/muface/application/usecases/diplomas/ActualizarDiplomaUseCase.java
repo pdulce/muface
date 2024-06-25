@@ -1,8 +1,8 @@
-package muface.microdiplomas.api.usecases;
+package muface.application.usecases.diplomas;
 
 import jakarta.transaction.Transactional;
 import muface.arch.command.ArqAbstractUseCase;
-import muface.microdiplomas.api.dto.DiplomaDTO;
+import muface.application.domain.valueobject.DiplomaDTO;
 import org.springframework.stereotype.Component;
 
 @Component

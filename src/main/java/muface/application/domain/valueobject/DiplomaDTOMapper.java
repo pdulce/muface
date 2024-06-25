@@ -1,7 +1,7 @@
-package muface.microdiplomas.api.dto;
+package muface.application.domain.valueobject;
 
 import muface.arch.command.IArqDTOMapper;
-import muface.microdiplomas.domain.model.Diploma;
+import muface.application.domain.model.Diploma;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;

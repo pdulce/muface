@@ -1,4 +1,4 @@
-package muface.microdiplomas.domain.model;
+package muface.application.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;

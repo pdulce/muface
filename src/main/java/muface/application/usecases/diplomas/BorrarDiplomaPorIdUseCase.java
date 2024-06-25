@@ -1,4 +1,4 @@
-package muface.microdiplomas.api.usecases;
+package muface.application.usecases.diplomas;
 
 
 import jakarta.transaction.Transactional;

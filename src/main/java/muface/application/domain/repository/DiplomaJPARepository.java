@@ -1,6 +1,6 @@
-package muface.microdiplomas.domain.repository;
+package muface.application.domain.repository;
 
-import muface.microdiplomas.domain.model.Diploma;
+import muface.application.domain.model.Diploma;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

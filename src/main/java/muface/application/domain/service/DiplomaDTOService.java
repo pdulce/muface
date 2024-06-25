@@ -1,10 +1,10 @@
-package muface.microdiplomas.domain.service;
+package muface.application.domain.service;
 
 import muface.arch.repository.ArqPortRepository;
 import muface.arch.service.ArqGenericService;
-import muface.microdiplomas.api.dto.DiplomaDTO;
-import muface.microdiplomas.domain.model.Diploma;
-import muface.microdiplomas.domain.repository.DiplomaJPARepository;
+import muface.application.domain.valueobject.DiplomaDTO;
+import muface.application.domain.model.Diploma;
+import muface.application.domain.repository.DiplomaJPARepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

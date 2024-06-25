@@ -1,6 +1,6 @@
-package muface.microdiplomas.domain.repository;
+package muface.application.domain.repository;
 
-import muface.microdiplomas.domain.model.DiplomaDocument;
+import muface.application.domain.model.DiplomaDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,10 +1,10 @@
-package muface.microdiplomas.api.dto;
+package muface.application.domain.valueobject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import muface.arch.command.IArqDTO;
-import muface.microdiplomas.domain.model.Diploma;
-import muface.microdiplomas.domain.model.FirmaOrganismo;
-import muface.microdiplomas.domain.model.Titulacion;
+import muface.application.domain.model.Diploma;
+import muface.application.domain.model.FirmaOrganismo;
+import muface.application.domain.model.Titulacion;
 import lombok.Data;
 
 import java.util.*;

@@ -1,8 +1,8 @@
-package muface.microdiplomas.api.usecases;
+package muface.application.usecases.diplomas;
 
 import muface.arch.command.ArqAbstractUseCasePagination;
-import muface.microdiplomas.api.dto.DiplomaDTO;
-import muface.microdiplomas.domain.service.DiplomaDTOService;
+import muface.application.domain.valueobject.DiplomaDTO;
+import muface.application.domain.service.DiplomaDTOService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

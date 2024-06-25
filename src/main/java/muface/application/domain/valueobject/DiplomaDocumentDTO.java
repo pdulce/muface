@@ -1,8 +1,8 @@
-package muface.microdiplomas.api.dto;
+package muface.application.domain.valueobject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import muface.arch.command.IArqDTO;
-import muface.microdiplomas.domain.model.DiplomaDocument;
+import muface.application.domain.model.DiplomaDocument;
 
 public class DiplomaDocumentDTO implements IArqDTO<String, DiplomaDocument> {
 

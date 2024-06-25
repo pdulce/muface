@@ -1,4 +1,4 @@
-package muface.microdiplomas.domain.model;
+package muface.application.domain.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

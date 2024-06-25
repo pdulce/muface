@@ -1,7 +1,6 @@
 package muface.arch.command;
 
 import muface.arch.service.ArqGenericService;
-import muface.microdiplomas.api.dto.DiplomaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ArqAbstractUseCase<R extends IArqDTO, P extends IArqDTO> implements IArqCommand {
