@@ -25,7 +25,7 @@ public abstract class ArqBaseRestController {
     protected abstract String getPrefix();
 
     protected String getCasoUso(String key) {
-        return applicationContext.getEnvironment().getProperty("use-cases." + getPrefix() + "." + key);
+        return applicationContext.getEnvironment().getProperty("arch.use-cases." + getPrefix() + "." + key);
     }
 
     protected String getCasoUsoInsercion() {
@@ -56,7 +56,7 @@ public abstract class ArqBaseRestController {
         return getCasoUso("consulta-paginada");
     }
 
-    @PostMapping
+    @PostMapping("crear")
     public ResponseEntity<Object> crear(@RequestBody DiplomaDTO dtoInBody) { // usaríamos la Entidad no el DTO
         return this.executeCreateUseCaseWithInputBody(getCasoUsoInsercion(), dtoInBody);
     }
@@ -86,7 +86,7 @@ public abstract class ArqBaseRestController {
         return this.executeCreateUseCaseWithInputBody(getCasoUsoConsultaGeneral(), dtoInBody);
     }
 
-    @PostMapping("consultapaginados")
+    @PostMapping("consulta-paginada")
     public ResponseEntity<Object> consultapaginados(@RequestBody DiplomaDTO dtoInBody, Pageable pageable) {
         return this.executeUseQuerypagCaseWithReqParams(getCasoUsoConsultaPaginada(), dtoInBody, pageable);
     }
