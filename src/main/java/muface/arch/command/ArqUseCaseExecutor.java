@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class ArqUseCaseExecutor {
     public <R, P> R executeUseCase(String useCaseName, P paramObj) {
         try {
             String usecaseCamelNotacion = useCaseName.substring(0,1).toLowerCase().concat(useCaseName.substring(1));
-            ArqAbstractUseCase<R, P> useCase = (ArqAbstractUseCase<R, P>) applicationContext.getBean(usecaseCamelNotacion);
+            IArqCommand<R, P> useCase = (IArqCommand<R, P>) applicationContext.getBean(usecaseCamelNotacion);
             if (useCase == null) {
                 throw new RuntimeException("El caso de Uso <" + useCaseName + "> no existe");
             }
@@ -35,15 +36,14 @@ public class ArqUseCaseExecutor {
         }
     }
 
-    public <R, P> R executePaginationUseCase(String useCaseName, P paramObj, Pageable pageable) {
+    public <R extends Page, P> R executePaginationUseCase(String useCaseName, P paramObj, Pageable pageable) {
         try {
             String usecaseCamelNotacion = useCaseName.substring(0,1).toLowerCase().concat(useCaseName.substring(1));
-            ArqAbstractUseCasePagination<R, P> useCase = (ArqAbstractUseCasePagination<R, P>)
-                    applicationContext.getBean(usecaseCamelNotacion);
+            IArqCommandPagination<R, P> useCase = (IArqCommandPagination<R, P>) applicationContext.getBean(usecaseCamelNotacion);
             if (useCase == null) {
                 throw new RuntimeException("El caso de Uso <" + useCaseName + "> no existe");
             }
-            return useCase.executeQueryPaginada(paramObj, pageable);
+            return useCase.execute(paramObj, pageable);
 
         } catch (ConstraintViolationException | NotExistException | ArqBussinessRuleException excConstraint) {
 

@@ -1,6 +1,6 @@
 package muface.microdiplomas.api.usecases;
 
-import muface.arch.command.ArqAbstractUseCase;
+import muface.arch.command.ArqAbstractUseCaseConsulta;
 import muface.microdiplomas.api.dto.DiplomaDTO;
 import muface.microdiplomas.domain.service.DiplomaDTOService;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ConsultasDiplomasUseCase extends ArqAbstractUseCase<List<DiplomaDTO>, DiplomaDTO> {
+public class ConsultasDiplomasUseCase extends ArqAbstractUseCaseConsulta<List<DiplomaDTO>, DiplomaDTO> {
 
     public List<DiplomaDTO> execute(DiplomaDTO diplomaDTO) {
         List<DiplomaDTO> diplomaDTOS = new ArrayList<>();

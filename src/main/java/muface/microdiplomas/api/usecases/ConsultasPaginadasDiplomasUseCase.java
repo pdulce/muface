@@ -14,7 +14,7 @@ public class ConsultasPaginadasDiplomasUseCase extends ArqAbstractUseCasePaginat
     @Autowired
     private DiplomaDTOService diplomaDTOService;
 
-    public Page<DiplomaDTO> executeQueryPaginada(DiplomaDTO diplomaDTO, Pageable pageable) {
+    public Page<DiplomaDTO> execute(DiplomaDTO diplomaDTO, Pageable pageable) {
         if (diplomaDTO.getIdCliente() != null) {
             DiplomaDTO filter = new DiplomaDTO();
             filter.setIdCliente(diplomaDTO.getIdCliente());
