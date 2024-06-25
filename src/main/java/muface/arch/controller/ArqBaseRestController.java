@@ -4,18 +4,16 @@ import muface.arch.command.IArqDTO;
 import muface.arch.command.ArqUseCaseExecutor;
 import jakarta.transaction.Transactional;
 import muface.application.domain.valueobject.DiplomaDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 public abstract class ArqBaseRestController {
-
-    @Value("${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
-
+    Logger logger = LoggerFactory.getLogger(ArqBaseRestController.class);
     @Autowired
     protected ApplicationContext applicationContext;
 
@@ -56,7 +54,7 @@ public abstract class ArqBaseRestController {
         return getCasoUso("consulta-paginada");
     }
 
-    @PostMapping("crear")
+    @PostMapping
     public ResponseEntity<Object> crear(@RequestBody DiplomaDTO dtoInBody) { // usaríamos la Entidad no el DTO
         return this.executeCreateUseCaseWithInputBody(getCasoUsoInsercion(), dtoInBody);
     }

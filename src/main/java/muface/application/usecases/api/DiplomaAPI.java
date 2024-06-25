@@ -21,14 +21,12 @@ public class DiplomaAPI extends ArqBaseRestController {
     /** pesonalized endpoints **/
 
     @PostMapping("saludar")
-    public ResponseEntity<Object> besarMimano(@RequestBody DiplomaDTO dtoInBody) { // usaríamos la Entidad no el DTO
+    public ResponseEntity<Object> besarMimano(@RequestBody DiplomaDTO dtoInBody) {
         return this.executeCreateUseCaseWithInputBody("CasoDeusoNuevoa1211", dtoInBody);
     }
-
-    @PostMapping("crearOtroTipo")
-    public ResponseEntity<Object> crear(@RequestBody DiplomaDTO dtoInBody) { // usaríamos la Entidad no el DTO
-        //hacer algo y luego invocar al caso de uso
-        return this.executeCreateUseCaseWithInputBody("CrearDiplomaUseCase222", dtoInBody);
+    @PostMapping("creacionNueva")
+    public ResponseEntity<Object> crearNovedoso(@RequestBody DiplomaDTO dtoInBody) {
+        return this.executeCreateUseCaseWithInputBody("CasoUsoCrearNovedoso", dtoInBody);
     }
 
 
