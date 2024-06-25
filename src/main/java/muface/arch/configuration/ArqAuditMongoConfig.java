@@ -20,11 +20,11 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
         basePackages = "com.mfc.infra.event.futuro.repository",
         mongoTemplateRef = "arqAuditMongoTemplate"
 )
-@ConditionalOnProperty(name = "arch.repository-type.active", havingValue = "mongo", matchIfMissing = false)
+@ConditionalOnProperty(name = "arch.event-broker-active", havingValue = "true", matchIfMissing = false)
 public class ArqAuditMongoConfig {
 
     @Bean(name = "arqAuditMongoTemplate")
-    @ConditionalOnProperty(name = "arch.repository-type.active", havingValue = "mongo", matchIfMissing = false)
+    @ConditionalOnProperty(name = "arch.event-broker-active", havingValue = "true", matchIfMissing = false)
     public MongoTemplate arqAuditMongoTemplate(MongoCustomConversions customConversions) {
         MongoProperties mongoProperties = arqAuditMongoProperties();
         MongoDatabaseFactory myMongoDbFactory = new SimpleMongoClientDatabaseFactory(
@@ -36,7 +36,7 @@ public class ArqAuditMongoConfig {
     }
 
     @Bean(name = "arqAuditMongoProperties")
-    @ConditionalOnProperty(name = "arch.repository-type.active", havingValue = "mongo", matchIfMissing = false)
+    @ConditionalOnProperty(name = "arch.event-broker-active", havingValue = "true", matchIfMissing = false)
     @ConfigurationProperties(prefix = "auditoria.data.mongodb")
     public MongoProperties arqAuditMongoProperties() {
         return new MongoProperties();
