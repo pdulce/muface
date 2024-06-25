@@ -5,22 +5,56 @@ import muface.arch.command.ArqUseCaseExecutor;
 import jakarta.transaction.Transactional;
 import muface.application.domain.valueobject.DiplomaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 public abstract class ArqBaseRestController {
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
+    @Autowired
+    protected ApplicationContext applicationContext;
+
     @Autowired
     protected ArqUseCaseExecutor useCaseExecutor;
 
-    protected abstract String getCasoUsoInsercion();
-    protected abstract String getCasoUsoModificacion();
-    protected abstract String getCasoUsoBorrado();
-    protected abstract String getCasoUsoBorradoPorId();
-    protected abstract String getCasoUsoConsultaPorId();
-    protected abstract String getCasoUsoConsultaGeneral();
-    protected abstract String getCasoUsoConsultaPaginada();
+    protected abstract String getPrefix();
+
+    protected String getCasoUso(String key) {
+        return applicationContext.getEnvironment().getProperty("use-cases." + getPrefix() + "." + key);
+    }
+
+    protected String getCasoUsoInsercion() {
+        return getCasoUso("insercion");
+    }
+
+    protected String getCasoUsoModificacion() {
+        return getCasoUso("modificacion");
+    }
+
+    protected String getCasoUsoBorrado() {
+        return getCasoUso("borrado-general");
+    }
+
+    protected String getCasoUsoBorradoPorId() {
+        return getCasoUso("borrado-por-id");
+    }
+
+    protected String getCasoUsoConsultaPorId() {
+        return getCasoUso("consulta-por-id");
+    }
+
+    protected String getCasoUsoConsultaGeneral() {
+        return getCasoUso("consulta-general");
+    }
+
+    protected String getCasoUsoConsultaPaginada() {
+        return getCasoUso("consulta-paginada");
+    }
 
     @PostMapping
     public ResponseEntity<Object> crear(@RequestBody DiplomaDTO dtoInBody) { // usaríamos la Entidad no el DTO

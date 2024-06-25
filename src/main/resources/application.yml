@@ -6,7 +6,15 @@ arch:
   event-broker-active: false
   repository-type:
     active: jpa # mongo o jpa
-
+  use-cases:
+    diplomas:
+      insercion: "CrearDiplomaUseCase"
+      modificacion: "ActualizarDiplomaUseCase"
+      borrado-general: "BorrarDiplomasUseCase"
+      borrado-por-id: "BorrarDiplomaPorIdUseCase"
+      consulta-por-id: "ConsultaPorIdDiplomasUseCase"
+      consulta-general: "ConsultasDiplomasUseCase"
+      consulta-paginada: "ConsultasPaginadasDiplomasUseCase"
 
 
 spring:
