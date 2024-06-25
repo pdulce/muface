@@ -28,7 +28,7 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
     }
 
     public String getTitulacionDeno() {
-        return this.titulacion != null && this.titulacion.isEmpty() ? "" : this.titulacion.values().iterator().next();
+        return this.titulacion == null || this.titulacion.isEmpty() ? "" : this.titulacion.values().iterator().next();
     }
 
 

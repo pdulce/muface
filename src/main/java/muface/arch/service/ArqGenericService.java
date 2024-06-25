@@ -44,11 +44,11 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     MessageSource messageSource;
 
     private String getClassOfDTO() {
-        return mapper.newInstance().getEntity().getClass().getName();
+        return mapper.newInstance().getEntity().getClass().getSimpleName();
     }
 
     protected ArqPortRepository<Object, ID> getRepository() {
-        String entityClassName = getClassOfDTO();
+        String entityClassName = mapper.newInstance().getEntity().getClass().getName();
         for (String repoName : commandRepositories.keySet()) {
             if (getRepositoryEntityOfDTO().contentEquals(entityClassName)) {
                 return (ArqPortRepository<Object, ID>) commandRepositories.get(repoName);

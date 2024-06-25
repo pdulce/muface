@@ -11,30 +11,25 @@ import java.util.List;
 @Component
 public class ConsultasDiplomasUseCase extends ArqAbstractUseCaseConsulta<List<DiplomaDTO>, DiplomaDTO> {
 
-    /*public List<DiplomaDTO> execute(Object diplomaDTO) {
+    @Override
+    public List<DiplomaDTO> execute(DiplomaDTO diplomaDTOFilter) {
         List<DiplomaDTO> diplomaDTOS = new ArrayList<>();
-        if (diplomaDTO.getIdCliente() != null) {
+        if (diplomaDTOFilter.getIdCliente() != null) {
             DiplomaDTO filter = new DiplomaDTO();
-            filter.setIdCliente(diplomaDTO.getIdCliente());
+            filter.setIdCliente(diplomaDTOFilter.getIdCliente());
             diplomaDTOS.addAll(this.commandService.buscarCoincidenciasEstricto(filter));
-        } else if (diplomaDTO.getNombreCompleto() != null) {
+        } else if (diplomaDTOFilter.getNombreCompleto() != null) {
             DiplomaDTO filter = new DiplomaDTO();
-            filter.setNombreCompleto(diplomaDTO.getNombreCompleto());
+            filter.setNombreCompleto(diplomaDTOFilter.getNombreCompleto());
             diplomaDTOS.addAll(this.commandService.buscarCoincidenciasNoEstricto(filter));
-        } else if (diplomaDTO.getTitulacionDeno() != null) {
+        } else if (diplomaDTOFilter.getTitulacionDeno() != null) {
             DiplomaDTOService diplomaDtoService = (DiplomaDTOService) this.commandService;
-            diplomaDTOS.addAll(diplomaDtoService.buscarDiplomasPorNombreDeTitulacion(diplomaDTO.getTitulacionDeno()));
+            diplomaDTOS.addAll(diplomaDtoService.buscarDiplomasPorNombreDeTitulacion(diplomaDTOFilter.getTitulacionDeno()));
         } else {
             // si no hay filtro, consultamos todos los registros
             diplomaDTOS.addAll(this.commandService.buscarTodos());
         }
         return diplomaDTOS;
-    }*/
-
-
-    @Override
-    public List<DiplomaDTO> execute(DiplomaDTO diplomaDTOFilter) {
-        return this.commandService.buscarCoincidenciasNoEstricto(diplomaDTOFilter);
     }
 
 
