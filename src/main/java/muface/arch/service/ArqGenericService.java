@@ -122,9 +122,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             if (optionalT.isPresent()) {
                 Serializable searchedInBBDD = (Serializable) optionalT.orElse(null);
                 entityDto.actualizarEntidad(searchedInBBDD); //actualiza los campos que no son ids
-                Serializable updatedEntity = (Serializable) entityDto.getEntity();
-                Serializable updated = (Serializable) commandRepo.save(updatedEntity);
-
+                Serializable updated = (Serializable) commandRepo.save(searchedInBBDD);
                 this.registrarEvento(updated, ArqEvent.EVENT_TYPE_UPDATE, (ID) entityDto.getId());
                 String info = messageSource.getMessage(ArqConstantMessages.UPDATED_OK,
                         new Object[]{getClassOfDTO()}, new Locale("es"));

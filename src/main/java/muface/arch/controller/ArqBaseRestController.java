@@ -65,8 +65,13 @@ public abstract class ArqBaseRestController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Object> borrar() {
+    public ResponseEntity<Object> borrarAll() {
         return this.executeCreateUseCaseWithInputBody(getCasoUsoBorrado(), new DiplomaDTO());
+    }
+
+    @PostMapping("borrarSeleccion")
+    public ResponseEntity<Object> borrarSeleccion(@RequestBody DiplomaDTO dtoInBody) {
+        return this.executeCreateUseCaseWithInputBody(getCasoUsoBorrado(), dtoInBody);
     }
 
     @DeleteMapping("{id}")

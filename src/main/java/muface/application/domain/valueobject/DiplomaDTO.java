@@ -105,45 +105,61 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
 
     @Override
     public void actualizarEntidad(Diploma entidadBBDD) {
-        if (entidadBBDD == null) {
-            return;
-        }
-
         entidadBBDD.setIdcustomer(this.idCliente);
         entidadBBDD.setName(this.nombreCompleto);
         entidadBBDD.setRegion(this.regionOComarca);
 
-        // Actualizar Titulacion
+        // Actualizar la Titulacion
         if (this.titulacion != null && !this.titulacion.isEmpty()) {
-            Map.Entry<Long, String> entry = this.titulacion.entrySet().iterator().next();
+            Map.Entry<Long, String> entry = titulacion.entrySet().iterator().next();
+            Long idTitulacion = entry.getKey();
+            String nombreTitulacion = entry.getValue();
             if (entidadBBDD.getTitulacion() == null) {
-                Titulacion titulacion = new Titulacion();
-                titulacion.setDiploma(entidadBBDD);
-                entidadBBDD.setTitulacion(titulacion);
+                Titulacion nuevaTitulacion = new Titulacion();
+                nuevaTitulacion.setName(nombreTitulacion);
+                nuevaTitulacion.setDiploma(entidadBBDD);
+                entidadBBDD.setTitulacion(nuevaTitulacion);
+            } else if (idTitulacion.longValue() == entidadBBDD.getTitulacion().getId().longValue()){
+                entidadBBDD.getTitulacion().setName(nombreTitulacion);
             }
-            entidadBBDD.getTitulacion().setName(entry.getValue());
-        } else {
-            entidadBBDD.setTitulacion(null);
+        } else if (entidadBBDD.getTitulacion() != null) {
+            entidadBBDD.setTitulacion(null); // O manejo adecuado de eliminación si se desea
         }
 
-        // Actualizar Firmas
-        if (this.firmas != null) {
-            List<FirmaOrganismo> firmasNuevas = new ArrayList<>();
-            this.firmas.forEach((idFirmante, contenidoFirma) -> {
-                FirmaOrganismo firmaOrganismo = new FirmaOrganismo();
-                firmaOrganismo.setId(idFirmante);
-                firmaOrganismo.setOrganismoFirmante(contenidoFirma.keySet().iterator().next());
-                firmaOrganismo.setFechaEmision(contenidoFirma.values().iterator().next());
-                firmaOrganismo.setDiploma(entidadBBDD);
-                firmasNuevas.add(firmaOrganismo);
-            });
-            entidadBBDD.getFirmas().clear();
-            entidadBBDD.getFirmas().addAll(firmasNuevas);
-        } else {
-            entidadBBDD.getFirmas().clear();
+        // Actualizar las Firmas
+        if (this.firmas != null && !this.firmas.isEmpty()) {
+            List<FirmaOrganismo> nuevasFirmas = new ArrayList<>();
+
+            for (Map.Entry<Long, Map<String, Date>> firmaEntry : this.firmas.entrySet()) {
+                Long idFirmante = firmaEntry.getKey();
+                Map<String, Date> datosFirma = firmaEntry.getValue();
+                Map.Entry<String, Date> entry = datosFirma.entrySet().iterator().next();
+                String firmante = entry.getKey();
+                Date fechaEmisionFirma = entry.getValue();
+
+                FirmaOrganismo firmaOrganismo = entidadBBDD.getFirmas().stream()
+                        .filter(f -> f.getId().equals(idFirmante))
+                        .findFirst()
+                        .orElse(new FirmaOrganismo());
+                if (firmaOrganismo.getId() == null) {
+                    firmaOrganismo.setId(idFirmante);
+                    firmaOrganismo.setDiploma(entidadBBDD);
+                    nuevasFirmas.add(firmaOrganismo);
+                } else {
+                    firmaOrganismo.setOrganismoFirmante(firmante);
+                    firmaOrganismo.setFechaEmision(fechaEmisionFirma);
+                }
+            }
+            if (!nuevasFirmas.isEmpty()) {
+                entidadBBDD.getFirmas().clear();
+                entidadBBDD.getFirmas().addAll(nuevasFirmas);
+            }
+        } else if (entidadBBDD.getFirmas() != null) {
+            entidadBBDD.getFirmas().clear(); // O manejo adecuado de eliminación si se desea
         }
     }
 
+    @Override
     public Long getId() {
         return this.id;
     }
