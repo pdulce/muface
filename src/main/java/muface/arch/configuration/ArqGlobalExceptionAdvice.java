@@ -1,6 +1,7 @@
 package muface.arch.configuration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.transaction.TransactionalException;
 import muface.arch.exceptions.ArqBaseOperationsException;
 import muface.arch.exceptions.NotExistException;
 import muface.arch.utils.ArqConstantMessages;
@@ -50,6 +51,10 @@ public class ArqGlobalExceptionAdvice {
     }
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(TransactionalException.class)
+    public ResponseEntity<String> handleTransactionalException(TransactionalException ex) {
         return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

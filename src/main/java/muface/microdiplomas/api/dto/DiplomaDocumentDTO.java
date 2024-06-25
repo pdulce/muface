@@ -60,9 +60,4 @@ public class DiplomaDocumentDTO implements IArqDTO<String, DiplomaDocument> {
         return diploma;
     }
 
-    @Override
-    public void actualizarEntidad(DiplomaDocument entity) {
-        setEntity(entity);
-    }
-
 }

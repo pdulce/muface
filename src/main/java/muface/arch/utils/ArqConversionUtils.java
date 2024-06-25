@@ -1,6 +1,5 @@
 package muface.arch.utils;
 
-import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,13 +10,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import muface.arch.command.IArqDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 public class ArqConversionUtils {
 
@@ -26,21 +21,7 @@ public class ArqConversionUtils {
 
     private ArqConversionUtils() {}
 
-    public static final Pageable changePageableOrderFields(IArqDTO dto, Pageable pageable) {
-        if (pageable.getSort() == null || pageable.getSort().isEmpty()) {
-            return pageable;
-        }
-        Sort originalSort = pageable.getSort();
-        Sort newSort = Sort.unsorted();
 
-        for (Sort.Order order : originalSort) {
-            String property = order.getProperty();
-            String transformedProperty = dto.getInnerOrderField(property);
-            newSort = newSort.and(Sort.by(order.getDirection(), transformedProperty));
-        }
-
-        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), newSort);
-    }
 
     public static final String getKeyAlmacen(String typeOfStore, String applicationId, String almacen) {
         return typeOfStore + ":" + applicationId + ":" + almacen;
@@ -128,23 +109,6 @@ public class ArqConversionUtils {
         }
         return resultMap;
     }
-
-    public static <T> Map<String, Object> convertToMap(T obj) {
-        Map<String, Object> resultMap = new HashMap<>();
-        Class<?> clazz = obj.getClass();
-
-        // Iterar sobre todos los campos declarados en la clase
-        for (Field field : clazz.getDeclaredFields()) {
-            field.setAccessible(true); // Permite el acceso a campos privados
-            try {
-                resultMap.put(field.getName(), field.get(obj));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace(); // Manejar la excepción adecuadamente
-            }
-        }
-        return resultMap;
-    }
-
 
     public static LocalDate addDaysToADate(final String fechaInicialString) {
         // Fecha inicial

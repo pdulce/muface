@@ -1,5 +1,7 @@
 package muface.arch.service;
 
+import muface.arch.command.IArqDTOMapper;
+import muface.arch.command.IArqEntidad;
 import muface.arch.configuration.ArqConfigProperties;
 import muface.arch.configuration.ArqSessionInterceptor;
 import muface.arch.command.IArqDTO;
@@ -9,7 +11,6 @@ import muface.arch.exceptions.ArqBaseOperationsException;
 import muface.arch.exceptions.NotExistException;
 import muface.arch.repository.ArqPortRepository;
 import muface.arch.utils.ArqConstantMessages;
-import muface.arch.utils.ArqConversionUtils;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -20,8 +21,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.*;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 @Transactional
@@ -35,7 +34,10 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     @Autowired(required = false)
     ArqCommandEventPublisherPort arqCommandEventPublisherPort;
 
-    private Class<D> myDtoClass;
+    //private Class<D> myDtoClass;
+
+    @Autowired
+    private IArqDTOMapper<IArqEntidad, D> mapper;
 
     @Autowired
     protected ApplicationContext applicationContext;
@@ -45,24 +47,12 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     @Autowired
     MessageSource messageSource;
 
-    private Class<D> getClassOfDTO() {
-        if (myDtoClass == null) {
-            myDtoClass = (Class<D>) ((ParameterizedType) getClass()
-                    .getGenericSuperclass())
-                    .getActualTypeArguments()[0];
-        }
-        return this.myDtoClass;
+    private String getClassOfDTO() {
+        return mapper.newInstance().getEntity().getClass().getName();
     }
-    protected ArqPortRepository<Object, ID> getRepository() {
-        String entityClassName = "";
-        try {
-            D entityDtoResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
-            entityClassName = entityDtoResultado.getEntity().getClass().getName();
-        } catch (Throwable exc) {
-            throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
-                    new Object[]{"Error recuperando repositorio de la entidad " + entityClassName});
-        }
 
+    protected ArqPortRepository<Object, ID> getRepository() {
+        String entityClassName = getClassOfDTO();
         for (String repoName : commandRepositories.keySet()) {
             if (getRepositoryEntityOfDTO().contentEquals(entityClassName)) {
                 return (ArqPortRepository<Object, ID>) commandRepositories.get(repoName);
@@ -82,12 +72,12 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         return applicationId + "-" + almacen + "-" + (id.toString());
     }
 
-    private void registrarEvento(Object entity, String eventType, ID id) {
+    private void registrarEvento(IArqEntidad entity, String eventType, ID id) {
         if (entity != null && arqConfigProperties.isEventBrokerActive()) {
             String applicationId = (String) ArqSessionInterceptor.getCurrentSession().getAttribute("applicationId");
             String sessionId = (String) ArqSessionInterceptor.getCurrentSession().getAttribute("sessionId");
             String traceId = (String) ArqSessionInterceptor.getCurrentSession().getAttribute("sessionId");
-            String almacen = entity.getClass().getSimpleName();
+            String almacen = getClassOfDTO();
             String idUnique = fabricarIdUnico(applicationId, almacen, id);
             ArqEvent eventArch = new ArqEvent(applicationId, almacen, eventType, sessionId, traceId, idUnique, entity);
             arqCommandEventPublisherPort.publish(ArqEvent.TOPIC_AUDITORIAS, eventArch);
@@ -95,7 +85,8 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     }
     private void registrarEventos(List<Object> entities, String eventType) {
         entities.forEach((entity) -> {
-            registrarEvento(entity, eventType, (ID) ArqConversionUtils.objectToMap(entity).get("id"));
+            D dto = mapper.map((IArqEntidad) entity);
+            registrarEvento((IArqEntidad) entity, eventType, (ID) dto.getId());
         });
     }
 
@@ -103,34 +94,29 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     @Override
     @Transactional
     public D insertar(D entityDto) {
+        D dto;
         try {
-            Class<D> dtoClass = (Class<D>) entityDto.getClass();
-            D entityDtoResultado = dtoClass.getDeclaredConstructor().newInstance();
-            try {
-                ArqPortRepository<Object, ID> commandRepo = getRepository();
-                entityDtoResultado.setEntity(commandRepo.save(entityDto.getEntity()));
-                this.registrarEvento(entityDtoResultado.getEntity(), ArqEvent.EVENT_TYPE_CREATE,
-                        (ID) entityDtoResultado.getId());
-                String info = messageSource.getMessage(ArqConstantMessages.CREATED_OK,
-                        new Object[]{getClassOfDTO().getSimpleName()}, new Locale("es"));
-                logger.info(info);
-            } catch (ConstraintViolationException ctExc) {
-                throw ctExc;
-            } catch (Throwable exc) {
-                String error = messageSource.getMessage(ArqConstantMessages.CREATED_KO,
-                        new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()},
-                        new Locale("es"));
-                logger.error(error);
-                throw new ArqBaseOperationsException(ArqConstantMessages.CREATED_KO,
-                        new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()});
-            }
-            return entityDtoResultado;
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                 | InvocationTargetException noSuchMethodException) {
-            throw new ArqBaseOperationsException(ArqConstantMessages.UPDATED_KO,
-                    new Object[]{entityDto.getClass().getSimpleName(), noSuchMethodException.getCause()});
+            ArqPortRepository<Object, ID> commandRepo = getRepository();
+            IArqEntidad entidad = (IArqEntidad) entityDto.getEntity();
+            IArqEntidad entityInserted = (IArqEntidad) commandRepo.save(entidad);
+            dto = mapper.map(entityInserted);
+            this.registrarEvento(entityInserted, ArqEvent.EVENT_TYPE_CREATE, (ID) entityDto.getId());
+            String info = messageSource.getMessage(ArqConstantMessages.CREATED_OK,
+                    new Object[]{getClassOfDTO()}, new Locale("es"));
+            logger.info(info);
+        } catch (ConstraintViolationException ctExc) {
+            throw ctExc;
+        } catch (Throwable exc) {
+            String error = messageSource.getMessage(ArqConstantMessages.CREATED_KO,
+                    new Object[]{getClassOfDTO(), exc.getCause()},
+                    new Locale("es"));
+            logger.error(error);
+            throw new ArqBaseOperationsException(ArqConstantMessages.CREATED_KO,
+                    new Object[]{getClassOfDTO(), exc.getCause()});
         }
+        return dto;
     }
+
     @Override
     @Transactional
     public D actualizar(D entityDto) {
@@ -138,26 +124,31 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             ArqPortRepository<Object, ID> commandRepo = getRepository();
             Optional<?> optionalT = commandRepo.findById((ID) entityDto.getId());
             if (optionalT.isPresent()) {
-                Object searched = optionalT.orElse(null);
-                entityDto.actualizarEntidad(searched);
-                Object updated = commandRepo.save(searched);
+                IArqEntidad searchedInBBDD = (IArqEntidad) optionalT.orElse(null);
+                // obtenemos los datos que vienen del cliente:
+                IArqEntidad entidad2Update = (IArqEntidad) entityDto.getEntity();
+                IArqDTO dto2Update = mapper.map(searchedInBBDD);
+                dto2Update.setEntity(entidad2Update);
+                entidad2Update = (IArqEntidad) dto2Update.getEntity();
+                IArqEntidad updated = (IArqEntidad) commandRepo.save(entidad2Update);
+
                 this.registrarEvento(updated, ArqEvent.EVENT_TYPE_UPDATE, (ID) entityDto.getId());
                 String info = messageSource.getMessage(ArqConstantMessages.UPDATED_OK,
-                        new Object[]{getClassOfDTO().getSimpleName()}, new Locale("es"));
+                        new Object[]{getClassOfDTO()}, new Locale("es"));
                 logger.info(info);
             } else {
                 throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
-                        new Object[]{getClassOfDTO().getSimpleName(), (ID) entityDto.getId()});
+                        new Object[]{getClassOfDTO(), (ID) entityDto.getId()});
             }
         } catch (ConstraintViolationException | NotExistException ctExc) {
             throw ctExc;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.UPDATED_KO,
-                    new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()},
+                    new Object[]{getClassOfDTO(), exc.getCause()},
                     new Locale("es"));
             logger.error(error);
             throw new ArqBaseOperationsException(ArqConstantMessages.UPDATED_KO,
-                    new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()});
+                    new Object[]{getClassOfDTO(), exc.getCause()});
         }
         return entityDto;
     }
@@ -167,33 +158,33 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     public String borrarEntidad(ID id) {
         if (id == null) {
             throw new NotExistException(ArqConstantMessages.ERROR_BAD_REQUEST,
-                    new Object[]{getClassOfDTO().getSimpleName(), "id: <null>"});
+                    new Object[]{getClassOfDTO(), "id: <null>"});
         }
         String info = "";
         try {
             ArqPortRepository<Object, ID> commandRepo = getRepository();
             Optional<?> optionalT = commandRepo.findById(id);
             if (optionalT.isPresent()) {
-                Object entity = optionalT.orElse(null);
+                IArqEntidad entity = (IArqEntidad) optionalT.orElse(null);
                 commandRepo.delete(entity);
                 this.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE, id);
                 info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
-                        new Object[]{getClassOfDTO().getSimpleName()}, LocaleContextHolder.getLocale());
+                        new Object[]{getClassOfDTO()}, LocaleContextHolder.getLocale());
                 logger.info(messageSource.getMessage(ArqConstantMessages.DELETED_OK,
-                        new Object[]{getClassOfDTO().getSimpleName()}, new Locale("es")));
+                        new Object[]{getClassOfDTO()}, new Locale("es")));
             } else {
                 throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
-                        new Object[]{getClassOfDTO().getSimpleName(), id});
+                        new Object[]{getClassOfDTO(), id});
             }
         } catch (ConstraintViolationException | NotExistException ctExc) {
             throw ctExc;
         } catch (Throwable exc) {
             String error = messageSource.getMessage(ArqConstantMessages.DELETED_KO,
-                    new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()},
+                    new Object[]{getClassOfDTO(), exc.getCause()},
                     LocaleContextHolder.getLocale());
             logger.error(error);
             throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
-                    new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()});
+                    new Object[]{getClassOfDTO(), exc.getCause()});
         }
         return info;
     }
@@ -215,10 +206,10 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
                 borrarEntidad(entityDTO);
             });
             info = messageSource.getMessage(ArqConstantMessages.DELETED_LIST_OK,
-                    new Object[]{entities.size(), getClassOfDTO().getSimpleName()},
+                    new Object[]{entities.size(), getClassOfDTO()},
                     LocaleContextHolder.getLocale());
             logger.info(messageSource.getMessage(ArqConstantMessages.DELETED_LIST_OK,
-                    new Object[]{getClassOfDTO().getSimpleName()}, new Locale("es")));
+                    new Object[]{getClassOfDTO()}, new Locale("es")));
             return info;
         } catch (Throwable exc) {
             throw exc;
@@ -240,16 +231,16 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
                 commandRepo.deleteAll();
                 this.registrarEventos(registros, ArqEvent.EVENT_TYPE_DELETE);
                 info = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
-                        new Object[]{getClassOfDTO().getSimpleName()}, LocaleContextHolder.getLocale());
+                        new Object[]{getClassOfDTO()}, LocaleContextHolder.getLocale());
                 logger.info(messageSource.getMessage(ArqConstantMessages.DELETED_ALL_OK,
-                        new Object[]{getClassOfDTO().getSimpleName()}, new Locale("es")));
+                        new Object[]{getClassOfDTO()}, new Locale("es")));
             } catch (Throwable exc) {
                 String error = messageSource.getMessage(ArqConstantMessages.DELETED_ALL_KO,
-                        new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()},
+                        new Object[]{getClassOfDTO(), exc.getCause()},
                         new Locale("es"));
                 logger.error(error);
                 throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_ALL_KO,
-                        new Object[]{getClassOfDTO().getSimpleName(), exc.getCause()});
+                        new Object[]{getClassOfDTO(), exc.getCause()});
             }
         }
         return info;
@@ -257,19 +248,8 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
 
     @Override
     public List<D> buscarTodos() {
-        List<D> resultado = new ArrayList<>();
-        this.getRepository().findAll().forEach((entity) -> {
-            try {
-                D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
-                instanciaDTOResultado.setEntity(entity);
-                resultado.add(instanciaDTOResultado);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                     | InvocationTargetException noSuchMethodException) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
-                        new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
-            }
-        });
-        return resultado;
+        List<Object> resultado = this.getRepository().findAll();
+        return convertirListaEntitiesADtos(resultado);
     }
     @Override
     public List<D> buscarTodosConOrdenacion(Sort sort) {
@@ -278,42 +258,25 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
                     new Object[]{"Parámetro sort es nulo"});
         }
-        List<D> resultado = new ArrayList<>();
-        this.getRepository().findAll(sort).forEach((entity) -> {
-            try {
-                D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
-                instanciaDTOResultado.setEntity(entity);
-                resultado.add(instanciaDTOResultado);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                     | InvocationTargetException noSuchMethodException) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
-                        new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
-            }
-        });
-        return resultado;
+        List<Object> resultado = this.getRepository().findAll(sort);
+        return convertirListaEntitiesADtos(resultado);
     }
 
     @Override
     public D buscarPorId(ID id) {
         if (id == null) {
             throw new NotExistException(ArqConstantMessages.ERROR_BAD_REQUEST,
-                    new Object[]{getClassOfDTO().getSimpleName(), "id: <null>"});
+                    new Object[]{getClassOfDTO(), "id: <null>"});
         }
         ArqPortRepository<Object, ID> commandRepo = getRepository();
-        try {
-            D entityDtoResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
-            Optional<?> optionalT = commandRepo.findById(id);
-            if (optionalT.isPresent()) {
-                entityDtoResultado.setEntity(optionalT.orElse(null));
-                return entityDtoResultado;
-            } else {
-                throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
-                        new Object[]{getClassOfDTO().getSimpleName(), id});
-            }
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                 | InvocationTargetException noSuchMethodException) {
-            throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
-                    new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
+        Optional<?> optionalT = commandRepo.findById(id);
+        if (optionalT.isPresent()) {
+            IArqEntidad entity = (IArqEntidad) optionalT.orElse(null);
+            D dto = mapper.map(entity);
+            return dto;
+        } else {
+            throw new NotExistException(ArqConstantMessages.RECORD_NOT_FOUND,
+                    new Object[]{getClassOfDTO(), id});
         }
     }
 
@@ -321,51 +284,31 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     public List<D> buscarPorIds(List<ID> ids) {
         if (ids == null || ids.isEmpty()) {
             throw new NotExistException(ArqConstantMessages.ERROR_BAD_REQUEST,
-                    new Object[]{getClassOfDTO().getSimpleName(), "ids: <null or empty list>"});
+                    new Object[]{getClassOfDTO(), "ids: <null or empty list>"});
         }
         ArqPortRepository<Object, ID> commandRepo = getRepository();
         List<Object> resultado = commandRepo.findByIds(ids);
-        return convertirListaADtos(resultado);
+        return convertirListaEntitiesADtos(resultado);
     }
 
     @Override
     public List<D> buscarCoincidenciasEstricto(D filterObject) {
-        List<D> resultado = new ArrayList<>();
         ArqPortRepository<Object, ID> commandRepo = getRepository();
-        commandRepo.findByExampleStricted(filterObject.getEntity()).forEach((entity) -> {
-            try {
-                D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
-                instanciaDTOResultado.setEntity(entity);
-                resultado.add(instanciaDTOResultado);
-            } catch (Throwable noSuchMethodException) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
-                        new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
-            }
-        });
-        return resultado;
+        List<Object> resultadoEntities = commandRepo.findByExampleStricted(filterObject.getEntity());
+        return convertirListaEntitiesADtos(resultadoEntities);
     }
 
     @Override
     public List<D> buscarCoincidenciasNoEstricto(D filterObject) {
-        List<D> resultado = new ArrayList<>();
         ArqPortRepository<Object, ID> commandRepo = getRepository();
-        commandRepo.findByExampleNotStricted(filterObject.getEntity()).forEach((entity) -> {
-            try {
-                D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
-                instanciaDTOResultado.setEntity(entity);
-                resultado.add(instanciaDTOResultado);
-            } catch (Throwable noSuchMethodException) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.DELETED_KO,
-                        new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
-            }
-        });
-        return resultado;
+        List<Object> resultadoEntities = commandRepo.findByExampleNotStricted(filterObject.getEntity());
+        return convertirListaEntitiesADtos(resultadoEntities);
     }
 
     /*** Consultas paginadas ***/
     @Override
     public Page<D> buscarCoincidenciasEstrictoPaginados(D filterObject, Pageable pageable) {
-        Pageable newPageable = ArqConversionUtils.changePageableOrderFields(filterObject, pageable);
+        Pageable newPageable = mapearCamposOrdenacionDeEntidad(filterObject, pageable);
         if (newPageable == null) {
             logger.error("Parámetro pageable es nulo");
             throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
@@ -378,7 +321,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
 
     @Override
     public Page<D> buscarCoincidenciasNoEstrictoPaginados(D filterObject, Pageable pageable) {
-        Pageable newPageable = ArqConversionUtils.changePageableOrderFields(filterObject, pageable);
+        Pageable newPageable = mapearCamposOrdenacionDeEntidad(filterObject, pageable);
         if (newPageable == null) {
             logger.error("Parámetro pageable es nulo");
             throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
@@ -391,35 +334,22 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
 
     @Override
     public Page<D> buscarTodosPaginados(Pageable pageable) {
-        try {
-            D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
-            Pageable newPageable = ArqConversionUtils.changePageableOrderFields(instanciaDTOResultado, pageable);
-            if (newPageable == null) {
-                logger.error("Parámetro pageable es nulo");
-                throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
-                        new Object[]{"Parámetro pageable es nulo"});
-            }
-            ArqPortRepository<Object, ID> commandRepo = getRepository();
-            Page<Object> resultado = commandRepo.findAllPaginated(newPageable);
-            return convertirAPageOfDtos(resultado, newPageable);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                 | InvocationTargetException noSuchMethodException) {
+        Pageable newPageable = mapearCamposOrdenacionDeEntidad(mapper.newInstance(), pageable);
+        if (newPageable == null) {
+            logger.error("Parámetro pageable es nulo");
             throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
-                    new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
+                    new Object[]{"Parámetro pageable es nulo"});
         }
+        ArqPortRepository<Object, ID> commandRepo = getRepository();
+        Page<Object> resultado = commandRepo.findAllPaginated(newPageable);
+        return convertirAPageOfDtos(resultado, newPageable);
     }
 
     protected final Page<D> convertirAPageOfDtos(Page pageimpl, Pageable pageable) {
         List<D> listConverted = new ArrayList<>();
         pageimpl.stream().toList().forEach((entity) -> {
-            try {
-                D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
-                instanciaDTOResultado.setEntity(entity);
-                listConverted.add(instanciaDTOResultado);
-            } catch (Throwable noSuchMethodException) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
-                        new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
-            }
+            D dto = mapper.map((IArqEntidad) entity);
+            listConverted.add(dto);
         });
         return new PageImpl<>(listConverted,
                 PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()),
@@ -427,21 +357,29 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     }
 
 
-    protected final List<D> convertirListaADtos(List listaOrigen) {
+    protected final List<D> convertirListaEntitiesADtos(List listaOrigen) {
         List<D> listConverted = new ArrayList<>();
         listaOrigen.stream().toList().forEach((entity) -> {
-            try {
-                D instanciaDTOResultado = getClassOfDTO().getDeclaredConstructor().newInstance();
-                instanciaDTOResultado.setEntity(entity);
-                listConverted.add(instanciaDTOResultado);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                     | InvocationTargetException noSuchMethodException) {
-                throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
-                        new Object[]{getClassOfDTO().getSimpleName(), noSuchMethodException.getCause()});
-            }
+            D dto = mapper.map((IArqEntidad) entity);
+            listConverted.add(dto);
         });
         return listConverted;
     }
 
+    protected static Pageable mapearCamposOrdenacionDeEntidad(IArqDTO dto, Pageable pageable) {
+        if (pageable.getSort() == null || pageable.getSort().isEmpty()) {
+            return pageable;
+        }
+        Sort originalSort = pageable.getSort();
+        Sort newSort = Sort.unsorted();
+
+        for (Sort.Order order : originalSort) {
+            String property = order.getProperty();
+            String transformedProperty = dto.getInnerOrderField(property);
+            newSort = newSort.and(Sort.by(order.getDirection(), transformedProperty));
+        }
+
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), newSort);
+    }
 
 }

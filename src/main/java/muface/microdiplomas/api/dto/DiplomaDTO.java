@@ -30,26 +30,8 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
     public String getTitulacionDeno() {
         return this.titulacion != null && this.titulacion.isEmpty() ? "" : this.titulacion.values().iterator().next();
     }
-    @Override
-    public void setEntity(Diploma diploma) {
-        this.id = diploma.getId();
-        this.idCliente = diploma.getIdcustomer();
-        this.nombreCompleto = diploma.getName();
-        if (diploma.getTitulacion() != null) {
-            Map<Long, String> tiulacionContent = new HashMap<>();
-            tiulacionContent.put(diploma.getTitulacion().getId(), diploma.getTitulacion().getName());
-            this.titulacion = tiulacionContent;
-        }
-        this.regionOComarca = diploma.getRegion();
-        this.firmas = new HashMap<>();
-        if (diploma.getFirmas() != null) {
-            diploma.getFirmas().forEach((firma) -> {
-                Map<String, Date> contenidoFirma = new HashMap<>();
-                contenidoFirma.put(firma.getOrganismoFirmante(), firma.getFechaEmision());
-                this.firmas.put(firma.getId(), contenidoFirma);
-            });
-        }
-    }
+
+
     public String getInnerOrderField(String fieldInDto) {
         if (fieldInDto.contentEquals("id")) {
             return "id";
@@ -101,46 +83,25 @@ public class DiplomaDTO implements IArqDTO<Long, Diploma> {
     }
 
     @Override
-    public void actualizarEntidad(Diploma entidadBBDD) {
-        if (entidadBBDD == null) {
-            return;
+    public void setEntity(Diploma diploma) {
+        this.id = diploma.getId();
+        this.idCliente = diploma.getIdcustomer();
+        this.nombreCompleto = diploma.getName();
+        if (diploma.getTitulacion() != null) {
+            Map<Long, String> tiulacionContent = new HashMap<>();
+            tiulacionContent.put(diploma.getTitulacion().getId(), diploma.getTitulacion().getName());
+            this.titulacion = tiulacionContent;
         }
-
-        entidadBBDD.setIdcustomer(this.idCliente);
-        entidadBBDD.setName(this.nombreCompleto);
-        entidadBBDD.setRegion(this.regionOComarca);
-
-        // Actualizar Titulacion
-        if (this.titulacion != null && !this.titulacion.isEmpty()) {
-            Map.Entry<Long, String> entry = this.titulacion.entrySet().iterator().next();
-            if (entidadBBDD.getTitulacion() == null) {
-                Titulacion titulacion = new Titulacion();
-                titulacion.setDiploma(entidadBBDD);
-                entidadBBDD.setTitulacion(titulacion);
-            }
-            entidadBBDD.getTitulacion().setName(entry.getValue());
-        } else {
-            entidadBBDD.setTitulacion(null);
-        }
-
-        // Actualizar Firmas
-        if (this.firmas != null) {
-            List<FirmaOrganismo> firmasNuevas = new ArrayList<>();
-            this.firmas.forEach((idFirmante, contenidoFirma) -> {
-                FirmaOrganismo firmaOrganismo = new FirmaOrganismo();
-                firmaOrganismo.setId(idFirmante);
-                firmaOrganismo.setOrganismoFirmante(contenidoFirma.keySet().iterator().next());
-                firmaOrganismo.setFechaEmision(contenidoFirma.values().iterator().next());
-                firmaOrganismo.setDiploma(entidadBBDD);
-                firmasNuevas.add(firmaOrganismo);
+        this.regionOComarca = diploma.getRegion();
+        this.firmas = new HashMap<>();
+        if (diploma.getFirmas() != null) {
+            diploma.getFirmas().forEach((firma) -> {
+                Map<String, Date> contenidoFirma = new HashMap<>();
+                contenidoFirma.put(firma.getOrganismoFirmante(), firma.getFechaEmision());
+                this.firmas.put(firma.getId(), contenidoFirma);
             });
-            entidadBBDD.getFirmas().clear();
-            entidadBBDD.getFirmas().addAll(firmasNuevas);
-        } else {
-            entidadBBDD.getFirmas().clear();
         }
     }
-
 
     public Long getId() {
         return this.id;

@@ -78,3 +78,19 @@ auditoria:
         hibernate:
           format_sql: true
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost/realms/diploma-realm
+          jwk-set-uri: http://localhost/realms/diploma-realm/protocol/openid-connect/certs
+
+# escuchando en el puerto 80
+keycloak:
+  realm: diploma-realm
+  auth-server-url: http://localhost/auth
+  resource: spring-boot-client
+  credentials:
+    secret: dgeTtq0crVJsoNWXv0ydcPnepJwzlDZj
+  principal-attribute: usertest
+  use-resource-role-mappings: true

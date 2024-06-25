@@ -2,7 +2,6 @@ package muface.microdiplomas.domain.service;
 
 import muface.arch.repository.ArqPortRepository;
 import muface.arch.service.ArqGenericService;
-import muface.arch.utils.ArqConversionUtils;
 import muface.microdiplomas.api.dto.DiplomaDTO;
 import muface.microdiplomas.domain.model.Diploma;
 import muface.microdiplomas.domain.repository.DiplomaJPARepository;
@@ -42,7 +41,7 @@ public class DiplomaDTOService extends ArqGenericService<DiplomaDTO, Long> {
 
     public Page<DiplomaDTO> buscarDiplomasPorNombreDeTitulacion(String nameOfTitulacion, Pageable pageable) {
         DiplomaJPARepository diplomaJPARepository = applicationContext.getBean(DiplomaJPARepository.class);
-        Pageable newPageable = ArqConversionUtils.changePageableOrderFields(new DiplomaDTO(), pageable);
+        Pageable newPageable = mapearCamposOrdenacionDeEntidad(new DiplomaDTO(), pageable);
         Page<Diploma> resultado = diplomaJPARepository.findDiplomasByTitulacionName(nameOfTitulacion, newPageable);
         return convertirAPageOfDtos(resultado, newPageable);
     }
