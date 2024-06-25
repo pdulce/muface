@@ -12,6 +12,10 @@ public class ArqRelationalAdapterRepository<T, ID> implements ArqPortRepository<
     private JpaRepository<T, ID> jpaRepository;
     private String classOfEntity;
 
+    @Override
+    public Object getRepoImplementation() {
+        return jpaRepository;
+    }
     public void setJpaRepository(JpaRepository<?, ID> jpaRepository) {
         this.jpaRepository = (JpaRepository<T, ID>) jpaRepository;
     }

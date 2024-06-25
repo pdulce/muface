@@ -29,7 +29,7 @@ public class DiplomaDTOService extends ArqGenericService<DiplomaDTO, Long> {
 
     public List<DiplomaDTO> buscarDiplomasPorNombreDeTitulacion(String nameOfTitulacion) {
         List<DiplomaDTO> resultado = new ArrayList<>();
-        DiplomaRepository diplomaRepository = (DiplomaRepository) applicationContext.getBean(getRepositoryEntityOfDTO());
+        DiplomaRepository diplomaRepository = (DiplomaRepository) getRepositorio();
         List<Diploma> listaEntities = diplomaRepository.findDiplomasByTitulacionName(nameOfTitulacion);
         listaEntities.forEach((diploma) -> {
             DiplomaDTO diplomaDTO = new DiplomaDTO();
@@ -40,7 +40,7 @@ public class DiplomaDTOService extends ArqGenericService<DiplomaDTO, Long> {
     }
 
     public Page<DiplomaDTO> buscarDiplomasPorNombreDeTitulacion(String nameOfTitulacion, Pageable pageable) {
-        DiplomaRepository diplomaRepository = (DiplomaRepository) applicationContext.getBean(getRepositoryEntityOfDTO());
+        DiplomaRepository diplomaRepository = (DiplomaRepository) getRepositorio();
         Pageable newPageable = mapearCamposOrdenacionDeEntidad(new DiplomaDTO(), pageable);
         Page<Diploma> resultado = diplomaRepository.findDiplomasByTitulacionName(nameOfTitulacion, newPageable);
         return convertirAPageOfDtos(resultado, newPageable);

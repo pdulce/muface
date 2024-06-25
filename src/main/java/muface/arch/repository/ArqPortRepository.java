@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface ArqPortRepository<T, ID> {
 
+    Object getRepoImplementation();
+
     String getClassOfEntity();
     void setClassOfEntity(String classOfEntity);
 

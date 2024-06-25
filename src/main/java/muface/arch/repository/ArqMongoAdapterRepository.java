@@ -15,6 +15,11 @@ public class ArqMongoAdapterRepository<T, ID> implements ArqPortRepository<T, ID
     private String classOfEntity;
 
     @Override
+    public Object getRepoImplementation() {
+        return mongoRepository;
+    }
+
+    @Override
     public String getClassOfEntity() {
         return this.classOfEntity;
     }

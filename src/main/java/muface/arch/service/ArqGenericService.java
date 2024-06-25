@@ -38,10 +38,16 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     @Autowired
     protected ApplicationContext applicationContext;
 
+    Map<String, ArqPortRepository<?, ID>> commandRepositories;
+
     public abstract String getRepositoryEntityOfDTO();
 
     @Autowired
     MessageSource messageSource;
+
+    protected Object getRepositorio() {
+        return getRepository().getRepoImplementation();
+    }
 
     private String getClassOfDTO() {
         return mapper.newInstance().getEntity().getClass().getSimpleName();
@@ -57,7 +63,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
                 new Object[]{"Error recuperando repositorio de la entidad " + entityClassName});
     }
-    Map<String, ArqPortRepository<?, ID>> commandRepositories;
+
 
     @Autowired
     public ArqGenericService(Map<String, ArqPortRepository<?, ID>> repositories) {
