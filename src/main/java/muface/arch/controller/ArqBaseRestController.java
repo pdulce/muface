@@ -34,20 +34,30 @@ public abstract class ArqBaseRestController {
 
     @DeleteMapping
     public ResponseEntity<Object> borrar() {
-        return this.executeDeleteUseCase(getCasoUsoBorrado(), new DiplomaDTO());
+        return this.executeUpdateUseCaseWithInputBody(getCasoUsoBorrado(), new DiplomaDTO());
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> borrarPorId(@PathVariable Long id) {
-        return this.executeDeleteUseCase(getCasoUsoBorradoPorId(), id);
+        return this.executeUseCaseById(getCasoUsoBorradoPorId(), id);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Object> consultaPorId(@PathVariable Long id) {
-        return this.executeUseQueryCaseWithReqParams(getCasoUsoConsultaPorId(), id);
+        return this.executeUseCaseById(getCasoUsoConsultaPorId(), id);
     }
 
-    /**** Internos ****/
+    @PostMapping("consulta")
+    public ResponseEntity<Object> consulta(@RequestBody DiplomaDTO dtoInBody) { // usaríamos la Entidad no el DTO
+        return this.executeCreateUseCaseWithInputBody(getCasoUsoConsultaGeneral(), dtoInBody);
+    }
+
+    @PostMapping("consultapaginados")
+    public ResponseEntity<Object> consultapaginados(@RequestBody DiplomaDTO dtoInBody, Pageable pageable) {
+        return this.executeUseQuerypagCaseWithReqParams(getCasoUsoConsultaPaginada(), dtoInBody, pageable);
+    }
+
+    /**** private methods ****/
 
 
     @Transactional
@@ -63,13 +73,8 @@ public abstract class ArqBaseRestController {
     }
 
     @Transactional
-    protected final ResponseEntity executeDeleteUseCase(final String useCase, Object id) {
+    protected final ResponseEntity executeUseCaseById(final String useCase, Object id) {
         Object result = useCaseExecutor.executeUseCase(useCase, id);
-        return ResponseEntity.ok(result);
-    }
-
-    protected final ResponseEntity executeUseQueryCaseWithReqParams(final String useCase, Object param) {
-        Object result = useCaseExecutor.executeUseCase(useCase, param);
         return ResponseEntity.ok(result);
     }
 
