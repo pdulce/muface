@@ -5,14 +5,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
-import muface.arch.command.IArqEntidad;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Data
-public class Diploma implements Serializable, IArqEntidad {
+public class Diploma implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

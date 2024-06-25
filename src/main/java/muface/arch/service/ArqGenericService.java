@@ -1,7 +1,6 @@
 package muface.arch.service;
 
 import muface.arch.command.IArqDTOMapper;
-import muface.arch.command.IArqEntidad;
 import muface.arch.configuration.ArqConfigProperties;
 import muface.arch.configuration.ArqSessionInterceptor;
 import muface.arch.command.IArqDTO;
@@ -21,23 +20,20 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.*;
 
+import java.io.Serializable;
 import java.util.*;
 
 @Transactional
 public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqServicePort<D, ID> {
-
     Logger logger = LoggerFactory.getLogger(ArqGenericService.class);
-
     @Autowired
     ArqConfigProperties arqConfigProperties;
 
     @Autowired(required = false)
     ArqCommandEventPublisherPort arqCommandEventPublisherPort;
 
-    //private Class<D> myDtoClass;
-
     @Autowired
-    private IArqDTOMapper<IArqEntidad, D> mapper;
+    private IArqDTOMapper<Serializable, D> mapper;
 
     @Autowired
     protected ApplicationContext applicationContext;
@@ -72,7 +68,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         return applicationId + "-" + almacen + "-" + (id.toString());
     }
 
-    private void registrarEvento(IArqEntidad entity, String eventType, ID id) {
+    private void registrarEvento(Serializable entity, String eventType, ID id) {
         if (entity != null && arqConfigProperties.isEventBrokerActive()) {
             String applicationId = (String) ArqSessionInterceptor.getCurrentSession().getAttribute("applicationId");
             String sessionId = (String) ArqSessionInterceptor.getCurrentSession().getAttribute("sessionId");
@@ -85,8 +81,8 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     }
     private void registrarEventos(List<Object> entities, String eventType) {
         entities.forEach((entity) -> {
-            D dto = mapper.map((IArqEntidad) entity);
-            registrarEvento((IArqEntidad) entity, eventType, (ID) dto.getId());
+            D dto = mapper.map((Serializable) entity);
+            registrarEvento((Serializable) entity, eventType, (ID) dto.getId());
         });
     }
 
@@ -97,8 +93,8 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         D dto;
         try {
             ArqPortRepository<Object, ID> commandRepo = getRepository();
-            IArqEntidad entidad = (IArqEntidad) entityDto.getEntity();
-            IArqEntidad entityInserted = (IArqEntidad) commandRepo.save(entidad);
+            Serializable entidad = (Serializable) entityDto.getEntity();
+            Serializable entityInserted = (Serializable) commandRepo.save(entidad);
             dto = mapper.map(entityInserted);
             this.registrarEvento(entityInserted, ArqEvent.EVENT_TYPE_CREATE, (ID) entityDto.getId());
             String info = messageSource.getMessage(ArqConstantMessages.CREATED_OK,
@@ -124,13 +120,13 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             ArqPortRepository<Object, ID> commandRepo = getRepository();
             Optional<?> optionalT = commandRepo.findById((ID) entityDto.getId());
             if (optionalT.isPresent()) {
-                IArqEntidad searchedInBBDD = (IArqEntidad) optionalT.orElse(null);
+                Serializable searchedInBBDD = (Serializable) optionalT.orElse(null);
                 // obtenemos los datos que vienen del cliente:
-                IArqEntidad entidad2Update = (IArqEntidad) entityDto.getEntity();
+                Serializable entidad2Update = (Serializable) entityDto.getEntity();
                 IArqDTO dto2Update = mapper.map(searchedInBBDD);
                 dto2Update.setEntity(entidad2Update);
-                entidad2Update = (IArqEntidad) dto2Update.getEntity();
-                IArqEntidad updated = (IArqEntidad) commandRepo.save(entidad2Update);
+                entidad2Update = (Serializable) dto2Update.getEntity();
+                Serializable updated = (Serializable) commandRepo.save(entidad2Update);
 
                 this.registrarEvento(updated, ArqEvent.EVENT_TYPE_UPDATE, (ID) entityDto.getId());
                 String info = messageSource.getMessage(ArqConstantMessages.UPDATED_OK,
@@ -165,7 +161,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             ArqPortRepository<Object, ID> commandRepo = getRepository();
             Optional<?> optionalT = commandRepo.findById(id);
             if (optionalT.isPresent()) {
-                IArqEntidad entity = (IArqEntidad) optionalT.orElse(null);
+                Serializable entity = (Serializable) optionalT.orElse(null);
                 commandRepo.delete(entity);
                 this.registrarEvento(entity, ArqEvent.EVENT_TYPE_DELETE, id);
                 info = messageSource.getMessage(ArqConstantMessages.DELETED_OK,
@@ -271,7 +267,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         ArqPortRepository<Object, ID> commandRepo = getRepository();
         Optional<?> optionalT = commandRepo.findById(id);
         if (optionalT.isPresent()) {
-            IArqEntidad entity = (IArqEntidad) optionalT.orElse(null);
+            Serializable entity = (Serializable) optionalT.orElse(null);
             D dto = mapper.map(entity);
             return dto;
         } else {
@@ -348,7 +344,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     protected final Page<D> convertirAPageOfDtos(Page pageimpl, Pageable pageable) {
         List<D> listConverted = new ArrayList<>();
         pageimpl.stream().toList().forEach((entity) -> {
-            D dto = mapper.map((IArqEntidad) entity);
+            D dto = mapper.map((Serializable) entity);
             listConverted.add(dto);
         });
         return new PageImpl<>(listConverted,
@@ -360,7 +356,7 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     protected final List<D> convertirListaEntitiesADtos(List listaOrigen) {
         List<D> listConverted = new ArrayList<>();
         listaOrigen.stream().toList().forEach((entity) -> {
-            D dto = mapper.map((IArqEntidad) entity);
+            D dto = mapper.map((Serializable) entity);
             listConverted.add(dto);
         });
         return listConverted;

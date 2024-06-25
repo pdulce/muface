@@ -1,7 +1,7 @@
 package muface.arch.command;
 
-public interface IArqDTOMapper<IArqEntidad, D extends IArqDTO> {
-    D map(IArqEntidad entity);
+public interface IArqDTOMapper<Serializable, D extends IArqDTO> {
+    D map(Serializable entity);
 
     D newInstance();
 
