@@ -115,10 +115,10 @@ public abstract class ArqBaseRestController {
         return ResponseEntity.ok(result);
     }
 
-    /*protected final ResponseEntity executeUseCaseWithRequest(final String useCase, Object[] paramsObject) {
-        Object result = useCaseExecutor.executePaginationUseCase(useCase, paramsObject);
+    protected final ResponseEntity executeUseCaseWithReqParams(final String useCase, Object[] paramsObject) {
+        Object result = useCaseExecutor.executeUseCase(useCase, paramsObject);
         return ResponseEntity.ok(result);
-    }*/
+    }
 
 
 }
