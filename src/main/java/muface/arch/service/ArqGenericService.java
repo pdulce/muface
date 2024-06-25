@@ -36,7 +36,9 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     @Autowired
     Map<String, ArqPortRepository<?, ID>> commandRepositories;
 
-    public abstract String getRepositoryEntityOfDTO();
+    private String getRepositoryEntityOfDTO() {
+        return this.mapper.newInstance().getEntity().getClass().getName();
+    }
 
     @Autowired
     MessageSource messageSource;
