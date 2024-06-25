@@ -1,10 +1,10 @@
 package muface.application.domain.service;
 
+import muface.application.domain.repository.DiplomaRepository;
 import muface.arch.repository.ArqPortRepository;
 import muface.arch.service.ArqGenericService;
 import muface.application.domain.valueobject.DiplomaDTO;
 import muface.application.domain.model.Diploma;
-import muface.application.domain.repository.DiplomaJPARepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,9 +29,8 @@ public class DiplomaDTOService extends ArqGenericService<DiplomaDTO, Long> {
 
     public List<DiplomaDTO> buscarDiplomasPorNombreDeTitulacion(String nameOfTitulacion) {
         List<DiplomaDTO> resultado = new ArrayList<>();
-        //TODO::
-        DiplomaJPARepository diplomaJPARepository = applicationContext.getBean(DiplomaJPARepository.class);
-        List<Diploma> listaEntities = diplomaJPARepository.findDiplomasByTitulacionName(nameOfTitulacion);
+        DiplomaRepository diplomaRepository = (DiplomaRepository) applicationContext.getBean(getRepositoryEntityOfDTO());
+        List<Diploma> listaEntities = diplomaRepository.findDiplomasByTitulacionName(nameOfTitulacion);
         listaEntities.forEach((diploma) -> {
             DiplomaDTO diplomaDTO = new DiplomaDTO();
             diplomaDTO.setEntity(diploma);
@@ -41,9 +40,9 @@ public class DiplomaDTOService extends ArqGenericService<DiplomaDTO, Long> {
     }
 
     public Page<DiplomaDTO> buscarDiplomasPorNombreDeTitulacion(String nameOfTitulacion, Pageable pageable) {
-        DiplomaJPARepository diplomaJPARepository = applicationContext.getBean(DiplomaJPARepository.class);
+        DiplomaRepository diplomaRepository = (DiplomaRepository) applicationContext.getBean(getRepositoryEntityOfDTO());
         Pageable newPageable = mapearCamposOrdenacionDeEntidad(new DiplomaDTO(), pageable);
-        Page<Diploma> resultado = diplomaJPARepository.findDiplomasByTitulacionName(nameOfTitulacion, newPageable);
+        Page<Diploma> resultado = diplomaRepository.findDiplomasByTitulacionName(nameOfTitulacion, newPageable);
         return convertirAPageOfDtos(resultado, newPageable);
     }
 

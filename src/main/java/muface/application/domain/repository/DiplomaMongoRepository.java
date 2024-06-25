@@ -5,6 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DiplomaMongoRepository extends MongoRepository<DiplomaDocument, String> {
+public interface DiplomaMongoRepository extends MongoRepository<DiplomaDocument, String>, DiplomaRepository {
 
 }
