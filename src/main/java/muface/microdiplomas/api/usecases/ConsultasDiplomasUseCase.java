@@ -11,11 +11,9 @@ import java.util.List;
 @Component
 public class ConsultasDiplomasUseCase extends ArqAbstractUseCaseConsulta<List<DiplomaDTO>, DiplomaDTO> {
 
-    public List<DiplomaDTO> execute(DiplomaDTO diplomaDTO) {
+    /*public List<DiplomaDTO> execute(Object diplomaDTO) {
         List<DiplomaDTO> diplomaDTOS = new ArrayList<>();
-        if (diplomaDTO.getId() != null) {
-            diplomaDTOS.add((DiplomaDTO) this.commandService.buscarPorId(diplomaDTO.getId()));
-        } else if (diplomaDTO.getIdCliente() != null) {
+        if (diplomaDTO.getIdCliente() != null) {
             DiplomaDTO filter = new DiplomaDTO();
             filter.setIdCliente(diplomaDTO.getIdCliente());
             diplomaDTOS.addAll(this.commandService.buscarCoincidenciasEstricto(filter));
@@ -31,6 +29,12 @@ public class ConsultasDiplomasUseCase extends ArqAbstractUseCaseConsulta<List<Di
             diplomaDTOS.addAll(this.commandService.buscarTodos());
         }
         return diplomaDTOS;
+    }*/
+
+
+    @Override
+    public List<DiplomaDTO> execute(DiplomaDTO diplomaDTOFilter) {
+        return this.commandService.buscarCoincidenciasNoEstricto(diplomaDTOFilter);
     }
 
 

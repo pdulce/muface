@@ -24,7 +24,7 @@ public class ArqUseCaseExecutor {
             if (useCase == null) {
                 throw new RuntimeException("El caso de Uso <" + useCaseName + "> no existe");
             }
-            return useCase.execute(paramObj);
+            return useCase.executeInner(paramObj);
 
         } catch (ConstraintViolationException | NotExistException | ArqBussinessRuleException excConstraint) {
 
@@ -43,7 +43,7 @@ public class ArqUseCaseExecutor {
             if (useCase == null) {
                 throw new RuntimeException("El caso de Uso <" + useCaseName + "> no existe");
             }
-            return useCase.execute(paramObj, pageable);
+            return useCase.executeInner(paramObj, pageable);
 
         } catch (ConstraintViolationException | NotExistException | ArqBussinessRuleException excConstraint) {
 

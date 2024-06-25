@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConsultaPorIdDiplomasUseCase extends ArqAbstractUseCaseById<DiplomaDTO, Long> {
 
-    public DiplomaDTO execute(Long idDiploma) {
-        return (DiplomaDTO) this.commandService.buscarPorId(idDiploma);
+    @Override
+    public DiplomaDTO execute(Long id) {
+        return (DiplomaDTO) this.commandService.buscarPorId(id);
     }
-
 
 }

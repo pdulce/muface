@@ -1,6 +1,7 @@
 package muface.microdiplomas.api.usecases;
 
 
+import jakarta.transaction.Transactional;
 import muface.arch.command.ArqAbstractUseCaseDeleteById;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,10 @@ public class BorrarDiplomaPorIdUseCase extends ArqAbstractUseCaseDeleteById<Stri
 
 
     @Override
+    @Transactional
     public String execute(Long id) {
         return this.commandService.borrarEntidad(id);
     }
+
+
 }
