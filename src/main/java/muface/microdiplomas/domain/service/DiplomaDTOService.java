@@ -29,6 +29,7 @@ public class DiplomaDTOService extends ArqGenericService<DiplomaDTO, Long> {
 
     public List<DiplomaDTO> buscarDiplomasPorNombreDeTitulacion(String nameOfTitulacion) {
         List<DiplomaDTO> resultado = new ArrayList<>();
+        //TODO::
         DiplomaJPARepository diplomaJPARepository = applicationContext.getBean(DiplomaJPARepository.class);
         List<Diploma> listaEntities = diplomaJPARepository.findDiplomasByTitulacionName(nameOfTitulacion);
         listaEntities.forEach((diploma) -> {

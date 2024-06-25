@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-public abstract class ArqBaseRestController {
+public class ArqBaseRestController {
 
     @Autowired
     protected ArqUseCaseExecutor useCaseExecutor;

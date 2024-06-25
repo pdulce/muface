@@ -121,12 +121,9 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
             Optional<?> optionalT = commandRepo.findById((ID) entityDto.getId());
             if (optionalT.isPresent()) {
                 Serializable searchedInBBDD = (Serializable) optionalT.orElse(null);
-                // obtenemos los datos que vienen del cliente:
-                Serializable entidad2Update = (Serializable) entityDto.getEntity();
-                IArqDTO dto2Update = mapper.map(searchedInBBDD);
-                dto2Update.setEntity(entidad2Update);
-                entidad2Update = (Serializable) dto2Update.getEntity();
-                Serializable updated = (Serializable) commandRepo.save(entidad2Update);
+                entityDto.actualizarEntidad(searchedInBBDD); //actualiza los campos que no son ids
+                Serializable updatedEntity = (Serializable) entityDto.getEntity();
+                Serializable updated = (Serializable) commandRepo.save(updatedEntity);
 
                 this.registrarEvento(updated, ArqEvent.EVENT_TYPE_UPDATE, (ID) entityDto.getId());
                 String info = messageSource.getMessage(ArqConstantMessages.UPDATED_OK,
@@ -191,6 +188,12 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
     public String borrarEntidad(D entityDto) {
         Object id = entityDto.getId();
         return this.borrarEntidad((ID) id);
+    }
+
+    @Override
+    @Transactional
+    public String borrarEntidades(D filter) {
+        return borrarEntidades(this.buscarCoincidenciasEstricto(filter));
     }
 
     @Override

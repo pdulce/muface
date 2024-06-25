@@ -6,13 +6,10 @@ import org.springframework.data.domain.Pageable;
 
 public abstract class ArqAbstractUseCasePagination<R, P> {
 
+    @Autowired
     protected ArqGenericService commandService;
     public abstract R executeQueryPaginada(P params, Pageable pageable);
 
-    @Autowired
-    public ArqAbstractUseCasePagination(ArqGenericService commandService) {
-        this.commandService = commandService;
-    }
 
 }
 

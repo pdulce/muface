@@ -60,4 +60,11 @@ public class DiplomaDocumentDTO implements IArqDTO<String, DiplomaDocument> {
         return diploma;
     }
 
+    @Override
+    public void actualizarEntidad(DiplomaDocument entidadBBDD) {
+        entidadBBDD.setIdcustomer(this.idCliente);
+        entidadBBDD.setName(this.nombreCompleto);
+        entidadBBDD.setRegion(this.regionOComarca);
+    }
+
 }

@@ -35,29 +35,13 @@ public class DiplomaAPI extends ArqBaseRestController {
         return super.executeUseQueryCaseWithReqParams("ConsultaPorIdDiplomasUseCase", id);
     }
 
-    @GetMapping
-    public ResponseEntity<Object> consultaPorCampos(@RequestParam(value = "clienteId", required = false) Long clienteId,
-                                @RequestParam(value = "nombrePila", required = false) String nombrePila,
-                                @RequestParam(value = "titulacion", required = false) String titulacion) {
-
-        DiplomaDTO filter = new DiplomaDTO();
-        filter.setIdCliente(clienteId);
-        filter.setNombreCompleto(nombrePila);
-        filter.setTitulacionDeno(titulacion);
+    @PostMapping("consulta")
+    public ResponseEntity<Object> consultaPorCampos(@RequestBody DiplomaDTO filter) {
         return super.executeUseQueryCaseWithReqParams("ConsultasDiplomasUseCase", filter);
     }
 
-    @GetMapping("paginados")
-    public ResponseEntity<Object> consultaPaginadaPorCampos(@RequestParam(value = "clienteId", required = false)
-                                                                Long clienteId,
-                                @RequestParam(value = "nombrePila", required = false) String nombrePila,
-                                @RequestParam(value = "titulacion", required = false) String titulacion,
-                                Pageable pageable) {
-
-        DiplomaDTO filter = new DiplomaDTO();
-        filter.setIdCliente(clienteId);
-        filter.setNombreCompleto(nombrePila);
-        filter.setTitulacionDeno(titulacion);
+    @PostMapping("consultapaginados")
+    public ResponseEntity<Object> consultaPaginadaPorCampos(@RequestBody DiplomaDTO filter, Pageable pageable) {
         return super.executeUseQuerypagCaseWithReqParams("ConsultasPaginadasDiplomasUseCase", filter, pageable);
     }
 
