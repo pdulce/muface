@@ -91,7 +91,7 @@ public abstract class ArqBaseRestController {
 
     @PostMapping("consulta-paginada")
     public ResponseEntity<Object> consultapaginados(@RequestBody DiplomaDTO dtoInBody, Pageable pageable) {
-        return this.executeUseQuerypagCaseWithReqParams(getCasoUsoConsultaPaginada(), dtoInBody, pageable);
+        return this.executeUseQueryPagination(getCasoUsoConsultaPaginada(), dtoInBody, pageable);
     }
 
     /**** private methods ****/
@@ -109,11 +109,16 @@ public abstract class ArqBaseRestController {
         return ResponseEntity.ok(result);
     }
 
-    protected final ResponseEntity executeUseQuerypagCaseWithReqParams(final String useCase, Object paramsObject,
-                                                                       Pageable pageable) {
+    protected final ResponseEntity executeUseQueryPagination(final String useCase, Object paramsObject,
+                                                             Pageable pageable) {
         Object result = useCaseExecutor.executePaginationUseCase(useCase, paramsObject, pageable);
         return ResponseEntity.ok(result);
     }
+
+    /*protected final ResponseEntity executeUseCaseWithRequest(final String useCase, Object[] paramsObject) {
+        Object result = useCaseExecutor.executePaginationUseCase(useCase, paramsObject);
+        return ResponseEntity.ok(result);
+    }*/
 
 
 }
