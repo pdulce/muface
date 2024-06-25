@@ -15,7 +15,6 @@ import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.*;
@@ -31,13 +30,10 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
 
     @Autowired(required = false)
     ArqCommandEventPublisherPort arqCommandEventPublisherPort;
-
     @Autowired
     private IArqDTOMapper<Serializable, D> mapper;
 
     @Autowired
-    protected ApplicationContext applicationContext;
-
     Map<String, ArqPortRepository<?, ID>> commandRepositories;
 
     public abstract String getRepositoryEntityOfDTO();
@@ -62,12 +58,6 @@ public abstract class ArqGenericService<D extends IArqDTO, ID> implements ArqSer
         }
         throw new ArqBaseOperationsException(ArqConstantMessages.ERROR_INTERNAL_SERVER_ERROR,
                 new Object[]{"Error recuperando repositorio de la entidad " + entityClassName});
-    }
-
-
-    @Autowired
-    public ArqGenericService(Map<String, ArqPortRepository<?, ID>> repositories) {
-        this.commandRepositories = repositories;
     }
 
     private String fabricarIdUnico(String applicationId, String almacen, Object id) {

@@ -21,10 +21,6 @@ public class DiplomaDTOService extends ArqGenericService<DiplomaDTO, Long> {
         return Diploma.class.getName();
     }
 
-    public DiplomaDTOService(Map<String, ArqPortRepository<?, Long>> repositories) {
-        super(repositories);
-    }
-
     /*** métodos personalizados ***/
 
     public List<DiplomaDTO> buscarDiplomasPorNombreDeTitulacion(String nameOfTitulacion) {
