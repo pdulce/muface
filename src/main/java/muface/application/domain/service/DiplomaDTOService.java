@@ -1,7 +1,6 @@
 package muface.application.domain.service;
 
 import muface.application.domain.repository.DiplomaRepository;
-import muface.arch.repository.ArqPortRepository;
 import muface.arch.service.ArqGenericService;
 import muface.application.domain.valueobject.DiplomaDTO;
 import muface.application.domain.model.Diploma;
